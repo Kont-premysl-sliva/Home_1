@@ -5,11 +5,5 @@
   "versionBadge": "v 411",
   "releaseDate": "1.11.2026",
   "maxKeptVersions": 3,
-  "keptVersions": ["v411","v410","v409"],
-  "files": [
-    "pc/index.html",
-    "pc/S_POHODA_Kontejnery_PC_v411.html",
-    "pc/S_POHODA_Kontejnery_PC_v410.html",
-    "pc/S_POHODA_Kontejnery_PC_v409.html"
-  ]
+  "keptVersions": ["v411","v410","v409"]
 }
