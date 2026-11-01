@@ -24,7 +24,7 @@
                 var cachedVer = parseInt(localStorage.getItem('ko_cached_github_ver') || localStorage.getItem('ko_cached_cloud_ver') || '0', 10);
                 var cachedHtml = localStorage.getItem('ko_cached_github_html') || localStorage.getItem('ko_cached_cloud_html');
                 var autoBoot = localStorage.getItem('ko_auto_github_boot') !== '0';
-                if (autoBoot && cachedHtml && cachedVer > 403 && !window.__GITHUB_BOOTED__) {
+                if (autoBoot && cachedHtml && cachedVer > 404 && !window.__GITHUB_BOOTED__) {
                     window.__GITHUB_BOOTED__ = true;
                     document.open();
                     document.write(cachedHtml);
@@ -2229,7 +2229,7 @@
 
     <script>
     (function() {
-        const CURRENT_SW_VERSION = 403;
+        const CURRENT_SW_VERSION = 404;
         const CURRENT_SW_VERSION_NAME = 400;
         const CURRENT_SW_RELEASE_DATE = "1.11.2026";
         const CURRENT_SW_RELEASE_DATE_SPACED = "1. 11. 2026";
@@ -15522,7 +15522,7 @@ function buildShareTextSummary(type, id) {
     </script>
 
     <!-- ============================================================================ -->
-    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v403)      -->
+    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v404)      -->
     <!-- Zkrácená verze Přepravy: ostatní agendy jsou na iPhonu kompletně skryté.     -->
     <!-- ============================================================================ -->
     <style id="iphoneAppStyles">

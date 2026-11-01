@@ -1400,6 +1400,28 @@ fun NastaveniScreen(
                                             )
                                         }
                                     }
+
+                                    Button(
+                                        onClick = {
+                                            try {
+                                                val intent = android.content.Intent(
+                                                    android.content.Intent.ACTION_VIEW,
+                                                    android.net.Uri.parse("https://github.com/settings/tokens/new?description=Home_1_Backup_Token&scopes=repo")
+                                                )
+                                                intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                context.startActivity(intent)
+                                            } catch (e: Exception) {
+                                                Toast.makeText(context, "Nelze otevřít prohlížeč: ${e.message}", Toast.LENGTH_SHORT).show()
+                                            }
+                                        },
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF047857)),
+                                        shape = RoundedCornerShape(6.dp),
+                                        modifier = Modifier.fillMaxWidth().padding(top = 2.dp)
+                                    ) {
+                                        Icon(Icons.Default.VpnKey, contentDescription = null, modifier = Modifier.size(16.dp))
+                                        Spacer(Modifier.width(6.dp))
+                                        Text("VYGENEROVAT NOVÝ TOKEN PRO HOME_1", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                    }
                                 }
                             }
 
@@ -1507,7 +1529,7 @@ fun NastaveniScreen(
                                                     ) {
                                                         Icon(Icons.Default.OpenInBrowser, contentDescription = null, modifier = Modifier.size(16.dp))
                                                         Spacer(Modifier.width(6.dp))
-                                                        Text("OTEVŘÍT REPOZITÁŘ KONT_2026 NA GITHUB", fontSize = 10.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                                                        Text("OTEVŘÍT REPOZITÁŘ HOME_1 NA GITHUB", fontSize = 10.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                                                     }
 
                                                     OutlinedButton(
@@ -1759,6 +1781,28 @@ fun NastaveniScreen(
                         color = Color(0xFF0F172A),
                         fontWeight = FontWeight.SemiBold
                     )
+
+                    Button(
+                        onClick = {
+                            try {
+                                val intent = android.content.Intent(
+                                    android.content.Intent.ACTION_VIEW,
+                                    android.net.Uri.parse("https://github.com/settings/tokens/new?description=Home_1_Backup_Token&scopes=repo")
+                                )
+                                intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                                context.startActivity(intent)
+                            } catch (e: Exception) {
+                                Toast.makeText(context, "Nelze otevřít prohlížeč: ${e.message}", Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF047857)),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.VpnKey, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(Modifier.width(6.dp))
+                        Text("OTEVŘÍT GITHUB A VYGENEROVAT TOKEN PRO HOME_1", fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                    }
                 }
             },
             confirmButton = {

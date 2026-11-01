@@ -44,9 +44,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 
-const val APP_VERSION_NUMBER = 403
-const val APP_VERSION_NAME = "403"
-const val APP_VERSION_BADGE = "v 403 • 1.11.2026"
+const val APP_VERSION_NUMBER = 404
+const val APP_VERSION_NAME = "404"
+const val APP_VERSION_BADGE = "v 404 • 1.11.2026"
 const val APP_LAST_UPDATE_DATE = "1.11.2026"
 
 fun formatUnifiedVersionBadge(versionNumber: Int): String = "v $versionNumber"
