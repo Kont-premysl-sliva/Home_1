@@ -1,13 +1,9 @@
 {
   "platform": "WEB_PC_APLIKACE",
   "folder": "pc/",
-  "currentVersion": 400,
-  "versionBadge": "v 400",
+  "currentVersion": 405,
+  "versionBadge": "v 405",
   "releaseDate": "1.11.2026",
   "maxKeptVersions": 3,
-  "keptVersions": [
-    "v400",
-    "v399",
-    "v398"
-  ]
+  "keptVersions": ["v405","v404","v403"]
 }
