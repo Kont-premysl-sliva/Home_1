@@ -2,15 +2,11 @@
   "platform": "ANDROID_VERZE",
   "folder": "android/",
   "applicationId": "com.aistudio.containerscanner.cxkqab",
-  "currentVersion": 400,
-  "versionCode": 400,
-  "versionName": "400.0",
+  "currentVersion": 405,
+  "versionCode": 405,
+  "versionName": "405.0",
   "releaseDate": "1.11.2026",
   "maxKeptVersions": 3,
-  "keptVersions": [
-    "v400",
-    "v399",
-    "v398"
-  ],
-  "apkDownloadUrl": "https://github.com/Kont-premysl-sliva/Home_1/releases/download/v400/Kontejnery_Ostrava_Android_v400.apk"
+  "keptVersions": ["v405","v404","v403"],
+  "apkDownloadUrl": "https://github.com/Kont-premysl-sliva/Home_1/releases/download/v405/Kontejnery_Ostrava_Android_v405.apk"
 }
