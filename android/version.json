@@ -5,7 +5,7 @@
   "currentVersion": 412,
   "versionCode": 412,
   "versionName": "412.0",
-  "releaseDate": "1.11.2026",
+  "releaseDate": "2.11.2026",
   "maxKeptVersions": 3,
   "keptVersions": ["v412","v411","v410"],
   "files": [
