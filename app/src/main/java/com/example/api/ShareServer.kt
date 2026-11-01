@@ -174,7 +174,7 @@ class ShareServer(
                     val targetUrl = if (!hostHeader.isNullOrBlank()) {
                         "http://$hostHeader/iphone.html?iphone=1"
                     } else {
-                        "https://kont-premysl-sliva.github.io/Kont_2026/iphone.html?iphone=1"
+                        "https://kont-premysl-sliva.github.io/Home_1/iphone.html?iphone=1"
                     }
                     val xml = com.example.ui.HtmlDownloadManager.buildIosMobileConfigXml(targetUrl, context)
                     val bytes = xml.toByteArray(Charsets.UTF_8)

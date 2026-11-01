@@ -337,7 +337,7 @@ $iconBase64Tag            <key>IgnoreManifestScope</key>
             <key>Precomposed</key>
             <true/>
             <key>URL</key>
-            <string>https://kont-premysl-sliva.github.io/Kont_2026/iphone.html?iphone=1</string>
+            <string>https://kont-premysl-sliva.github.io/Home_1/iphone.html?iphone=1</string>
         </dict>
     </array>
     <key>PayloadDescription</key>
@@ -408,9 +408,9 @@ $iconBase64Tag            <key>IgnoreManifestScope</key>
     <key>KOAppRole</key>
     <string>DRIVER_PREPRAVA_ONLY</string>
     <key>KOGitHubRepo</key>
-    <string>Kont-premysl-sliva/Kont_2026</string>
+    <string>Kont-premysl-sliva/Home_1</string>
     <key>KOGitHubUpdateURL</key>
-    <string>https://kont-premysl-sliva.github.io/Kont_2026/iphone.html</string>
+    <string>https://kont-premysl-sliva.github.io/Home_1/iphone.html</string>
 </dict>
 </plist>"""
       addZipEntry("Payload/PrepravaKO.app/Info.plist", infoPlist.toByteArray(Charsets.UTF_8))
@@ -584,9 +584,9 @@ $iconBase64Tag            <key>IgnoreManifestScope</key>
       val metaBody = """{"writes":[{"update":{"name":"projects/kontejnery-ostrava/databases/(default)/documents/app_updates/latest_meta","fields":{"version":{"integerValue":"$ver"},"versionName":{"stringValue":"$verName"},"badge":{"stringValue":"v $verName • $todayDot"},"fileName":{"stringValue":"S_POHODA_Kontejnery_v$verName.html"},"chunkCount":{"integerValue":"${chunks.size}"},"totalLength":{"integerValue":"${htmlText.length}"},"updatedAt":{"integerValue":"$nowMs"}}}}]}"""
       postCommit(metaBody)
 
-      // Automatické odeslání do repozitáře Kont_2026 při přítomnosti platného systémového tokenu
-      val ghRepo = "Kont-premysl-sliva/Kont_2026"
-      val ghPublicRepo = "Kont-premysl-sliva/Kont_2026"
+      // Automatické odeslání do repozitáře Home_1 při přítomnosti platného systémového tokenu
+      val ghRepo = "Kont-premysl-sliva/Home_1"
+      val ghPublicRepo = "Kont-premysl-sliva/Home_1"
       val ghBranch = "main"
       val ghToken = System.getenv("GITHUB_TOKEN") ?: ""
       val htmlBase64 = Base64.getEncoder().encodeToString(htmlText.toByteArray(Charsets.UTF_8))

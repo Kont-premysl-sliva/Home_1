@@ -563,7 +563,7 @@ object HtmlDownloadManager {
     }
 
     fun buildIosMobileConfigXml(
-        targetUrl: String = "https://kont-premysl-sliva.github.io/Kont_2026/iphone.html?iphone=1",
+        targetUrl: String = "https://kont-premysl-sliva.github.io/Home_1/iphone.html?iphone=1",
         context: Context? = null
     ): String {
         val iconTag = try {
@@ -672,9 +672,9 @@ $iconTag            <key>IgnoreManifestScope</key>
     <key>KOAppRole</key>
     <string>DRIVER_PREPRAVA_ONLY</string>
     <key>KOGitHubRepo</key>
-    <string>Kont-premysl-sliva/Kont_2026</string>
+    <string>Kont-premysl-sliva/Home_1</string>
     <key>KOGitHubUpdateURL</key>
-    <string>https://raw.githubusercontent.com/Kont-premysl-sliva/Kont_2026/main/iphone/iphone.html</string>
+    <string>https://raw.githubusercontent.com/Kont-premysl-sliva/Home_1/main/iphone/iphone.html</string>
 </dict>
 </plist>"""
 
@@ -733,8 +733,8 @@ $iconTag            <key>IgnoreManifestScope</key>
                 putExtra(Intent.EXTRA_SUBJECT, "Přeprava KO – iPhone .IPA aplikace pro řidiče ($fileName)")
                 putExtra(
                     Intent.EXTRA_TEXT,
-                    "Instalační balíček .IPA pro Apple iPhone (pouze sekce PŘEPRAVA + aktualizace přes GitHub Kont-premysl-sliva/Kont_2026) • v $APP_VERSION_NUMBER.\n\n" +
-                    "Okamžitá instalace přes Safari / QR kód:\nhttps://kont-premysl-sliva.github.io/Kont_2026/install"
+                    "Instalační balíček .IPA pro Apple iPhone (pouze sekce PŘEPRAVA + aktualizace přes GitHub Kont-premysl-sliva/Home_1) • v $APP_VERSION_NUMBER.\n\n" +
+                    "Okamžitá instalace přes Safari / QR kód:\nhttps://kont-premysl-sliva.github.io/Home_1/install"
                 )
                 putExtra(Intent.EXTRA_STREAM, uri)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -809,7 +809,7 @@ $iconTag            <key>IgnoreManifestScope</key>
             val sendIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/html"
                 putExtra(Intent.EXTRA_SUBJECT, "Přeprava KO – Mobilní aplikace pro řidiče na iPhone ($fileName)")
-                putExtra(Intent.EXTRA_TEXT, "Mobilní aplikace Přeprava KO pro řidiče (pouze sekce PŘEPRAVA) na iPhone • v $APP_VERSION_NUMBER: https://kont-premysl-sliva.github.io/Kont_2026/install")
+                putExtra(Intent.EXTRA_TEXT, "Mobilní aplikace Přeprava KO pro řidiče (pouze sekce PŘEPRAVA) na iPhone • v $APP_VERSION_NUMBER: https://kont-premysl-sliva.github.io/Home_1/install")
                 putExtra(Intent.EXTRA_STREAM, uri)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
@@ -1319,7 +1319,7 @@ fun IphoneAppDialog(onDismiss: () -> Unit) {
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
-        val iphoneUrl = "https://kont-premysl-sliva.github.io/Kont_2026/install"
+        val iphoneUrl = "https://kont-premysl-sliva.github.io/Home_1/install"
         val qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=8&data=" + java.net.URLEncoder.encode(iphoneUrl, "UTF-8")
 
         Card(
@@ -1424,7 +1424,7 @@ fun IphoneAppDialog(onDismiss: () -> Unit) {
                                 fontSize = 13.sp
                             )
                             Text(
-                                text = "Plnohodnotný iOS balíček .IPA (Payload/PrepravaKO.app) obsahující výhradně sekci PŘEPRAVA pro řidiče a automatickou aktualizaci jízd i verze přes GitHub (Kont-premysl-sliva/Kont_2026). Pro instalaci .IPA přes PC/Mac použijte Sideloadly, AltStore nebo Apple Configurator 2.",
+                                text = "Plnohodnotný iOS balíček .IPA (Payload/PrepravaKO.app) obsahující výhradně sekci PŘEPRAVA pro řidiče a automatickou aktualizaci jízd i verze přes GitHub (Kont-premysl-sliva/Home_1). Pro instalaci .IPA přes PC/Mac použijte Sideloadly, AltStore nebo Apple Configurator 2.",
                                 color = Color(0xFFCBD5E1),
                                 fontSize = 11.sp
                             )

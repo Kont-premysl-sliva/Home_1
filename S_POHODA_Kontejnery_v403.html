@@ -24,7 +24,7 @@
                 var cachedVer = parseInt(localStorage.getItem('ko_cached_github_ver') || localStorage.getItem('ko_cached_cloud_ver') || '0', 10);
                 var cachedHtml = localStorage.getItem('ko_cached_github_html') || localStorage.getItem('ko_cached_cloud_html');
                 var autoBoot = localStorage.getItem('ko_auto_github_boot') !== '0';
-                if (autoBoot && cachedHtml && cachedVer > 400 && !window.__GITHUB_BOOTED__) {
+                if (autoBoot && cachedHtml && cachedVer > 403 && !window.__GITHUB_BOOTED__) {
                     window.__GITHUB_BOOTED__ = true;
                     document.open();
                     document.write(cachedHtml);
@@ -1898,7 +1898,7 @@
                     <div onclick="testGitHubConnection()" class="cursor-pointer bg-emerald-100 hover:bg-emerald-200/80 border border-emerald-300 rounded-xl px-3 py-2.5 flex items-center justify-between gap-2 transition-all">
                         <div class="flex items-center gap-2 min-w-0">
                             <span id="ghVerifyIcon" class="material-icons text-emerald-700 text-lg">sync</span>
-                            <span class="font-extrabold text-xs text-emerald-950 truncate">GitHub: Kont-premysl-sliva/Kont_2026</span>
+                            <span class="font-extrabold text-xs text-emerald-950 truncate">GitHub: Kont-premysl-sliva/Home_1</span>
                         </div>
                         <span id="ghVerifyBadge" class="bg-emerald-700 text-white text-[10px] font-black px-2 py-1 rounded flex items-center gap-1 flex-shrink-0">
                             <span class="material-icons text-[12px]">check</span> OVĚŘENO
@@ -1964,7 +1964,7 @@
                         <div class="grid grid-cols-2 gap-2 text-xs">
                             <div>
                                 <label class="block text-[10px] font-bold text-slate-700">Repozitář</label>
-                                <input type="text" id="ghRepoInput" value="Kont-premysl-sliva/Kont_2026" class="w-full px-2 py-1 rounded border border-slate-300 bg-white font-mono text-xs">
+                                <input type="text" id="ghRepoInput" value="Kont-premysl-sliva/Home_1" class="w-full px-2 py-1 rounded border border-slate-300 bg-white font-mono text-xs">
                             </div>
                             <div>
                                 <label class="block text-[10px] font-bold text-slate-700">Větev</label>
@@ -2229,7 +2229,7 @@
 
     <script>
     (function() {
-        const CURRENT_SW_VERSION = 400;
+        const CURRENT_SW_VERSION = 403;
         const CURRENT_SW_VERSION_NAME = 400;
         const CURRENT_SW_RELEASE_DATE = "1.11.2026";
         const CURRENT_SW_RELEASE_DATE_SPACED = "1. 11. 2026";
@@ -3292,7 +3292,7 @@
                     '    copy /y "%USERPROFILE%\\Desktop\\Kontejnery_Ostrava.ico" "%ICOPATH%" >nul',
                     ') else (',
                     '    echo Stahuji ikonu z GitHubu...',
-                    '    powershell -NoProfile -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (New-Object System.Net.WebClient).DownloadFile(\'https://raw.githubusercontent.com/Kont-premysl-sliva/Kont_2026/main/Kontejnery_Ostrava.ico\', $env:ICOPATH)"',
+                    '    powershell -NoProfile -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (New-Object System.Net.WebClient).DownloadFile(\'https://raw.githubusercontent.com/Kont-premysl-sliva/Home_1/main/Kontejnery_Ostrava.ico\', $env:ICOPATH)"',
                     ')',
                     'echo [2/3] Vytvarim zastupce na Plose Windows s modrou ikonou K...',
                     'powershell -NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference = \'SilentlyContinue\'; $desktop = [Environment]::GetFolderPath(\'Desktop\'); $ico = $env:LOCALAPPDATA + \'\\KontejneryOstrava\\Kontejnery_Ostrava.ico\'; $target = \'\'; $searchDirs = @($desktop, (Join-Path $env:USERPROFILE \'Downloads\'), \'%~dp0\'); foreach ($dir in $searchDirs) { if ($dir -and (Test-Path $dir)) { $c = Get-ChildItem -Path $dir -Filter \'*.html\' | Where-Object { $_.Name -like \'*POHODA*\' -or $_.Name -like \'*Kontejnery*\' -or $_.Name -like \'index*.html\' } | Sort-Object LastWriteTime -Descending; if ($c) { $target = $c[0].FullName; break; } } }; if (!$target) { $target = Join-Path $desktop \'index.html\'; }; $pf86 = [Environment]::GetEnvironmentVariable(\'ProgramFiles(x86)\'); $browsers = @((Join-Path $env:ProgramFiles \'Google\\Chrome\\Application\\chrome.exe\'), (Join-Path $pf86 \'Google\\Chrome\\Application\\chrome.exe\'), (Join-Path $env:LOCALAPPDATA \'Google\\Chrome\\Application\\chrome.exe\'), (Join-Path $env:ProgramFiles \'Microsoft\\Edge\\Application\\msedge.exe\'), (Join-Path $pf86 \'Microsoft\\Edge\\Application\\msedge.exe\')); $bExe = \'\'; foreach ($b in $browsers) { if ($b -and (Test-Path $b)) { $bExe = $b; break; } }; $ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut((Join-Path $desktop \'Kontejnery Ostrava.lnk\')); if ($bExe) { $s.TargetPath = $bExe; $s.Arguments = \'--app=\\"\' + $target + \'\\"\'; } else { $s.TargetPath = $target; }; $s.WorkingDirectory = $desktop; if (Test-Path $ico) { $s.IconLocation = $ico + \',0\'; }; $s.Description = \'Kontejnery Ostrava - PC Terminal ERP\'; $s.Save(); Write-Host \'[3/3] Zastupce byl uspesne vytvoren!\' -ForegroundColor Green; [System.Reflection.Assembly]::LoadWithPartialName(\'System.Windows.Forms\') | Out-Null; [System.Windows.Forms.MessageBox]::Show(\'Zástupce \\\"Kontejnery Ostrava\\\" s modrou ikonou K byl úspěšně vytvořen na vaší Ploše!\' + [Environment]::NewLine + [Environment]::NewLine + \'Cíl: \' + $target, \'Kontejnery Ostrava - Hotovo\', [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information) | Out-Null;"',
@@ -3345,8 +3345,8 @@
             } catch (e) {}
         };
 
-        const DEFAULT_GH_REPO = 'Kont-premysl-sliva/Kont_2026';
-        const FALLBACK_GH_REPO = 'Kont-premysl-sliva/Kont_2026';
+        const DEFAULT_GH_REPO = 'Kont-premysl-sliva/Home_1';
+        const FALLBACK_GH_REPO = 'Kont-premysl-sliva/Home_1';
         const DEFAULT_GH_BRANCH = 'main';
         const DEFAULT_GH_TOKEN = '';
         const GH_TOKEN_EXPIRATION_DATE = '16. 12. 2026';
@@ -3357,7 +3357,7 @@
                 localStorage.removeItem('ko_gh_token');
             }
             const curSavedRp = localStorage.getItem('ko_gh_repo');
-            if (!curSavedRp || curSavedRp.includes('Kont_1') || curSavedRp.includes('Kont_2026')) {
+            if (!curSavedRp || curSavedRp.includes('Kont_1') || curSavedRp.includes('Home_1')) {
                 localStorage.setItem('ko_gh_repo', DEFAULT_GH_REPO);
             }
         } catch (e) {}
@@ -3582,7 +3582,7 @@
                         warnHtml += `<div class="font-bold flex items-center gap-1 text-amber-900"><span class="material-icons text-base text-amber-600">warning</span> Repozitář nalezen, ale Token nemá oprávnění k obsahu!</div>`;
                         warnHtml += `<div class="text-xs text-amber-900">Repozitář <b>${repo}</b> na GitHubu existuje, ale stávající Token nemá oprávnění ke čtení a zápisu souborů (Chyba 403).</div>`;
                         warnHtml += `<div class="text-xs text-slate-700 bg-white p-2 rounded border border-amber-200">GitHub neumožňuje měnit oprávnění u již vytvořeného tokenu. Řešením je vygenerovat <b>Klasický token (Classic)</b>:</div>`;
-                        warnHtml += `<div class="text-xs text-slate-800 space-y-1 font-sans"><p>1. Otevřete: <a href="https://github.com/settings/tokens/new" target="_blank" class="text-blue-600 underline font-bold">https://github.com/settings/tokens/new</a></p><p>2. Do Note zadejte <b>Kont_2026</b> a zaškrtněte políčko <b>[x] repo</b></p><p>3. Dole klikněte na <b>Generate token</b> a nový kód vložte níže.</p></div>`;
+                        warnHtml += `<div class="text-xs text-slate-800 space-y-1 font-sans"><p>1. Otevřete: <a href="https://github.com/settings/tokens/new" target="_blank" class="text-blue-600 underline font-bold">https://github.com/settings/tokens/new</a></p><p>2. Do Note zadejte <b>Home_1</b> a zaškrtněte políčko <b>[x] repo</b></p><p>3. Dole klikněte na <b>Generate token</b> a nový kód vložte níže.</p></div>`;
                         warnHtml += `</div>`;
                         if (statusEl) statusEl.innerHTML = warnHtml;
                         return;
@@ -3785,7 +3785,7 @@
                     };
                     const jsonStr = JSON.stringify(snapObj, null, 2);
                     const b64 = b64EncodeUnicode(jsonStr);
-                    const targetRepos = [repo, 'Kont-premysl-sliva/Kont_2026'].filter((v, i, a) => a.findIndex(x => x.toLowerCase() === v.toLowerCase()) === i);
+                    const targetRepos = [repo, 'Kont-premysl-sliva/Home_1'].filter((v, i, a) => a.findIndex(x => x.toLowerCase() === v.toLowerCase()) === i);
                     for (const r of targetRepos) {
                         try {
                             let sha = null;
@@ -3824,7 +3824,7 @@
             const repoInput = document.getElementById('ghRepoInput');
             const branchInput = document.getElementById('ghBranchInput');
             const tokenInput = document.getElementById('ghTokenInput');
-            const repo = (repoInput?.value || localStorage.getItem('ko_gh_repo') || 'Kont-premysl-sliva/Kont_2026').trim().replace(/^https:\/\/github\.com\//, '').replace(/\/$/, '');
+            const repo = (repoInput?.value || localStorage.getItem('ko_gh_repo') || 'Kont-premysl-sliva/Home_1').trim().replace(/^https:\/\/github\.com\//, '').replace(/\/$/, '');
             const branch = (branchInput?.value || localStorage.getItem('ko_gh_branch') || 'main').trim();
             const token = (tokenInput?.value || localStorage.getItem('ko_gh_token') || DEFAULT_GH_TOKEN).trim();
 
@@ -3848,7 +3848,7 @@
                 } else if (chkRes.status === 404) {
                     repoErrorReason = "Repozitář '" + repo + "' nebyl na GitHubu nalezen (Chyba 404).\n\n" +
                         "Důvody a řešení na GitHubu:\n" +
-                        "1. Repozitář zatím nebyl vytvořen: otevřete https://github.com/" + repo + ". Pokud píše 404, přejděte na https://github.com/new a vytvořte jej (jako Private s názvem Kont_2026).\n" +
+                        "1. Repozitář zatím nebyl vytvořen: otevřete https://github.com/" + repo + ". Pokud píše 404, přejděte na https://github.com/new a vytvořte jej (jako Private s názvem Home_1).\n" +
                         "2. Oprávnění tokenu: Vygenerovaný Fine-grained token má výchozí nastavení 'Public Repositories (read-only)'. V nastavení tokenu na GitHubu (Repository access) přepněte na 'All repositories' a v Repository permissions povolte 'Contents: Read and write'.";
                 } else if (chkRes.status === 401) {
                     repoErrorReason = "Chyba 401 (Neplatný Token): GitHub odmítl zadaný Token. Zkontrolujte jeho platnost.";
@@ -3875,8 +3875,8 @@
                 for (const fn of candidateFiles) {
                     try {
                         let text = await fetchGitHubFileContents(repo, br, fn, token);
-                        if (!text && fn === 'containers_sync.json' && repo.toLowerCase() !== 'kont-premysl-sliva/preprava_ko') {
-                            text = await fetchGitHubFileContents('Kont-premysl-sliva/Kont_2026', br, fn, token);
+                        if (!text && fn === 'containers_sync.json' && repo.toLowerCase() !== 'kont-premysl-sliva/home_1') {
+                            text = await fetchGitHubFileContents('Kont-premysl-sliva/Home_1', br, fn, token);
                         }
                         if (text && text.trim().startsWith('{')) {
                             loadedData = JSON.parse(text);
@@ -3905,7 +3905,7 @@
         };
 
         window.uploadBackupToGitHub = async () => {
-            const repo = (document.getElementById('ghRepoInput')?.value || localStorage.getItem('ko_gh_repo') || 'Kont-premysl-sliva/Kont_2026').trim().replace(/^https:\/\/github\.com\//, '').replace(/\/$/, '');
+            const repo = (document.getElementById('ghRepoInput')?.value || localStorage.getItem('ko_gh_repo') || 'Kont-premysl-sliva/Home_1').trim().replace(/^https:\/\/github\.com\//, '').replace(/\/$/, '');
             const branch = (document.getElementById('ghBranchInput')?.value || localStorage.getItem('ko_gh_branch') || 'main').trim();
             const token = (document.getElementById('ghTokenInput')?.value || localStorage.getItem('ko_gh_token') || DEFAULT_GH_TOKEN).trim();
 
@@ -3982,17 +3982,17 @@
                     body: JSON.stringify(putPayload)
                 });
 
-                // Zrcadlíme containers_sync.json i do veřejného portálu Kont_2026 pro iPhone
-                if (repo.toLowerCase() !== 'kont-premysl-sliva/preprava_ko') {
+                // Zrcadlíme containers_sync.json i do veřejného portálu Home_1 pro iPhone
+                if (repo.toLowerCase() !== 'kont-premysl-sliva/home_1') {
                     try {
                         let pubSha = null;
-                        const pubGet = await fetch(`https://api.github.com/repos/Kont-premysl-sliva/Kont_2026/contents/${filePath}?ref=${branch}`, {
+                        const pubGet = await fetch(`https://api.github.com/repos/Kont-premysl-sliva/Home_1/contents/${filePath}?ref=${branch}`, {
                             headers: { 'Accept': 'application/vnd.github.v3+json', 'Authorization': authHeader }
                         });
                         if (pubGet.ok) pubSha = (await pubGet.json()).sha;
                         const pubPayload = { ...putPayload };
                         if (pubSha) pubPayload.sha = pubSha; else delete pubPayload.sha;
-                        await fetch(`https://api.github.com/repos/Kont-premysl-sliva/Kont_2026/contents/${filePath}`, {
+                        await fetch(`https://api.github.com/repos/Kont-premysl-sliva/Home_1/contents/${filePath}`, {
                             method: 'PUT',
                             headers: { 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json', 'Authorization': authHeader },
                             body: JSON.stringify(pubPayload)
@@ -4020,7 +4020,7 @@
                 return false;
             }
 
-            const repo = (document.getElementById('ghRepoInput')?.value || localStorage.getItem('ko_gh_repo') || 'Kont-premysl-sliva/Kont_2026').trim().replace(/^https:\/\/github\.com\//, '').replace(/\/$/, '');
+            const repo = (document.getElementById('ghRepoInput')?.value || localStorage.getItem('ko_gh_repo') || 'Kont-premysl-sliva/Home_1').trim().replace(/^https:\/\/github\.com\//, '').replace(/\/$/, '');
             const branch = (document.getElementById('ghBranchInput')?.value || localStorage.getItem('ko_gh_branch') || 'main').trim();
             const token = (document.getElementById('ghTokenInput')?.value || localStorage.getItem('ko_gh_token') || DEFAULT_GH_TOKEN).trim();
 
@@ -4039,7 +4039,7 @@
                 const iphoneB64 = b64EncodeUnicode(iphoneHtml);
                 const iconPngB64 = window.__KO_ICON_PNG_B64__ || '';
                 const iconKeyXml = iconPngB64 ? `\n            <key>Icon</key>\n            <data>${iconPngB64}</data>` : '';
-                const mobileConfigXml = `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n<plist version="1.0">\n<dict>\n    <key>PayloadContent</key>\n    <array>\n        <dict>\n            <key>FullScreen</key>\n            <true/>${iconKeyXml}\n            <key>IsRemovable</key>\n            <true/>\n            <key>Label</key>\n            <string>Přeprava KO</string>\n            <key>PayloadDescription</key>\n            <string>Mobilní aplikace pro řidiče (Sekce Přeprava) • Kontejnery Ostrava v ${CURRENT_SW_VERSION_NAME}</string>\n            <key>PayloadDisplayName</key>\n            <string>Přeprava KO – Řidič (iPhone)</string>\n            <key>PayloadIdentifier</key>\n            <string>cz.kontejneryostrava.ios.webclip.v${CURRENT_SW_VERSION_NAME}</string>\n            <key>PayloadType</key>\n            <string>com.apple.webClip.managed</string>\n            <key>PayloadUUID</key>\n            <string>6A4E8F12-90B1-4C3D-A812-000000000${CURRENT_SW_VERSION_NAME}</string>\n            <key>PayloadVersion</key>\n            <integer>1</integer>\n            <key>Precomposed</key>\n            <true/>\n            <key>URL</key>\n            <string>https://kont-premysl-sliva.github.io/Kont_2026/iphone.html?iphone=1</string>\n        </dict>\n    </array>\n    <key>PayloadDescription</key>\n    <string>Nainstaluje zkrácenou mobilní aplikaci Přeprava KO pro řidiče (v ${CURRENT_SW_VERSION_NAME}) na plochu iPhone v režimu celé obrazovky.</string>\n    <key>PayloadDisplayName</key>\n    <string>Přeprava KO • Aplikace pro řidiče (iPhone) • v ${CURRENT_SW_VERSION_NAME}</string>\n    <key>PayloadIdentifier</key>\n    <string>cz.kontejneryostrava.ios.profile.v${CURRENT_SW_VERSION_NAME}</string>\n    <key>PayloadOrganization</key>\n    <string>Kontejnery Ostrava s.r.o.</string>\n    <key>PayloadRemovalDisallowed</key>\n    <false/>\n    <key>PayloadType</key>\n    <string>Configuration</string>\n    <key>PayloadUUID</key>\n    <string>9B7C2D45-11E2-4F8A-B${CURRENT_SW_VERSION_NAME}-000000000${CURRENT_SW_VERSION_NAME}</string>\n    <key>PayloadVersion</key>\n    <integer>1</integer>\n</dict>\n</plist>`;
+                const mobileConfigXml = `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n<plist version="1.0">\n<dict>\n    <key>PayloadContent</key>\n    <array>\n        <dict>\n            <key>FullScreen</key>\n            <true/>${iconKeyXml}\n            <key>IsRemovable</key>\n            <true/>\n            <key>Label</key>\n            <string>Přeprava KO</string>\n            <key>PayloadDescription</key>\n            <string>Mobilní aplikace pro řidiče (Sekce Přeprava) • Kontejnery Ostrava v ${CURRENT_SW_VERSION_NAME}</string>\n            <key>PayloadDisplayName</key>\n            <string>Přeprava KO – Řidič (iPhone)</string>\n            <key>PayloadIdentifier</key>\n            <string>cz.kontejneryostrava.ios.webclip.v${CURRENT_SW_VERSION_NAME}</string>\n            <key>PayloadType</key>\n            <string>com.apple.webClip.managed</string>\n            <key>PayloadUUID</key>\n            <string>6A4E8F12-90B1-4C3D-A812-000000000${CURRENT_SW_VERSION_NAME}</string>\n            <key>PayloadVersion</key>\n            <integer>1</integer>\n            <key>Precomposed</key>\n            <true/>\n            <key>URL</key>\n            <string>https://kont-premysl-sliva.github.io/Home_1/iphone.html?iphone=1</string>\n        </dict>\n    </array>\n    <key>PayloadDescription</key>\n    <string>Nainstaluje zkrácenou mobilní aplikaci Přeprava KO pro řidiče (v ${CURRENT_SW_VERSION_NAME}) na plochu iPhone v režimu celé obrazovky.</string>\n    <key>PayloadDisplayName</key>\n    <string>Přeprava KO • Aplikace pro řidiče (iPhone) • v ${CURRENT_SW_VERSION_NAME}</string>\n    <key>PayloadIdentifier</key>\n    <string>cz.kontejneryostrava.ios.profile.v${CURRENT_SW_VERSION_NAME}</string>\n    <key>PayloadOrganization</key>\n    <string>Kontejnery Ostrava s.r.o.</string>\n    <key>PayloadRemovalDisallowed</key>\n    <false/>\n    <key>PayloadType</key>\n    <string>Configuration</string>\n    <key>PayloadUUID</key>\n    <string>9B7C2D45-11E2-4F8A-B${CURRENT_SW_VERSION_NAME}-000000000${CURRENT_SW_VERSION_NAME}</string>\n    <key>PayloadVersion</key>\n    <integer>1</integer>\n</dict>\n</plist>`;
                 const mobileConfigB64 = b64EncodeUnicode(mobileConfigXml);
 
                 const pcVersionJsonB64 = b64EncodeUnicode(JSON.stringify({
@@ -4138,7 +4138,7 @@
                     } catch (e) {}
                 }
                 const authHeader = (token.startsWith('ghp_') || token.startsWith('github_pat_')) ? `Bearer ${token}` : `token ${token}`;
-                const targetRepos = [repo, 'Kont-premysl-sliva/Kont_2026'].filter((v, i, a) => a.findIndex(x => x.toLowerCase() === v.toLowerCase()) === i);
+                const targetRepos = [repo, 'Kont-premysl-sliva/Home_1'].filter((v, i, a) => a.findIndex(x => x.toLowerCase() === v.toLowerCase()) === i);
 
                 for (const targetRepo of targetRepos) {
                     for (const entry of targetEntries) {
@@ -15522,7 +15522,7 @@ function buildShareTextSummary(type, id) {
     </script>
 
     <!-- ============================================================================ -->
-    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v380)      -->
+    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v403)      -->
     <!-- Zkrácená verze Přepravy: ostatní agendy jsou na iPhonu kompletně skryté.     -->
     <!-- ============================================================================ -->
     <style id="iphoneAppStyles">
@@ -15770,7 +15770,7 @@ function buildShareTextSummary(type, id) {
                 <div class="space-y-1">
                     <div class="inline-flex items-center gap-1.5 bg-[#1E293B] text-sky-300 border border-sky-400/40 text-[11px] font-black px-3 py-1 rounded-full shadow-inner">
                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>GitHub: Kont-premysl-sliva/Kont_2026</span>
+                        <span>GitHub: Kont-premysl-sliva/Home_1</span>
                     </div>
                 </div>
 
@@ -16154,14 +16154,14 @@ function buildShareTextSummary(type, id) {
         window.shareIphoneInstallWhatsApp = function() {
             const ver = window.CURRENT_SW_VERSION_NAME || '369';
             const inp = document.getElementById('iosInstallUrlInput');
-            const url = inp ? inp.value : 'https://kont-premysl-sliva.github.io/Kont_2026/install';
+            const url = inp ? inp.value : 'https://kont-premysl-sliva.github.io/Home_1/install';
             const txt = `Kontejnery Ostrava — Instalace mobilní aplikace Přeprava KO pro řidiče (iPhone v ${ver}): ${url}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');
         };
 
         function buildMobileConfigXmlString() {
             const ver = window.CURRENT_SW_VERSION_NAME || '369';
-            const targetUrl = 'https://kont-premysl-sliva.github.io/Kont_2026/iphone.html?iphone=1';
+            const targetUrl = 'https://kont-premysl-sliva.github.io/Home_1/iphone.html?iphone=1';
             const iconPngB64 = window.__KO_ICON_PNG_B64__ || '';
             const iconKeyXml = iconPngB64 ? `\n            <key>Icon</key>\n            <data>${iconPngB64}</data>` : '';
             return `<?xml version="1.0" encoding="UTF-8"?>
@@ -16389,7 +16389,7 @@ function buildShareTextSummary(type, id) {
     <key>KODriverOnlySection</key>
     <string>preprava</string>
     <key>KOGitHubAutoUpdateUrl</key>
-    <string>https://raw.githubusercontent.com/Kont-premysl-sliva/Kont_2026/main/iphone.html</string>
+    <string>https://raw.githubusercontent.com/Kont-premysl-sliva/Home_1/main/iphone.html</string>
 </dict>
 </plist>`;
             const swiftSource = `import UIKit
@@ -16408,7 +16408,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 class DriverPrepravaViewController: UIViewController {
     private var webView: WKWebView!
-    private let githubRawUrl = "https://raw.githubusercontent.com/Kont-premysl-sliva/Kont_2026/main/iphone.html"
+    private let githubRawUrl = "https://raw.githubusercontent.com/Kont-premysl-sliva/Home_1/main/iphone.html"
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -16429,7 +16429,7 @@ class DriverPrepravaViewController: UIViewController {
         URLSession.shared.dataTask(with: url) { [weak self] data, resp, _ in
             guard let data = data, let remoteHtml = String(data: data, encoding: .utf8), remoteHtml.contains("<!DOCTYPE html>") else { return }
             DispatchQueue.main.async {
-                self?.webView.loadHTMLString(remoteHtml, baseURL: URL(string: "https://raw.githubusercontent.com/Kont-premysl-sliva/Kont_2026/main/"))
+                self?.webView.loadHTMLString(remoteHtml, baseURL: URL(string: "https://raw.githubusercontent.com/Kont-premysl-sliva/Home_1/main/"))
             }
         }.resume()
     }
@@ -16483,7 +16483,7 @@ class DriverPrepravaViewController: UIViewController {
         };
 
         window.downloadIphoneIpaFromGitHub = function() {
-            window.open('https://kont-premysl-sliva.github.io/Kont_2026/Kontejnery_Preprava_iPhone.ipa', '_blank');
+            window.open('https://kont-premysl-sliva.github.io/Home_1/Kontejnery_Preprava_iPhone.ipa', '_blank');
         };
 
         window.downloadStandaloneIphoneApp = function() {

@@ -224,7 +224,7 @@ fun SdileniScreen(
                             Button(
                                 onClick = {
                                     try {
-                                        val iphoneUrl = "https://kont-premysl-sliva.github.io/Kont_2026/install"
+                                        val iphoneUrl = "https://kont-premysl-sliva.github.io/Home_1/install"
                                         val msg = "Kontejnery Ostrava – Instalace mobilní aplikace Přeprava KO pro řidiče (iPhone v$APP_VERSION_NUMBER): $iphoneUrl"
                                         val waIntent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://wa.me/?text=" + java.net.URLEncoder.encode(msg, "UTF-8")))
                                         context.startActivity(waIntent)

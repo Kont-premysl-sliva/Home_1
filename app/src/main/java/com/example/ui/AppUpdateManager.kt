@@ -34,8 +34,8 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 object AppUpdateManager {
-    const val LATEST_CLOUD_VERSION_NAME = "402"
-    const val LATEST_CLOUD_VERSION_CODE = 402
+    const val LATEST_CLOUD_VERSION_NAME = "403"
+    const val LATEST_CLOUD_VERSION_CODE = 403
     const val LATEST_CLOUD_UPDATE_DATE = "1.11.2026"
     const val APK_DOWNLOAD_URL = "https://ais-dev-6j7lbmiei2bndsmwbtshh6-935777442239.europe-west2.run.app/app-release.apk"
 

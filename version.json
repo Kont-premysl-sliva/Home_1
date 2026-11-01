@@ -25,14 +25,14 @@
       "applicationId": "com.aistudio.containerscanner.cxkqab",
       "versionJson": "android/version.json",
       "apkPath": "android/Kontejnery_Ostrava_Android_v402.apk",
-      "apkDownloadUrl": "https://github.com/Kont-premysl-sliva/Kont_2026/releases/download/v402/Kontejnery_Ostrava_Android_v402.apk"
+      "apkDownloadUrl": "https://github.com/Kont-premysl-sliva/Home_1/releases/download/v402/Kontejnery_Ostrava_Android_v402.apk"
     },
     "iphone": {
       "folder": "iphone/",
       "version": 402,
       "entryFile": "iphone/iphone.html",
       "versionJson": "iphone/version.json",
-      "webClipUrl": "https://kont-premysl-sliva.github.io/Kont_2026/iphone.html?iphone=1"
+      "webClipUrl": "https://kont-premysl-sliva.github.io/Home_1/iphone.html?iphone=1"
     }
   }
 }

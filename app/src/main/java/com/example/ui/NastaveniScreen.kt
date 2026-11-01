@@ -1494,7 +1494,7 @@ fun NastaveniScreen(
                                                     Button(
                                                         onClick = {
                                                             try {
-                                                                val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://github.com/Kont-premysl-sliva/Kont_2026"))
+                                                                val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://github.com/Kont-premysl-sliva/Home_1"))
                                                                 intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
                                                                 context.startActivity(intent)
                                                             } catch (e: Exception) {
@@ -1734,7 +1734,7 @@ fun NastaveniScreen(
                     modifier = Modifier.verticalScroll(rememberScrollState())
                 ) {
                     Text(
-                        text = "Pro nahrávání nových verzí a záloh databáze do vašeho repozitáře Kont-premysl-sliva/Kont_2026 vyžaduje GitHub Personal Access Token (PAT) s právem zápisu:",
+                        text = "Pro nahrávání nových verzí a záloh databáze do vašeho repozitáře Kont-premysl-sliva/Home_1 vyžaduje GitHub Personal Access Token (PAT) s právem zápisu:",
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

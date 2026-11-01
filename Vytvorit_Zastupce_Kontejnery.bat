@@ -20,7 +20,7 @@ if exist "%~dp0Kontejnery_Ostrava.ico" (
     copy /y "%USERPROFILE%\Desktop\Kontejnery_Ostrava.ico" "%ICOPATH%" >nul
 ) else (
     echo Stahuji ikonu z GitHubu...
-    powershell -NoProfile -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (New-Object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/Kont-premysl-sliva/Kont_2026/main/Kontejnery_Ostrava.ico', $env:ICOPATH)"
+    powershell -NoProfile -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (New-Object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/Kont-premysl-sliva/Home_1/main/Kontejnery_Ostrava.ico', $env:ICOPATH)"
 )
 
 echo [2/3] Vytvarim zastupce na Plose Windows s modrou ikonou K...

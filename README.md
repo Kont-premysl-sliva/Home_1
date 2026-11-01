@@ -1,6 +1,6 @@
 # 🚛 Kontejnery Ostrava – Rozdělení aplikací na GitHubu
 
-V rámci repozitáře `Kont-premysl-sliva/Kont_2026` jsou přehledně odděleny **3 samostatné platformy** do vlastních složek (se zachováním hlavních rozcestníků v kořenu repozitáře pro zpětnou kompatibilitu).
+V rámci repozitáře `Kont-premysl-sliva/Home_1` jsou přehledně odděleny **3 samostatné platformy** do vlastních složek (se zachováním hlavních rozcestníků v kořenu repozitáře pro zpětnou kompatibilitu).
 U každé ze tří platforem se při změně **automaticky navyšuje číslo verze (+1)** a v archivu každé složky jsou automaticky udržovány **poslední 3 verze** (všechny starší verze se automaticky mažou).
 
 ---

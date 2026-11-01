@@ -23,9 +23,9 @@ object GitHubBackupManager {
     private const val KEY_TOKEN = "github_token"
     private const val KEY_LAST_SYNC = "github_last_sync"
 
-    const val DEFAULT_REPO = "Kont-premysl-sliva/Kont_2026"
-    const val PUBLIC_PORTAL_REPO = "Kont-premysl-sliva/Kont_2026"
-    const val FALLBACK_PORTAL_REPO = "Kont-premysl-sliva/Kont_2026"
+    const val DEFAULT_REPO = "Kont-premysl-sliva/Home_1"
+    const val PUBLIC_PORTAL_REPO = "Kont-premysl-sliva/Home_1"
+    const val FALLBACK_PORTAL_REPO = "Kont-premysl-sliva/Home_1"
     const val DEFAULT_BRANCH = "main"
     const val DEFAULT_TOKEN = ""
 
@@ -89,7 +89,7 @@ object GitHubBackupManager {
     fun getRepo(context: Context): String {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val saved = prefs.getString(KEY_REPO, DEFAULT_REPO)?.ifBlank { DEFAULT_REPO } ?: DEFAULT_REPO
-        if (saved.contains("Kont_2026", ignoreCase = true) || saved.contains("Kont_1", ignoreCase = true) || saved.contains("preprava", ignoreCase = true)) {
+        if (saved.contains("Home_1", ignoreCase = true) || saved.contains("Kont_1", ignoreCase = true) || saved.contains("preprava", ignoreCase = true) || saved.contains("Home_1", ignoreCase = true)) {
             prefs.edit().putString(KEY_REPO, DEFAULT_REPO).apply()
             return DEFAULT_REPO
         }
@@ -97,7 +97,7 @@ object GitHubBackupManager {
     }
 
     fun setRepo(context: Context, repo: String) {
-        val target = if (repo.isBlank() || repo.contains("Kont_2026", ignoreCase = true) || repo.contains("Kont_1", ignoreCase = true) || repo.contains("preprava", ignoreCase = true)) {
+        val target = if (repo.isBlank() || repo.contains("Home_1", ignoreCase = true) || repo.contains("Kont_1", ignoreCase = true) || repo.contains("preprava", ignoreCase = true) || repo.contains("Home_1", ignoreCase = true)) {
             DEFAULT_REPO
         } else {
             repo.trim()
@@ -234,7 +234,7 @@ object GitHubBackupManager {
                     pubConn.disconnect()
                     return@withContext GitHubResult.Error(
                         "Repozitář '$repo' nebyl na GitHubu nalezen (Chyba 404).\n" +
-                        "Zkontrolujte prosím přesný název repozitáře (má být Kont-premysl-sliva/Kont_2026)."
+                        "Zkontrolujte prosím přesný název repozitáře (má být Kont-premysl-sliva/Home_1)."
                     )
                 }
                 pubConn.disconnect()
@@ -299,7 +299,7 @@ object GitHubBackupManager {
 
     /**
      * Rychlá tichá obousměrná synchronizace pouze datového souboru containers_sync.json
-     * s GitHubem (Kont_2026 + veřejný portál Kont_2026) bez navyšování verze SW.
+     * s GitHubem (Home_1 + veřejný portál Home_1) bez navyšování verze SW.
      */
     suspend fun syncDataOnlyWithGitHub(
         context: Context,
@@ -514,7 +514,7 @@ object GitHubBackupManager {
             if (code in 200..299) {
                 setLastSync(context)
 
-                // Zrcadlíme containers_sync.json také do veřejného portálu Kont_2026 pro iPhone a Web
+                // Zrcadlíme containers_sync.json také do veřejného portálu Home_1 pro iPhone a Web
                 if (!repo.equals(PUBLIC_PORTAL_REPO, ignoreCase = true)) {
                     try {
                         uploadRawBytes(PUBLIC_PORTAL_REPO, branch, filePath, jsonBytes, token, commitMessage)
@@ -552,7 +552,7 @@ object GitHubBackupManager {
             } else {
                 val err = conn.errorStream?.bufferedReader()?.readText() ?: "HTTP $code"
                 val helpfulMsg = when (code) {
-                    404 -> "Chyba 404 (Repozitář nenalezen):\nRepozitář '$repo' nebyl nalezen, nebo váš Token nemá oprávnění k zápisu.\n\nZkontrolujte na GitHubu:\n1. Zda je repozitář Kont_2026 vytvořen (https://github.com/new).\n2. V nastavení tokenu (Repository access) přepněte na 'All repositories' a v oprávněních (Contents) povolte 'Read and write'."
+                    404 -> "Chyba 404 (Repozitář nenalezen):\nRepozitář '$repo' nebyl nalezen, nebo váš Token nemá oprávnění k zápisu.\n\nZkontrolujte na GitHubu:\n1. Zda je repozitář Home_1 vytvořen (https://github.com/new).\n2. V nastavení tokenu (Repository access) přepněte na 'All repositories' a v oprávněních (Contents) povolte 'Read and write'."
                     401 -> "Chyba 401 (Neplatný Token):\nGitHub odmítl zadaný Token. Zkontrolujte jeho správnost a platnost."
                     403 -> "Chyba 403 (Přístup odepřen):\nToken nemá oprávnění pro zápis do repozitáře. V nastavení tokenu povolte 'Contents: Read and write'."
                     else -> "Chyba GitHub API (HTTP $code): $err"
