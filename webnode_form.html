@@ -1,0 +1,972 @@
+<div id="kontejnery-order-wrapper">
+  <style>
+    #kontejnery-order-wrapper {
+      max-width: 860px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 25px 20px;
+      font-family: 'Open Sans', Arial, sans-serif;
+      box-sizing: border-box;
+      color: #333333;
+    }
+
+    #kontejnery-order-wrapper * {
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+
+    #kontejnery-order-wrapper h1 {
+      color: #133b68;
+      font-weight: 600;
+      font-size: 27px;
+      margin: 0 0 22px 0;
+    }
+
+    #kontejnery-order-wrapper h2 {
+      color: #133b68;
+      font-weight: 600;
+      font-size: 22px;
+      margin: 28px 0 16px 0;
+    }
+
+    /* --- HORNÍ ŠIPKY (STEPPER) --- */
+    #kontejnery-order-wrapper .wn-stepper {
+      display: flex;
+      background-color: #e5e9ec;
+      margin-bottom: 28px;
+      height: 48px;
+      user-select: none;
+      border-radius: 3px;
+    }
+
+    #kontejnery-order-wrapper .wn-step-tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: #728091;
+      background-color: #e5e9ec;
+      cursor: pointer;
+      position: relative;
+      padding: 0 15px 0 25px;
+      margin-right: -12px;
+      clip-path: polygon(calc(100% - 15px) 0%, 100% 50%, calc(100% - 15px) 100%, 0% 100%, 15px 50%, 0% 0%);
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    #kontejnery-order-wrapper .wn-step-tab:first-child {
+      padding-left: 12px;
+      clip-path: polygon(calc(100% - 15px) 0%, 100% 50%, calc(100% - 15px) 100%, 0% 100%, 0% 50%, 0% 0%);
+    }
+
+    #kontejnery-order-wrapper .wn-step-tab:last-child {
+      margin-right: 0;
+      padding-right: 12px;
+      clip-path: polygon(100% 0%, 100% 50%, 100% 100%, 0% 100%, 15px 50%, 0% 0%);
+    }
+
+    #kontejnery-order-wrapper .wn-step-tab.completed {
+      background-color: #c9d7e5;
+      color: #133b68;
+    }
+
+    #kontejnery-order-wrapper .wn-step-tab.active {
+      background-color: #133b68;
+      color: #ffffff;
+      z-index: 5;
+    }
+
+    /* --- FORMULÁŘ --- */
+    #kontejnery-order-wrapper .wn-form-step {
+      display: none;
+    }
+
+    #kontejnery-order-wrapper .wn-form-step.active {
+      display: block;
+    }
+
+    #kontejnery-order-wrapper .wn-row {
+      display: flex;
+      align-items: center;
+      background-color: #f4f6f8;
+      border-bottom: 1px solid #dfe4e8;
+      padding: 6px 12px;
+      min-height: 44px;
+    }
+
+    #kontejnery-order-wrapper .wn-row:first-of-type {
+      border-top: 1px solid #dfe4e8;
+    }
+
+    #kontejnery-order-wrapper .wn-label {
+      width: 32%;
+      font-size: 16px;
+      color: #222222;
+      font-weight: 500;
+    }
+
+    #kontejnery-order-wrapper .wn-field {
+      width: 68%;
+      display: flex;
+      align-items: center;
+    }
+
+    #kontejnery-order-wrapper input[type="text"],
+    #kontejnery-order-wrapper input[type="email"],
+    #kontejnery-order-wrapper input[type="tel"],
+    #kontejnery-order-wrapper input[type="number"],
+    #kontejnery-order-wrapper input[type="date"],
+    #kontejnery-order-wrapper select,
+    #kontejnery-order-wrapper textarea {
+      border: 1px solid #8e9ea7;
+      background-color: #ffffff;
+      padding: 6px 10px;
+      font-size: 16px;
+      color: #111111;
+      border-radius: 2px;
+      outline: none;
+      width: 100%;
+      height: 36px;
+    }
+
+    /* Tlačítko ARES */
+    #kontejnery-order-wrapper .btn-ares {
+      background-color: #1b5e8b;
+      color: #ffffff;
+      border: none;
+      padding: 0 14px;
+      height: 36px;
+      font-size: 13.5px;
+      font-weight: 700;
+      border-radius: 2px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.2s;
+    }
+
+    #kontejnery-order-wrapper .btn-ares:hover {
+      background-color: #133b68;
+    }
+
+    #kontejnery-order-wrapper #wn-ares-status {
+      display: none;
+      font-size: 13.5px;
+      margin: 4px 0 8px 32%;
+      padding: 6px 12px;
+      border-radius: 3px;
+      line-height: 1.4;
+    }
+
+    #kontejnery-order-wrapper #wn-ares-status.success {
+      background-color: #d1fae5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    #kontejnery-order-wrapper #wn-ares-status.loading {
+      background-color: #e0f2fe;
+      color: #075985;
+      border: 1px solid #bae6fd;
+    }
+
+    #kontejnery-order-wrapper #wn-ares-status.error {
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+
+    /* Styl kalendáře */
+    #kontejnery-order-wrapper input[type="date"] {
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      position: relative;
+    }
+
+    #kontejnery-order-wrapper input[type="date"]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      filter: invert(19%) sepia(35%) saturate(2250%) hue-rotate(185deg) brightness(92%) contrast(92%);
+      opacity: 0.85;
+      font-size: 18px;
+    }
+
+    #kontejnery-order-wrapper input:focus,
+    #kontejnery-order-wrapper select:focus,
+    #kontejnery-order-wrapper textarea:focus {
+      border-color: #133b68;
+      box-shadow: 0 0 0 1px #133b68;
+    }
+
+    #kontejnery-order-wrapper .wn-info-text {
+      font-size: 15.5px;
+      color: #555555;
+      line-height: 1.5;
+      margin: 18px 0;
+    }
+
+    /* Krok 2: Počty */
+    #kontejnery-order-wrapper .qty-row {
+      justify-content: space-between;
+    }
+
+    #kontejnery-order-wrapper .qty-label {
+      font-size: 16px;
+      color: #222222;
+      flex: 1;
+    }
+
+    #kontejnery-order-wrapper .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #kontejnery-order-wrapper .qty-input {
+      width: 54px !important;
+      height: 36px !important;
+      text-align: center;
+    }
+
+    #kontejnery-order-wrapper .unit {
+      font-size: 16px;
+      color: #444;
+      min-width: 20px;
+    }
+
+    /* Krok 3: Místo dodání */
+    #kontejnery-order-wrapper .wn-textarea {
+      width: 100%;
+      height: 110px;
+      resize: vertical;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+
+    #kontejnery-order-wrapper .split-row .col-left {
+      width: 28%;
+      font-size: 16px;
+      color: #222;
+    }
+
+    #kontejnery-order-wrapper .split-row .col-mid {
+      width: 36%;
+    }
+
+    #kontejnery-order-wrapper .split-row .col-right {
+      width: 36%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      font-size: 16px;
+    }
+
+    #kontejnery-order-wrapper .split-row input,
+    #kontejnery-order-wrapper .split-row select {
+      width: 100%;
+      max-width: 240px;
+      height: 36px;
+    }
+
+    #kontejnery-order-wrapper .transport-select {
+      width: 100%;
+      max-width: 520px;
+      height: 38px;
+      margin-bottom: 10px;
+    }
+
+    /* Krok 4: Poznámka a souhlasy */
+    #kontejnery-order-wrapper .note-input {
+      width: 100%;
+      height: 36px;
+      margin-bottom: 10px;
+    }
+
+    #kontejnery-order-wrapper .checkbox-block {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 15.5px;
+      color: #333333;
+      line-height: 1.45;
+      margin: 14px 0;
+      cursor: pointer;
+    }
+
+    #kontejnery-order-wrapper .checkbox-block input[type="checkbox"] {
+      margin-top: 3px;
+      accent-color: #133b68;
+      width: 18px;
+      height: 18px;
+    }
+
+    #kontejnery-order-wrapper .checkbox-block a {
+      color: #133b68;
+      text-decoration: underline;
+    }
+
+    /* --- TLAČÍTKA --- */
+    #kontejnery-order-wrapper .wn-btn-group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      margin-top: 30px;
+    }
+
+    #kontejnery-order-wrapper .wn-btn-group.stacked {
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    #kontejnery-order-wrapper .btn {
+      height: 46px;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #kontejnery-order-wrapper .btn-next {
+      width: 220px;
+      background-color: #133b68;
+      color: #ffffff;
+      padding-right: 14px;
+      clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%);
+    }
+
+    #kontejnery-order-wrapper .btn-prev-wrap {
+      display: inline-block;
+      background-color: #adb5bd;
+      padding: 1px;
+      clip-path: polygon(16px 0, 100% 0, 100% 100%, 16px 100%, 0 50%);
+    }
+
+    #kontejnery-order-wrapper .btn-prev {
+      width: 200px;
+      height: 44px;
+      background-color: #e9ecef;
+      color: #495057;
+      padding-left: 14px;
+      clip-path: polygon(16px 0, 100% 0, 100% 100%, 16px 100%, 0 50%);
+    }
+
+    #kontejnery-order-wrapper .btn-submit {
+      background-color: #133b68;
+      color: #ffffff;
+      padding: 0 32px;
+      height: 50px;
+      gap: 12px;
+      font-size: 16.5px;
+      border-radius: 3px;
+      transition: background-color 0.2s;
+    }
+
+    #kontejnery-order-wrapper .btn-submit:disabled {
+      background-color: #728091;
+      cursor: not-allowed;
+    }
+
+    /* Poděkování */
+    #kontejnery-order-wrapper #wn-thankYouScreen {
+      display: none;
+      text-align: center;
+      padding: 40px 15px;
+    }
+
+    #kontejnery-order-wrapper .success-icon {
+      width: 68px;
+      height: 68px;
+      background-color: #eaf1f8;
+      color: #133b68;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+
+    #kontejnery-order-wrapper .thank-you-title {
+      font-size: 26px;
+      color: #133b68;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    #kontejnery-order-wrapper .thank-you-desc {
+      font-size: 17px;
+      color: #495057;
+      line-height: 1.6;
+      max-width: 580px;
+      margin: 0 auto 26px auto;
+    }
+
+    #kontejnery-order-wrapper .btn-restart {
+      background-color: #133b68;
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 3px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+    }
+
+    @media (max-width: 720px) {
+      #kontejnery-order-wrapper .wn-row, 
+      #kontejnery-order-wrapper .split-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        padding: 10px;
+      }
+      #kontejnery-order-wrapper .wn-label, 
+      #kontejnery-order-wrapper .wn-field, 
+      #kontejnery-order-wrapper .split-row .col-left, 
+      #kontejnery-order-wrapper .split-row .col-mid, 
+      #kontejnery-order-wrapper .split-row .col-right {
+        width: 100%;
+        justify-content: flex-start;
+      }
+      #kontejnery-order-wrapper #wn-ares-status {
+        margin-left: 0;
+      }
+      #kontejnery-order-wrapper .split-row input, 
+      #kontejnery-order-wrapper .split-row select {
+        max-width: 100%;
+      }
+      #kontejnery-order-wrapper .wn-step-tab {
+        font-size: 12px;
+        padding: 0 6px 0 16px;
+      }
+    }
+  </style>
+
+  <h1>Online objednávka pronájmu kontejnerů</h1>
+
+  <!-- NAVIGACE KROKŮ -->
+  <div class="wn-stepper" id="wn-stepper">
+    <div class="wn-step-tab active" onclick="wnGoToStep(0)">FIRMA</div>
+    <div class="wn-step-tab" onclick="wnGoToStep(1)">CO</div>
+    <div class="wn-step-tab" onclick="wnGoToStep(2)">KAM</div>
+    <div class="wn-step-tab" onclick="wnGoToStep(3)">ODESLAT</div>
+  </div>
+
+  <form id="wnOrderForm" onsubmit="wnSubmitOrder(event)">
+
+    <!-- KROK 1: FIRMA -->
+    <div class="wn-form-step active">
+      <div class="wn-row">
+        <div class="wn-label">IČ</div>
+        <div class="wn-field" style="gap: 8px;">
+          <input type="text" name="ic" placeholder="Zadejte IČ pro načtení z ARES..." onblur="wnCheckAres(false)" style="flex: 1;">
+          <button type="button" class="btn-ares" onclick="wnCheckAres(true)">🔍 ARES</button>
+        </div>
+      </div>
+      <div id="wn-ares-status"></div>
+
+      <div class="wn-row">
+        <div class="wn-label">Objednatel - název</div>
+        <div class="wn-field"><input type="text" name="firma" required placeholder="Firma nebo Jméno Poptávajícího"></div>
+      </div>
+      <div class="wn-row">
+        <div class="wn-label">Ulice a č.p.</div>
+        <div class="wn-field"><input type="text" name="ulice" placeholder="Ulice a číslo popisné"></div>
+      </div>
+      <div class="wn-row">
+        <div class="wn-label">Město</div>
+        <div class="wn-field"><input type="text" name="mesto" placeholder="Město / Obec"></div>
+      </div>
+      <div class="wn-row">
+        <div class="wn-label">PSČ</div>
+        <div class="wn-field"><input type="text" name="psc" placeholder="PSČ"></div>
+      </div>
+      <div class="wn-row">
+        <div class="wn-label">DIČ</div>
+        <div class="wn-field"><input type="text" name="dic" placeholder="DIČ (např. CZ12345678)"></div>
+      </div>
+      <div class="wn-row">
+        <div class="wn-label">Vyřizuje (Osoba)</div>
+        <div class="wn-field"><input type="text" name="vyrizuje" placeholder="Jméno kontaktní osoby"></div>
+      </div>
+      <div class="wn-row">
+        <div class="wn-label">Telefon</div>
+        <div class="wn-field"><input type="tel" name="telefon" required placeholder="+420 777 000 111"></div>
+      </div>
+      <div class="wn-row">
+        <div class="wn-label">Email</div>
+        <div class="wn-field"><input type="email" name="email" required placeholder="email@firma.cz"></div>
+      </div>
+
+      <p class="wn-info-text">
+        Elektronická fakturace - na základě legislativních možností žádáme o sdělení emailového kontaktu určeného pro elektronické zasílání daňových dokladů.
+      </p>
+
+      <div class="wn-row">
+        <div class="wn-label">Email pro fakturaci</div>
+        <div class="wn-field"><input type="email" name="email_fakturace" placeholder="fakturace@firma.cz"></div>
+      </div>
+
+      <div class="wn-btn-group">
+        <button type="button" class="btn btn-next" onclick="wnNextStep()">POKRAČOVAT</button>
+      </div>
+    </div>
+
+    <!-- KROK 2: CO -->
+    <div class="wn-form-step">
+      <div class="wn-row qty-row">
+        <div class="qty-label">celkem obytných kontejnerů</div>
+        <div class="qty-controls">
+          <input type="number" min="0" class="qty-input" name="kontejner_obytny" value="0">
+          <span class="unit">ks</span>
+        </div>
+      </div>
+
+      <div class="wn-row qty-row">
+        <div class="qty-label">celkem skladových kontejnerů</div>
+        <div class="qty-controls">
+          <input type="number" min="0" class="qty-input" name="kontejner_skladovy" value="0">
+          <span class="unit">ks</span>
+        </div>
+      </div>
+
+      <div class="wn-row qty-row">
+        <div class="qty-label">celkem sanitárních kontejnerů</div>
+        <div class="qty-controls">
+          <input type="number" min="0" class="qty-input" name="kontejner_sanitarni" value="0">
+          <span class="unit">ks</span>
+        </div>
+      </div>
+
+      <div class="wn-row qty-row">
+        <div class="qty-label">celkem materiálových kontejnerů</div>
+        <div class="qty-controls">
+          <input type="number" min="0" class="qty-input" name="kontejner_materialovy" value="0">
+          <span class="unit">ks</span>
+        </div>
+      </div>
+
+      <h2>Vybavení kontejnerů</h2>
+
+      <div class="wn-row qty-row">
+        <div class="qty-label">celkem židlí</div>
+        <div class="qty-controls">
+          <input type="number" min="0" class="qty-input" name="vybaveni_zidle" value="0">
+          <span class="unit">ks</span>
+        </div>
+      </div>
+
+      <div class="wn-row qty-row">
+        <div class="qty-label">celkem stolů</div>
+        <div class="qty-controls">
+          <input type="number" min="0" class="qty-input" name="vybaveni_stoly" value="0">
+          <span class="unit">ks</span>
+        </div>
+      </div>
+
+      <div class="wn-row qty-row">
+        <div class="qty-label">kancelářská skříňka malá</div>
+        <div class="qty-controls">
+          <input type="number" min="0" class="qty-input" name="vybaveni_skrinka_mala" value="0">
+          <span class="unit">ks</span>
+        </div>
+      </div>
+
+      <div class="wn-row qty-row">
+        <div class="qty-label">ocelová šatní skříňka</div>
+        <div class="qty-controls">
+          <input type="number" min="0" class="qty-input" name="vybaveni_satni_skrinka" value="0">
+          <span class="unit">ks</span>
+        </div>
+      </div>
+
+      <div class="wn-row qty-row">
+        <div class="qty-label"><input type="text" name="dalsi_vybaveni_1_nazev" value="další vybavení 1"></div>
+        <div class="qty-controls">
+          <input type="number" min="0" class="qty-input" name="dalsi_vybaveni_1_ks" value="0">
+          <span class="unit">ks</span>
+        </div>
+      </div>
+
+      <div class="wn-row qty-row">
+        <div class="qty-label"><input type="text" name="dalsi_vybaveni_2_nazev" value="další vybavení 2"></div>
+        <div class="qty-controls">
+          <input type="number" min="0" class="qty-input" name="dalsi_vybaveni_2_ks" value="0">
+          <span class="unit">ks</span>
+        </div>
+      </div>
+
+      <div class="wn-btn-group">
+        <div class="btn-prev-wrap">
+          <button type="button" class="btn btn-prev" onclick="wnPrevStep()">ZPĚT</button>
+        </div>
+        <button type="button" class="btn btn-next" onclick="wnNextStep()">POKRAČOVAT</button>
+      </div>
+    </div>
+
+    <!-- KROK 3: KAM -->
+    <div class="wn-form-step">
+      <h2>Místo dodání - podrobná specifikace*</h2>
+      <textarea class="wn-textarea" name="misto_dodani" placeholder="Např. Ostrava Vítkovice, Stavba hala A, přjezd z ulice Ruská..." required></textarea>
+
+      <div class="wn-row split-row">
+        <div class="col-left">Datum dodání:</div>
+        <div class="col-mid"><input type="date" name="datum_dodani" required></div>
+        <div class="col-right">
+          <span>Čas:</span>
+          <select name="cas_dodani">
+            <option value="07:00-08:00">07:00-08:00</option>
+            <option value="08:00-09:00">08:00-09:00</option>
+            <option value="09:00-10:00">09:00-10:00</option>
+            <option value="10:00-11:00">10:00-11:00</option>
+            <option value="11:00-12:00">11:00-12:00</option>
+            <option value="12:00-13:00">12:00-13:00</option>
+            <option value="13:00-14:00">13:00-14:00</option>
+            <option value="14:00-15:00">14:00-15:00</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="wn-row split-row">
+        <div class="col-left">Pronájem do:</div>
+        <div class="col-mid"><input type="date" name="pronajem_do"></div>
+        <div class="col-right"></div>
+      </div>
+
+      <div class="wn-row split-row">
+        <div class="col-left">*Osoba k převzetí:</div>
+        <div class="col-mid"></div>
+        <div class="col-right"><input type="text" name="osoba_prevzeti" placeholder="Jméno přebírajícího" required></div>
+      </div>
+
+      <div class="wn-row split-row">
+        <div class="col-left">*Kontakt:</div>
+        <div class="col-mid"></div>
+        <div class="col-right"><input type="text" name="kontakt_prevzeti" placeholder="Telefon na stavbu" required></div>
+      </div>
+
+      <h2>Přeprava kontejnerů</h2>
+      <select class="transport-select" name="preprava">
+        <option value="Auto s hydraulickou rukou MAN (pro 1 kontejner)">Auto s hydraulickou rukou MAN (pro 1 kontejner)</option>
+        <option value="Auto s rukou + vlek (pro 2 kontejnery)">Auto s rukou + vlek (pro 2 kontejnery)</option>
+        <option value="Vlastní přeprava a složení">Vlastní přeprava a složení</option>
+      </select>
+
+      <div class="wn-btn-group">
+        <div class="btn-prev-wrap">
+          <button type="button" class="btn btn-prev" onclick="wnPrevStep()">ZPĚT</button>
+        </div>
+        <button type="button" class="btn btn-next" onclick="wnNextStep()">POKRAČOVAT</button>
+      </div>
+    </div>
+
+    <!-- KROK 4: ODESLAT -->
+    <div class="wn-form-step">
+      <h2>Poznámka</h2>
+      <input type="text" class="note-input" name="poznamka_1" placeholder="Poznámka řádek 1...">
+      <input type="text" class="note-input" name="poznamka_2" placeholder="Poznámka řádek 2...">
+      <input type="text" class="note-input" name="poznamka_3" placeholder="Poznámka řádek 3...">
+
+      <label class="checkbox-block">
+        <input type="checkbox" name="souhlas_cenik" checked required>
+        <span>
+          Cenu za pronájem kontejnerů dle <a href="#" target="_blank">aktuálního ceníku</a> akceptuji v plném rozsahu a souhlasím s elektronickou fakturací.
+        </span>
+      </label>
+
+      <label class="checkbox-block">
+        <input type="checkbox" name="souhlas_podminky" checked required>
+        <span>
+          Prohlašuji, že jsem se podrobně seznámil s obchodními podmínkami pronájmu a souhlasím bez výhrad. <a href="#" target="_blank">Prohlédnout si je můžete zde.</a>
+        </span>
+      </label>
+
+      <div class="wn-btn-group stacked">
+        <div class="btn-prev-wrap">
+          <button type="button" class="btn btn-prev" onclick="wnPrevStep()">ZPĚT</button>
+        </div>
+
+        <button type="submit" id="wnBtnSubmit" class="btn btn-submit">
+          <svg width="26" height="22" viewBox="0 0 28 24" fill="none">
+            <rect x="1" y="5" width="26" height="18" rx="1" stroke="#ffffff" stroke-width="1.8"/>
+            <path d="M1 6L14 15L27 6" stroke="#ffffff" stroke-width="1.8"/>
+            <path d="M14 11V1M14 1L10 5M14 1L18 5" stroke="#f5a623" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span id="wnBtnSubmitText">ZÁVAZNĚ ZASLAT OBJEDNÁVKU</span>
+        </button>
+      </div>
+    </div>
+
+  </form>
+
+  <!-- PODĚKOVÁNÍ PO ODESLÁNÍ -->
+  <div id="wn-thankYouScreen">
+    <div class="success-icon">✓</div>
+    <div class="thank-you-title">Děkujeme za vaši objednávku!</div>
+    <div class="thank-you-desc">
+      Objednávku jsme úspěšně přijali a automaticky předali do naší aplikace.<br>
+      <strong>Naše obchodní oddělení se vám brzy ozve</strong> pro potvrzení termínu a detailů předání.
+    </div>
+    <button type="button" class="btn-restart" onclick="wnResetForm()">Nová objednávka</button>
+  </div>
+</div>
+
+<script>
+  let wnCurrentStep = 0;
+  const wnWrapper = document.getElementById('kontejnery-order-wrapper');
+  const wnSteps = wnWrapper.querySelectorAll('.wn-form-step');
+  const wnTabs = wnWrapper.querySelectorAll('.wn-step-tab');
+  const wnForm = document.getElementById('wnOrderForm');
+  const wnStepper = document.getElementById('wn-stepper');
+  const wnThankYouScreen = document.getElementById('wn-thankYouScreen');
+  const wnAresStatus = document.getElementById('wn-ares-status');
+
+  const FIREBASE_PROJECT_ID = "kontejnery-ostrava";
+  const FIREBASE_API_KEY = "AIzaSyBkkArHtJZbNtqejCb8BbuVt4R5Dr66GKE";
+
+  function wnUpdateView() {
+    wnSteps.forEach((step, index) => {
+      step.classList.toggle('active', index === wnCurrentStep);
+    });
+
+    wnTabs.forEach((tab, index) => {
+      tab.classList.remove('active', 'completed');
+      if (index < wnCurrentStep) {
+        tab.classList.add('completed');
+      } else if (index === wnCurrentStep) {
+        tab.classList.add('active');
+      }
+    });
+
+    wnWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function wnNextStep() {
+    const currentInputs = wnSteps[wnCurrentStep].querySelectorAll('input[required], textarea[required]');
+    for (let input of currentInputs) {
+      if (!input.checkValidity()) {
+        input.reportValidity();
+        return;
+      }
+    }
+
+    if (wnCurrentStep < wnSteps.length - 1) {
+      wnCurrentStep++;
+      wnUpdateView();
+    }
+  }
+
+  function wnPrevStep() {
+    if (wnCurrentStep > 0) {
+      wnCurrentStep--;
+      wnUpdateView();
+    }
+  }
+
+  function wnGoToStep(index) {
+    if (index >= 0 && index < wnSteps.length) {
+      wnCurrentStep = index;
+      wnUpdateView();
+    }
+  }
+
+  function formatDateCZ(isoDate) {
+    if (!isoDate) return '-';
+    const parts = isoDate.split('-');
+    if (parts.length === 3) {
+      return `${parts[2]}.${parts[1]}.${parts[0]}`;
+    }
+    return isoDate;
+  }
+
+  function wnShowAresStatus(text, type) {
+    if (!wnAresStatus) return;
+    wnAresStatus.style.display = text ? 'block' : 'none';
+    wnAresStatus.className = type || '';
+    wnAresStatus.innerHTML = text;
+  }
+
+  /* --- NAČÍTÁNÍ Z ARES --- */
+  async function wnCheckAres(isManual) {
+    const icInput = document.querySelector('input[name="ic"]');
+    if (!icInput) return;
+    
+    let ico = icInput.value.replace(/\s+/g, '');
+    if (!ico) {
+      if (isManual) wnShowAresStatus("⚠️ Prosím zadejte IČ pro vyhledání v ARES.", "error");
+      return;
+    }
+
+    if (!/^\d{7,8}$/.test(ico)) {
+      wnShowAresStatus("⚠️ Zadejte platné 7-8 místné IČ.", "error");
+      return;
+    }
+
+    ico = ico.padStart(8, '0');
+    icInput.value = ico;
+
+    wnShowAresStatus("🔍 Načítám údaje o firmě z ARES...", "loading");
+
+    try {
+      const aresUrl = `https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/${ico}`;
+      let response = await fetch(aresUrl).catch(() => null);
+
+      if (!response || !response.ok) {
+        // Fallback přes CORS proxy
+        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(aresUrl)}`;
+        response = await fetch(proxyUrl).catch(() => null);
+      }
+
+      if (response && response.ok) {
+        const data = await response.json();
+        if (data && (data.obchodniJmeno || data.ico)) {
+          const firmaInput = document.querySelector('input[name="firma"]');
+          const dicInput = document.querySelector('input[name="dic"]');
+          const uliceInput = document.querySelector('input[name="ulice"]');
+          const mestoInput = document.querySelector('input[name="mesto"]');
+          const pscInput = document.querySelector('input[name="psc"]');
+
+          if (firmaInput && data.obchodniJmeno) firmaInput.value = data.obchodniJmeno;
+          if (dicInput && data.dic) dicInput.value = data.dic;
+
+          if (data.sidlo) {
+            const s = data.sidlo;
+            if (uliceInput) {
+              let u = s.nazevUlice ? `${s.nazevUlice} ${s.cisloDomovni || s.cisloOrientacni || ''}`.trim() : (s.textovaAdresa || '');
+              uliceInput.value = u;
+            }
+            if (mestoInput && s.nazevObce) mestoInput.value = s.nazevObce;
+            if (pscInput && s.psc) pscInput.value = String(s.psc || '');
+          }
+
+          wnShowAresStatus(`✅ <strong>ARES:</strong> Načtena firma: <strong>${data.obchodniJmeno}</strong>`, "success");
+          return;
+        }
+      }
+      wnShowAresStatus(`⚠️ Firma s IČ ${ico} nebyla v databázi ARES nalezena.`, "error");
+    } catch (e) {
+      console.error("ARES fetch error:", e);
+      wnShowAresStatus("⚠️ Nepodařilo se připojit k systému ARES. Vyplňte údaje ručně.", "error");
+    }
+  }
+
+  /* --- ODESLÁNÍ OBJEDNÁVKY DO FIREBASE / APLIKACE --- */
+  async function wnSubmitOrder(e) {
+    e.preventDefault();
+
+    const btnSubmit = document.getElementById('wnBtnSubmit');
+    const btnSubmitText = document.getElementById('wnBtnSubmitText');
+    if (btnSubmit) btnSubmit.disabled = true;
+    if (btnSubmitText) btnSubmitText.innerText = "ODESÍLÁM DO APLIKACE...";
+
+    const formData = new FormData(wnForm);
+    const data = Object.fromEntries(formData.entries());
+
+    const orderId = "ord_web_" + Date.now();
+    const fullAddress = [data.ulice, data.mesto, data.psc].filter(Boolean).join(', ');
+
+    let summaryMsg = `=== ONLINE OBJEDNÁVKA PRONÁJMU ===\n`;
+    summaryMsg += `Místo dodání: ${data.misto_dodani || '-'}\n`;
+    summaryMsg += `Datum dodání: ${formatDateCZ(data.datum_dodani)} (Čas: ${data.cas_dodani || '-'})\n`;
+    summaryMsg += `Pronájem do: ${formatDateCZ(data.pronajem_do) || 'Neurčito'}\n`;
+    summaryMsg += `Osoba k převzetí: ${data.osoba_prevzeti || '-'} (Tel: ${data.kontakt_prevzeti || '-'})\n`;
+    summaryMsg += `Přeprava: ${data.preprava || '-'}\n\n`;
+
+    summaryMsg += `--- KONTEJNERY ---\n`;
+    summaryMsg += `• Obytné: ${data.kontejner_obytny || 0} ks\n`;
+    summaryMsg += `• Skladové: ${data.kontejner_skladovy || 0} ks\n`;
+    summaryMsg += `• Sanitární: ${data.kontejner_sanitarni || 0} ks\n`;
+    summaryMsg += `• Materiálové: ${data.kontejner_materialovy || 0} ks\n\n`;
+
+    summaryMsg += `--- VYBAVENÍ ---\n`;
+    summaryMsg += `• Židle: ${data.vybaveni_zidle || 0} ks | Stoly: ${data.vybaveni_stoly || 0} ks\n`;
+    summaryMsg += `• Skříňka malá: ${data.vybaveni_skrinka_mala || 0} ks | Šatní skříňka: ${data.vybaveni_satni_skrinka || 0} ks\n`;
+    if (data.dalsi_vybaveni_1_ks > 0) summaryMsg += `• ${data.dalsi_vybaveni_1_nazev}: ${data.dalsi_vybaveni_1_ks} ks\n`;
+    if (data.dalsi_vybaveni_2_ks > 0) summaryMsg += `• ${data.dalsi_vybaveni_2_nazev}: ${data.dalsi_vybaveni_2_ks} ks\n`;
+
+    const notes = [data.poznamka_1, data.poznamka_2, data.poznamka_3].filter(Boolean).join(' | ');
+    if (notes) summaryMsg += `\nPoznámka: ${notes}\n`;
+
+    // Datová struktura pro aplikaci (Firebase Firestore)
+    const firestorePayload = {
+      fields: {
+        company: { stringValue: data.firma || '' },
+        firma: { stringValue: data.firma || '' },
+        name: { stringValue: data.vyrizuje || data.osoba_prevzeti || data.firma || '' },
+        vyrizuje: { stringValue: data.vyrizuje || '' },
+        phone: { stringValue: data.telefon || data.kontakt_prevzeti || '' },
+        telefon: { stringValue: data.telefon || '' },
+        email: { stringValue: data.email || '' },
+        email_fakturace: { stringValue: data.email_fakturace || '' },
+        ic: { stringValue: data.ic || '' },
+        ico: { stringValue: data.ic || '' },
+        dic: { stringValue: data.dic || '' },
+        ulice: { stringValue: fullAddress || data.ulice || '' },
+        adresa: { stringValue: fullAddress || '' },
+        message: { stringValue: summaryMsg },
+        zprava: { stringValue: summaryMsg },
+        inquiryType: { stringValue: "Online objednávka pronájmu z webu" },
+        status: { stringValue: "NOVÁ" },
+        depo: { stringValue: "Depo 1" },
+        isOrder: { booleanValue: true },
+        timestamp: { integerValue: String(Date.now()) },
+        source: { stringValue: "Webnode Online Form" }
+      }
+    };
+
+    let isSuccess = false;
+
+    try {
+      const restUrl = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents/objednavky?documentId=${orderId}&key=${FIREBASE_API_KEY}`;
+      const res = await fetch(restUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(firestorePayload)
+      });
+
+      if (res.ok) {
+        isSuccess = true;
+      } else {
+        console.warn("Firestore REST write HTTP status:", res.status);
+      }
+    } catch (err) {
+      console.error("Firestore submit error:", err);
+    }
+
+    // E-mailový záložní odkaz
+    const targetEmail = "sliva@kontejnery-ostrava.cz";
+    const subject = encodeURIComponent("Nová online objednávka pronájmu: " + (data.firma || "Web"));
+    const mailtoUrl = `mailto:${targetEmail}?subject=${subject}&body=${encodeURIComponent(summaryMsg)}`;
+
+    wnForm.style.display = 'none';
+    wnStepper.style.display = 'none';
+    wnThankYouScreen.style.display = 'block';
+    wnWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Otevřít mailto zálohu pokud si ji přeje odeslat
+    setTimeout(() => {
+      try { window.location.href = mailtoUrl; } catch(_) {}
+    }, 500);
+  }
+
+  function wnResetForm() {
+    wnForm.reset();
+    wnCurrentStep = 0;
+    const btnSubmit = document.getElementById('wnBtnSubmit');
+    const btnSubmitText = document.getElementById('wnBtnSubmitText');
+    if (btnSubmit) btnSubmit.disabled = false;
+    if (btnSubmitText) btnSubmitText.innerText = "ZÁVAZNĚ ZASLAT OBJEDNÁVKU";
+    if (wnAresStatus) wnAresStatus.style.display = 'none';
+    wnThankYouScreen.style.display = 'none';
+    wnForm.style.display = 'block';
+    wnStepper.style.display = 'flex';
+    wnUpdateView();
+  }
+</script>

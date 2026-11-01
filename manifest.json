@@ -1,0 +1,19 @@
+{
+  "name": "Přeprava KO",
+  "short_name": "Přeprava KO",
+  "description": "Mobilní aplikace pro řidiče (Přeprava + Kontejnery) • Kontejnery Ostrava",
+  "start_url": "iphone.html?driver=1",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0F172A",
+  "theme_color": "#0F172A",
+  "icons": [
+    {
+      "src": "public/assets/ko_print_logo.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

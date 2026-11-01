@@ -1,0 +1,16 @@
+{
+  "platform": "ANDROID_VERZE",
+  "folder": "android/",
+  "applicationId": "com.aistudio.containerscanner.cxkqab",
+  "currentVersion": 402,
+  "versionCode": 402,
+  "versionName": "402.0",
+  "releaseDate": "1.11.2026",
+  "maxKeptVersions": 3,
+  "keptVersions": ["v402","v401","v400"],
+  "files": [
+    "android/Kontejnery_Ostrava_Android_v402.json",
+    "android/Kontejnery_Ostrava_Android_v401.json",
+    "android/Kontejnery_Ostrava_Android_v400.json"
+  ]
+}

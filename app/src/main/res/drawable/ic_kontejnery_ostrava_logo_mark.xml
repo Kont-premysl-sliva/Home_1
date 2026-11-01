@@ -1,0 +1,56 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="760dp"
+    android:height="490dp"
+    android:viewportWidth="760"
+    android:viewportHeight="490">
+
+    <!-- Dark Navy Background #011C45 -->
+    <path
+        android:fillColor="#011C45"
+        android:pathData="M24,0 H736 A24,24 0 0,1 760,24 V466 A24,24 0 0,1 736,490 H24 A24,24 0 0,1 0,466 V24 A24,24 0 0,1 24,0 Z" />
+
+    <!-- Levý rohový sloupek s oválným okem -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M106,156 C106,148 114,144 126,144 C138,144 146,148 146,156 L146,238 L106,238 Z" />
+    <path
+        android:fillColor="#011C45"
+        android:pathData="M126,150 A8,11 0 1,0 126.01,150 Z" />
+
+    <!-- Levý šikmý střešní nosník -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M136,158 L399,51 L399,86 L136,191 Z" />
+
+    <!-- Středový hlavní rohový sloupek s okem -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M405,44 C405,28 416,19 432,19 C446,19 452,28 452,44 L452,238 L405,238 Z" />
+    <path
+        android:fillColor="#011C45"
+        android:pathData="M428,35 A10,13 0 1,0 428.01,35 Z" />
+
+    <!-- Pravý šikmý střešní nosník -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M458,49 L632,126 L632,160 L458,85 Z" />
+
+    <!-- Pravý rohový sloupek s okem -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M630,136 C630,121 639,113 653,113 C665,113 670,121 670,136 L670,238 L630,238 Z" />
+    <path
+        android:fillColor="#011C45"
+        android:pathData="M649,129 A9,12 0 1,0 649.01,129 Z" />
+
+    <!-- Perspektivní okno kontejneru vpravo -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M518,153 L582,172 L582,226 L518,226 Z" />
+
+    <!-- Azurová dekorační linka -->
+    <path
+        android:fillColor="#009FE3"
+        android:pathData="M106,418 H654 V421 H106 Z" />
+
+</vector>

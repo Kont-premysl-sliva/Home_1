@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <!-- Ground Shadow -->
+    <path
+        android:fillColor="#1E293B"
+        android:pathData="M10,102 L110,102 C112,102 114,105 110,106 L10,106 C6,106 8,102 10,102 Z" />
+
+    <!-- Container Main Outer Frame (ISO Cargo Blue) -->
+    <path
+        android:fillColor="#0369A1"
+        android:pathData="M10,30 H110 C112,30 113,31 113,33 V95 C113,97 112,98 110,98 H10 C8,98 7,97 7,95 V33 C7,31 8,30 10,30 Z" />
+
+    <!-- Corner Castings (Top Left, Top Right, Bottom Left, Bottom Right) -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M7,30 H20 V42 H7 Z" />
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M100,30 H113 V42 H100 Z" />
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M7,86 H20 V98 H7 Z" />
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M100,86 H113 V98 H100 Z" />
+
+    <!-- Corner Casting Holes -->
+    <path
+        android:fillColor="#64748B"
+        android:pathData="M10,33 H16 V38 H10 Z" />
+    <path
+        android:fillColor="#64748B"
+        android:pathData="M104,33 H110 V38 H104 Z" />
+    <path
+        android:fillColor="#64748B"
+        android:pathData="M10,90 H16 V95 H10 Z" />
+    <path
+        android:fillColor="#64748B"
+        android:pathData="M104,90 H110 V95 H104 Z" />
+
+    <!-- Corrugated Side Wall Panel Area -->
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M20,34 H100 V94 H20 Z" />
+
+    <!-- Corrugation Ribs (Alternating Shadow and Light for 3D steel fluting) -->
+    <!-- Rib 1 -->
+    <path android:fillColor="#075985" android:pathData="M23,34 H28 V94 H23 Z" />
+    <path android:fillColor="#38BDF8" android:pathData="M28,34 H30 V94 H28 Z" />
+    <!-- Rib 2 -->
+    <path android:fillColor="#075985" android:pathData="M34,34 H39 V94 H34 Z" />
+    <path android:fillColor="#38BDF8" android:pathData="M39,34 H41 V94 H39 Z" />
+    <!-- Rib 3 -->
+    <path android:fillColor="#075985" android:pathData="M45,34 H50 V94 H45 Z" />
+    <path android:fillColor="#38BDF8" android:pathData="M50,34 H52 V94 H50 Z" />
+    <!-- Center Dividing Post -->
+    <path android:fillColor="#0C4A6E" android:pathData="M58,32 H62 V96 H58 Z" />
+    <!-- Rib 4 -->
+    <path android:fillColor="#075985" android:pathData="M68,34 H73 V94 H68 Z" />
+    <path android:fillColor="#38BDF8" android:pathData="M73,34 H75 V94 H73 Z" />
+    <!-- Rib 5 -->
+    <path android:fillColor="#075985" android:pathData="M79,34 H84 V94 H79 Z" />
+    <path android:fillColor="#38BDF8" android:pathData="M84,34 H86 V94 H84 Z" />
+    <!-- Rib 6 -->
+    <path android:fillColor="#075985" android:pathData="M90,34 H95 V94 H90 Z" />
+    <path android:fillColor="#38BDF8" android:pathData="M95,34 H97 V94 H95 Z" />
+
+    <!-- Top & Bottom Rails -->
+    <path
+        android:fillColor="#0C4A6E"
+        android:pathData="M7,30 H113 V34 H7 Z" />
+    <path
+        android:fillColor="#0C4A6E"
+        android:pathData="M7,94 H113 V98 H7 Z" />
+
+    <!-- ISO Code Label Plaque (Yellow warning/certification plate on container) -->
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M78,42 H96 V54 H78 Z" />
+    <path
+        android:fillColor="#1E293B"
+        android:pathData="M81,45 H93 V47 H81 Z" />
+    <path
+        android:fillColor="#1E293B"
+        android:pathData="M81,49 H90 V51 H81 Z" />
+</vector>

@@ -1,0 +1,9 @@
+{
+  "platform": "ANDROID_VERZE",
+  "folder": "android/",
+  "applicationId": "com.aistudio.containerscanner.cxkqab",
+  "versionCode": 382,
+  "versionName": "382.0",
+  "releaseDate": "1.11.2026",
+  "apkPath": "android/Kontejnery_Ostrava_Android_v382.apk"
+}

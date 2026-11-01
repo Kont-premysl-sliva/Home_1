@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Subtle inner badge border -->
+    <path
+        android:fillColor="#1AFFFFFF"
+        android:strokeColor="#55FFFFFF"
+        android:strokeWidth="2"
+        android:pathData="M27,35 C27,30.58 30.58,27 35,27 L73,27 C77.42,27 81,30.58 81,35 L81,73 C81,77.42 77.42,81 73,81 L35,81 C30.58,81 27,77.42 27,73 Z" />
+    <!-- Bold white letter K -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M36,32 L47,32 L47,50 L62,32 L75,32 L57,53 L76,76 L62,76 L49,59 L47,61.5 L47,76 L36,76 Z" />
+</vector>

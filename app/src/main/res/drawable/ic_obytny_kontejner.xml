@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <!-- Background Ground Shadow -->
+    <path
+        android:fillColor="#1E293B"
+        android:pathData="M10,104 L110,104 C112,104 114,106 110,107 L10,107 C6,107 8,104 10,104 Z" />
+
+    <!-- Container Main Outer Body / Frame -->
+    <path
+        android:fillColor="#1E3A8A"
+        android:pathData="M12,28 H108 C110,28 111,29 111,31 V98 C111,100 110,101 108,101 H12 C10,101 9,100 9,98 V31 C9,29 10,28 12,28 Z" />
+
+    <!-- ISO Corner Castings (Top Left, Top Right, Bottom Left, Bottom Right) -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M9,28 H20 V38 H9 Z" />
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M100,28 H111 V38 H100 Z" />
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M9,91 H20 V101 H9 Z" />
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M100,91 H111 V101 H100 Z" />
+
+    <!-- Corner Holes -->
+    <path
+        android:fillColor="#94A3B8"
+        android:pathData="M12,31 H17 V35 H12 Z" />
+    <path
+        android:fillColor="#94A3B8"
+        android:pathData="M103,31 H108 V35 H103 Z" />
+    <path
+        android:fillColor="#94A3B8"
+        android:pathData="M12,94 H17 V98 H12 Z" />
+    <path
+        android:fillColor="#94A3B8"
+        android:pathData="M103,94 H108 V98 H103 Z" />
+
+    <!-- Inner Wall / Insulated Sandwich Panels (Modern Living Container Light Cream/Gray) -->
+    <path
+        android:fillColor="#F1F5F9"
+        android:pathData="M18,34 H102 V95 H18 Z" />
+
+    <!-- Subtle Panel Vertical Seams -->
+    <path
+        android:fillColor="#E2E8F0"
+        android:pathData="M38,34 H40 V95 H38 Z" />
+    <path
+        android:fillColor="#E2E8F0"
+        android:pathData="M78,34 H80 V95 H78 Z" />
+
+    <!-- Modern Living Container Window (Left Side) - PVC Outer White Frame -->
+    <path
+        android:fillColor="#334155"
+        android:pathData="M24,44 H54 V74 H24 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M25,45 H53 V73 H25 Z" />
+    <!-- Window Glazing / Blue Tint Glass -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M27,47 H38 V71 H27 Z" />
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M40,47 H51 V71 H40 Z" />
+    <!-- Window Reflection Highlights -->
+    <path
+        android:fillColor="#BAE6FD"
+        android:pathData="M29,49 L36,49 L32,69 L29,69 Z" />
+    <path
+        android:fillColor="#BAE6FD"
+        android:pathData="M42,49 L49,49 L45,69 L42,69 Z" />
+    <!-- Window Sill -->
+    <path
+        android:fillColor="#CBD5E1"
+        android:pathData="M23,73 H55 V76 H23 Z" />
+
+    <!-- Modern Entrance Door (Right Side) -->
+    <path
+        android:fillColor="#1E293B"
+        android:pathData="M64,40 H94 V95 H64 Z" />
+    <path
+        android:fillColor="#F8FAFC"
+        android:pathData="M66,42 H92 V95 H66 Z" />
+    <!-- Door Window / Upper Glass Insert -->
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M70,46 H88 V60 H70 Z" />
+    <path
+        android:fillColor="#BAE6FD"
+        android:pathData="M72,48 L76,48 L73,58 L71,58 Z" />
+    <path
+        android:fillColor="#CBD5E1"
+        android:strokeColor="#94A3B8"
+        android:strokeWidth="1"
+        android:pathData="M70,46 H88 V60 H70 Z" />
+    <!-- Door Handle -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M68,66 H73 V68 H68 Z" />
+    <path
+        android:fillColor="#64748B"
+        android:pathData="M68,68 H70 V72 H68 Z" />
+
+    <!-- Exterior Light / Vent Above Door -->
+    <path
+        android:fillColor="#E2E8F0"
+        android:pathData="M76,36 H82 V38 H76 Z" />
+
+    <!-- Top and Bottom Outer Reinforcement Rails -->
+    <path
+        android:fillColor="#1D4ED8"
+        android:pathData="M18,31 H102 V34 H18 Z" />
+    <path
+        android:fillColor="#1D4ED8"
+        android:pathData="M18,95 H102 V98 H18 Z" />
+
+</vector>

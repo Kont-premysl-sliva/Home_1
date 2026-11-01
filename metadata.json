@@ -1,0 +1,6 @@
+{
+  "name": "DEPO",
+  "description": "Aplikace pro čtení označení a barvy kontejnerů z fotografií.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
