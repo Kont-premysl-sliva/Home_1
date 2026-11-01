@@ -267,38 +267,26 @@
             }
         }
 
-        function autoDetectPlatform() {
-            const ua = navigator.userAgent || '';
-            const isIos = /iPhone|iPod|iPad/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-            if (isIos) {
-                switchPlatform('ios');
-            } else {
-                switchPlatform('android');
+        function initDynamicInstallUrls() {
+            try {
+                const currentCleanUrl = window.location.href.split('?')[0].split('#')[0];
+                const inp = document.getElementById('directUrlInput');
+                const qr = document.getElementById('qrImg');
+                if (inp && currentCleanUrl.startsWith('http')) {
+                    inp.value = currentCleanUrl;
+                    if (qr) {
+                        qr.src = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=6&data=" + encodeURIComponent(currentCleanUrl);
+                    }
+                }
+            } catch (e) {
+                console.error(e);
             }
         }
 
-        function triggerDirectProfileInstall(e) {
-            const box = document.getElementById('profileStepsBox');
-            if (box) {
-                box.className = 'bg-[#064E3B] border-2 border-[#4ADE80] rounded-xl p-3 space-y-1.5 text-xs text-white';
-            }
-        }
-
-        function copyInstallLink() {
-            const inp = document.getElementById('directUrlInput');
-            if (!inp) return;
-            navigator.clipboard?.writeText(inp.value);
-            alert('Instalační odkaz byl zkopírován do schránky:\n' + inp.value);
-        }
-
-        function shareWhatsAppLink() {
-            const inp = document.getElementById('directUrlInput');
-            const url = inp ? inp.value : 'https://kont-premysl-sliva.github.io/Home_1/install';
-            const msg = 'Kontejnery Ostrava – Instalace mobilní aplikace Přeprava KO pro řidiče (Android i iPhone): ' + url;
-            window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
-        }
-
-        document.addEventListener('DOMContentLoaded', autoDetectPlatform);
+        document.addEventListener('DOMContentLoaded', () => {
+            autoDetectPlatform();
+            initDynamicInstallUrls();
+        });
     </script>
 </body>
 </html>
