@@ -4,7 +4,7 @@
   "versionCode": 413,
   "versionName": "413.0",
   "versionBadge": "v 413",
-  "releaseDate": "2.11.2026",
+  "releaseDate": "1.11.2026",
   "maxKeptVersions": 3,
   "keptVersions": ["v413","v412","v411"],
   "platforms": {
