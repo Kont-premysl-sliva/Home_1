@@ -1,38 +1,34 @@
 {
   "system": "Kontejnery Ostrava • Stormware Pohoda ERP",
-  "currentVersion": 402,
-  "versionCode": 402,
-  "versionName": "402.0",
-  "versionBadge": "v 402",
+  "currentVersion": 400,
+  "versionCode": 400,
+  "versionName": "400.0",
+  "versionBadge": "v 400",
   "releaseDate": "1.11.2026",
   "maxKeptVersions": 3,
   "keptVersions": [
-    "v402",
-    "v401",
-    "v400"
+    "v400",
+    "v399",
+    "v398"
   ],
   "platforms": {
     "pc": {
       "folder": "pc/",
-      "version": 402,
+      "version": 400,
       "entryFile": "pc/index.html",
       "versionJson": "pc/version.json"
     },
     "android": {
       "folder": "android/",
-      "version": 402,
-      "versionCode": 402,
-      "applicationId": "com.aistudio.containerscanner.cxkqab",
-      "versionJson": "android/version.json",
-      "apkPath": "android/Kontejnery_Ostrava_Android_v402.apk",
-      "apkDownloadUrl": "https://github.com/Kont-premysl-sliva/Home_1/releases/download/v402/Kontejnery_Ostrava_Android_v402.apk"
+      "version": 400,
+      "versionCode": 400,
+      "apkPath": "android/Kontejnery_Ostrava_Android_v400.apk"
     },
     "iphone": {
       "folder": "iphone/",
-      "version": 402,
+      "version": 400,
       "entryFile": "iphone/iphone.html",
-      "versionJson": "iphone/version.json",
-      "webClipUrl": "https://kont-premysl-sliva.github.io/Home_1/iphone.html?iphone=1"
+      "versionJson": "iphone/version.json"
     }
   }
 }
