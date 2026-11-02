@@ -7096,8 +7096,54 @@ try {
             }
         };
 
-                window._activeCompleteTransportId = null;
+                        window._activeCompleteTransportId = null;
         window._completeModalPhotos = [];
+
+        window.ensureSelectHasOption = (selectEl, val) => {
+            if (!selectEl || !val) return;
+            const exists = Array.from(selectEl.options || []).some(o => o.value === val);
+            if (!exists) {
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = val;
+                const customOpt = selectEl.querySelector('option[value="__CUSTOM__"]');
+                if (customOpt) selectEl.insertBefore(opt, customOpt);
+                else selectEl.appendChild(opt);
+            }
+        };
+
+        window.onCustomCarrierCompletePrompt = () => {
+            const val = prompt('Zadejte název přepravce:', '');
+            const sel = document.getElementById('completeTransportCarrierSelect');
+            if (val && val.trim()) {
+                window.ensureSelectHasOption(sel, val.trim());
+                sel.value = val.trim();
+            } else if (sel) {
+                sel.value = 'Kontejnery Autodoprava';
+            }
+        };
+
+        window.onCustomVehicleCompletePrompt = () => {
+            const val = prompt('Zadejte označení / SPZ vozidla:', '');
+            const sel = document.getElementById('completeTransportVehicleSelect');
+            if (val && val.trim()) {
+                window.ensureSelectHasOption(sel, val.trim());
+                sel.value = val.trim();
+            } else if (sel) {
+                sel.value = localStorage.getItem('ko_ios_favorite_vehicle') || 'MAN';
+            }
+        };
+
+        window.onCustomDriverCompletePrompt = () => {
+            const val = prompt('Zadejte jméno řidiče:', '');
+            const sel = document.getElementById('completeTransportDriverSelect');
+            if (val && val.trim()) {
+                window.ensureSelectHasOption(sel, val.trim());
+                sel.value = val.trim();
+            } else if (sel) {
+                sel.value = localStorage.getItem('ko_iphone_driver_name') || 'Martin';
+            }
+        };
 
         window.getCurrentDateCzechFormatted = () => {
             const now = new Date();
@@ -7206,83 +7252,91 @@ try {
         };
 
         window.promptCompleteTransport = (id) => {
-            const t = (allTransports || []).find(x => String(x.id) === String(id));
-            if (!t) return;
-            window._activeCompleteTransportId = id;
+            try {
+                const t = (allTransports || []).find(x => String(x.id) === String(id)) || {};
+                window._activeCompleteTransportId = id;
 
-            const company = (t.customerCompany || t.company || t.customerName || '').trim();
-            const loc = (t.destinationLocation || t.customerAddress || '').trim();
+                const company = (t.customerCompany || t.company || t.customerName || '').trim();
+                const loc = (t.destinationLocation || t.customerAddress || '').trim();
 
-            const compEl = document.getElementById('completeTransportCompanyInput');
-            if (compEl) compEl.value = company;
-            const locEl = document.getElementById('completeTransportLocalityInput');
-            if (locEl) locEl.value = loc;
+                const compEl = document.getElementById('completeTransportCompanyInput');
+                if (compEl) compEl.value = company;
+                const locEl = document.getElementById('completeTransportLocalityInput');
+                if (locEl) locEl.value = loc;
 
-            // Výběr data
-            const today = window.getCurrentDateCzechFormatted();
-            let initialIso = today.iso;
-            let initialCz = today.cz;
-            let initialDayName = today.dayName;
+                // Výběr data
+                const today = window.getCurrentDateCzechFormatted();
+                let initialIso = today.iso;
+                let initialCz = today.cz;
+                let initialDayName = today.dayName;
 
-            const existingDate = (t.transportDate || t.dateText || t.date || '').trim();
-            const czMatch = existingDate.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})/);
-            if (czMatch) {
-                const da = Number(czMatch[1]);
-                const mo = Number(czMatch[2]);
-                const yr = Number(czMatch[3]);
-                const d = new Date(yr, mo - 1, da);
-                if (!isNaN(d.getTime())) {
-                    const dayNames = ['NEDĚLE', 'PONDĚLÍ', 'ÚTERÝ', 'STŘEDA', 'ČTVRTEK', 'PÁTEK', 'SOBOTA'];
-                    initialDayName = dayNames[d.getDay()] || initialDayName;
-                    initialIso = `${yr}-${String(mo).padStart(2, '0')}-${String(da).padStart(2, '0')}`;
-                    initialCz = `${String(da).padStart(2, '0')}.${String(mo).padStart(2, '0')}.${yr}`;
+                const existingDate = (t.transportDate || t.dateText || t.date || '').trim();
+                const czMatch = existingDate.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+                if (czMatch) {
+                    const da = Number(czMatch[1]);
+                    const mo = Number(czMatch[2]);
+                    const yr = Number(czMatch[3]);
+                    const d = new Date(yr, mo - 1, da);
+                    if (!isNaN(d.getTime())) {
+                        const dayNames = ['NEDĚLE', 'PONDĚLÍ', 'ÚTERÝ', 'STŘEDA', 'ČTVRTEK', 'PÁTEK', 'SOBOTA'];
+                        initialDayName = dayNames[d.getDay()] || initialDayName;
+                        initialIso = `${yr}-${String(mo).padStart(2, '0')}-${String(da).padStart(2, '0')}`;
+                        initialCz = `${String(da).padStart(2, '0')}.${String(mo).padStart(2, '0')}.${yr}`;
+                    }
                 }
-            }
 
-            const dateInput = document.getElementById('completeTransportDateInput');
-            if (dateInput) {
-                dateInput.value = initialIso;
-            }
-            const dateDisp = document.getElementById('completeTransportDateDisplay');
-            if (dateDisp) {
-                dateDisp.textContent = `${initialCz} • ${initialDayName}`;
-            }
+                const dateInput = document.getElementById('completeTransportDateInput');
+                if (dateInput) {
+                    dateInput.value = initialIso;
+                }
+                const dateDisp = document.getElementById('completeTransportDateDisplay');
+                if (dateDisp) {
+                    dateDisp.textContent = `${initialCz} • ${initialDayName}`;
+                }
 
-            // Rozbalovací položky: Přepravce, Vozidlo, Řidič
-            const carSel = document.getElementById('completeTransportCarrierSelect');
-            if (carSel) {
-                const existingCarrier = t.carrier || t.prepravce || 'Kontejnery Autodoprava';
-                window.ensureSelectHasOption(carSel, existingCarrier);
-                carSel.value = existingCarrier;
-            }
+                // Rozbalovací položky: Přepravce, Vozidlo, Řidič
+                const carSel = document.getElementById('completeTransportCarrierSelect');
+                if (carSel) {
+                    const existingCarrier = t.carrier || t.prepravce || 'Kontejnery Autodoprava';
+                    if (typeof window.ensureSelectHasOption === 'function') window.ensureSelectHasOption(carSel, existingCarrier);
+                    carSel.value = existingCarrier;
+                }
 
-            const vehSel = document.getElementById('completeTransportVehicleSelect');
-            if (vehSel) {
-                const favVeh = localStorage.getItem('ko_ios_favorite_vehicle') || 'MAN';
-                const existingVeh = t.spz || t.vehicle || favVeh;
-                window.ensureSelectHasOption(vehSel, existingVeh);
-                vehSel.value = existingVeh;
-            }
+                const vehSel = document.getElementById('completeTransportVehicleSelect');
+                if (vehSel) {
+                    const favVeh = localStorage.getItem('ko_ios_favorite_vehicle') || 'MAN';
+                    const existingVeh = t.spz || t.vehicle || favVeh;
+                    if (typeof window.ensureSelectHasOption === 'function') window.ensureSelectHasOption(vehSel, existingVeh);
+                    vehSel.value = existingVeh;
+                }
 
-            const driSel = document.getElementById('completeTransportDriverSelect');
-            if (driSel) {
-                const loggedDriver = localStorage.getItem('ko_iphone_driver_name') || 'Martin';
-                const existingDriver = t.driver || loggedDriver;
-                window.ensureSelectHasOption(driSel, existingDriver);
-                driSel.value = existingDriver;
-            }
+                const driSel = document.getElementById('completeTransportDriverSelect');
+                if (driSel) {
+                    const loggedDriver = localStorage.getItem('ko_iphone_driver_name') || 'Martin';
+                    const existingDriver = t.driver || loggedDriver;
+                    if (typeof window.ensureSelectHasOption === 'function') window.ensureSelectHasOption(driSel, existingDriver);
+                    driSel.value = existingDriver;
+                }
 
-            // Fotografie (max. 3)
-            const existingPhotos = Array.isArray(t.photos) ? [...t.photos] : (t.photo ? [t.photo] : []);
-            window._completeModalPhotos = existingPhotos.filter(Boolean).slice(0, 3);
-            window.renderCompleteModalPhotoSlots();
+                // Fotografie (max. 3)
+                const existingPhotos = Array.isArray(t.photos) ? [...t.photos] : (t.photo ? [t.photo] : []);
+                window._completeModalPhotos = existingPhotos.filter(Boolean).slice(0, 3);
+                window.renderCompleteModalPhotoSlots();
 
-            const modal = document.getElementById('transportCompleteModal');
-            if (modal) {
-                modal.classList.remove('hidden');
-                modal.style.display = 'flex';
-                modal.style.visibility = 'visible';
-                modal.style.pointerEvents = 'auto';
+                const modal = document.getElementById('transportCompleteModal');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    modal.style.display = 'flex';
+                    modal.style.visibility = 'visible';
+                    modal.style.pointerEvents = 'auto';
+                }
+            } catch (err) {
+                console.error("Chyba při otevírání Dokončení přepravy:", err);
+                const modal = document.getElementById('transportCompleteModal');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    modal.style.display = 'flex';
+                }
             }
         };
 
@@ -7297,68 +7351,78 @@ try {
         };
 
         window.confirmCompleteTransport = () => {
-            const id = window._activeCompleteTransportId;
-            if (!id) return;
-            const t = (allTransports || []).find(x => String(x.id) === String(id));
-            if (!t) {
-                window.closeTransportCompleteModal();
-                return;
-            }
-
-            const dateDisp = document.getElementById('completeTransportDateDisplay');
-            const rawDisp = (dateDisp ? dateDisp.textContent : '').trim();
-            const dateMatch = rawDisp.match(/^(\d{1,2}\.\d{1,2}\.\d{4})/);
-            const finalCzDate = dateMatch ? dateMatch[1] : (window.getCurrentDateCzechFormatted().cz);
-
-            const compVal = (document.getElementById('completeTransportCompanyInput')?.value || t.customerCompany || t.company || '').trim();
-            const locVal = (document.getElementById('completeTransportLocalityInput')?.value || t.destinationLocation || t.customerAddress || '').trim();
-
-            const finalCarrier = document.getElementById('completeTransportCarrierSelect')?.value || 'Kontejnery Autodoprava';
-            const finalVehicle = document.getElementById('completeTransportVehicleSelect')?.value || 'MAN';
-            const finalDriver = document.getElementById('completeTransportDriverSelect')?.value || 'Martin';
-
-            // Spojení fotek: nově nahrané z modálu mají prioritu, doplněné do max 3
-            const modalPhotos = (window._completeModalPhotos || []).filter(Boolean);
-            const existingPhotos = Array.isArray(t.photos) ? [...t.photos].filter(Boolean) : (t.photo ? [t.photo] : []);
-            const mergedPhotos = [...modalPhotos];
-            for (const p of existingPhotos) {
-                if (!mergedPhotos.includes(p) && mergedPhotos.length < 3) {
-                    mergedPhotos.push(p);
+            try {
+                const id = window._activeCompleteTransportId;
+                if (!id) return;
+                const t = (allTransports || []).find(x => String(x.id) === String(id));
+                if (!t) {
+                    window.closeTransportCompleteModal();
+                    return;
                 }
-            }
-            const primaryPhoto = mergedPhotos[0] || '';
 
-            const updated = {
-                ...t,
-                status: 'HOTOVO',
-                customerCompany: compVal,
-                company: compVal,
-                destinationLocation: locVal,
-                customerAddress: locVal,
-                transportDate: finalCzDate,
-                dateText: finalCzDate,
-                date: finalCzDate,
-                completionDate: finalCzDate,
-                carrier: finalCarrier,
-                prepravce: finalCarrier,
-                spz: finalVehicle,
-                vehicle: finalVehicle,
-                driver: finalDriver,
-                photos: mergedPhotos,
-                photo: primaryPhoto,
-                containerImageUri: primaryPhoto,
-                completedAt: Date.now(),
-                timestamp: Date.now()
-            };
+                const dateDisp = document.getElementById('completeTransportDateDisplay');
+                const rawDisp = (dateDisp ? dateDisp.textContent : '').trim();
+                const dateMatch = rawDisp.match(/^(\d{1,2}\.\d{1,2}\.\d{4})/);
+                const finalCzDate = dateMatch ? dateMatch[1] : (window.getCurrentDateCzechFormatted().cz);
 
-            upsert('transports', allTransports, t.id, updated);
-            window.closeTransportCompleteModal();
-            if (typeof window.iosFilterPrepravaStatus === 'function') {
-                window.iosFilterPrepravaStatus('HOTOVO');
-            } else {
-                renderCurrentView();
+                const compVal = (document.getElementById('completeTransportCompanyInput')?.value || t.customerCompany || t.company || '').trim();
+                const locVal = (document.getElementById('completeTransportLocalityInput')?.value || t.destinationLocation || t.customerAddress || '').trim();
+
+                const finalCarrier = document.getElementById('completeTransportCarrierSelect')?.value || 'Kontejnery Autodoprava';
+                const finalVehicle = document.getElementById('completeTransportVehicleSelect')?.value || 'MAN';
+                const finalDriver = document.getElementById('completeTransportDriverSelect')?.value || 'Martin';
+
+                // Spojení fotek: nově nahrané z modálu mají prioritu, doplněné do max 3
+                const modalPhotos = (window._completeModalPhotos || []).filter(Boolean);
+                const existingPhotos = Array.isArray(t.photos) ? [...t.photos].filter(Boolean) : (t.photo ? [t.photo] : []);
+                const mergedPhotos = [...modalPhotos];
+                for (const p of existingPhotos) {
+                    if (!mergedPhotos.includes(p) && mergedPhotos.length < 3) {
+                        mergedPhotos.push(p);
+                    }
+                }
+                const primaryPhoto = mergedPhotos[0] || '';
+
+                const updated = {
+                    ...t,
+                    status: 'HOTOVO',
+                    customerCompany: compVal,
+                    company: compVal,
+                    destinationLocation: locVal,
+                    customerAddress: locVal,
+                    transportDate: finalCzDate,
+                    dateText: finalCzDate,
+                    date: finalCzDate,
+                    completionDate: finalCzDate,
+                    carrier: finalCarrier,
+                    prepravce: finalCarrier,
+                    spz: finalVehicle,
+                    vehicle: finalVehicle,
+                    driver: finalDriver,
+                    photos: mergedPhotos,
+                    photo: primaryPhoto,
+                    containerImageUri: primaryPhoto,
+                    completedAt: Date.now(),
+                    timestamp: Date.now()
+                };
+
+                upsert('transports', allTransports, t.id, updated);
+                try {
+                    if (typeof pushSyncToMobileBridgeAndServer === 'function') pushSyncToMobileBridgeAndServer();
+                } catch (e) {}
+
+                window.closeTransportCompleteModal();
+
+                if (typeof window.iosFilterPrepravaStatus === 'function') {
+                    window.iosFilterPrepravaStatus('HOTOVO');
+                } else if (typeof renderCurrentView === 'function') {
+                    renderCurrentView();
+                }
+                showToast(`Přeprava dokončena a uložena do Hotové (${finalVehicle} • ${finalDriver})`);
+            } catch (err) {
+                console.error("Chyba při dokončování přepravy:", err);
+                alert("Chyba při ukládání dokončení přepravy: " + err.message);
             }
-            showToast(`Přeprava dokončena a uložena do Hotové (${finalVehicle} • ${finalDriver})`);
         };
 
         window.quickSetAgendaStatus = (agendaType, id, newStatus) => {
