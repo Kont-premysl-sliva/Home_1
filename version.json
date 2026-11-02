@@ -1,15 +1,15 @@
 {
   "system": "Kontejnery Ostrava • Stormware Pohoda ERP",
-  "currentVersion": 417,
-  "versionCode": 417,
-  "versionName": "417.0",
-  "versionBadge": "v 417",
+  "currentVersion": 418,
+  "versionCode": 418,
+  "versionName": "418.0",
+  "versionBadge": "v 418",
   "releaseDate": "2.11.2026",
   "maxKeptVersions": 3,
-  "keptVersions": ["v417","v416","v415"],
+  "keptVersions": ["v418","v417","v416"],
   "platforms": {
-    "pc": { "folder": "pc/", "version": 417, "entryFile": "pc/index.html", "versionJson": "pc/version.json" },
-    "android": { "folder": "android/", "version": 417, "versionCode": 417, "apkPath": "android/Kontejnery_Ostrava_Android_v417.apk" },
-    "iphone": { "folder": "iphone/", "version": 417, "entryFile": "iphone/iphone.html", "versionJson": "iphone/version.json" }
+    "pc": { "folder": "pc/", "version": 418, "entryFile": "pc/index.html", "versionJson": "pc/version.json" },
+    "android": { "folder": "android/", "version": 418, "versionCode": 418, "apkPath": "android/Kontejnery_Ostrava_Android_v418.apk" },
+    "iphone": { "folder": "iphone/", "version": 418, "entryFile": "iphone/iphone.html", "versionJson": "iphone/version.json" }
   }
 }
