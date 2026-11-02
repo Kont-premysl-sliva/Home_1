@@ -8,9 +8,5 @@
   "releaseDate": "2.11.2026",
   "maxKeptVersions": 3,
   "keptVersions": ["v417","v416","v415"],
-  "files": [
-    "android/Kontejnery_Ostrava_Android_v417.json",
-    "android/Kontejnery_Ostrava_Android_v416.json",
-    "android/Kontejnery_Ostrava_Android_v415.json"
-  ]
+  "apkDownloadUrl": "https://github.com/Kont-premysl-sliva/Home_1/releases/download/v417/Kontejnery_Ostrava_Android_v417.apk"
 }
