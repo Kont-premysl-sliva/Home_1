@@ -2,6 +2,7 @@
 <html lang="cs">
 <head>
     
+    
     <script id="appEnvironmentInitScript">
         (function() {
             try {
@@ -130,7 +131,7 @@
             <!-- Verze aplikace a datum -->
             <div class="inline-flex items-center gap-1.5 bg-sky-950/80 border border-sky-400/40 text-sky-200 px-3 py-1 rounded-full text-xs font-black shadow-inner mb-4">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="loginVersionDisplay">v 439 • 2.11.2026</span>
+                <span id="loginVersionDisplay">v 440 • 3.11.2026</span>
             </div>
 
             <!-- Přepínač PC vs Řidič -->
@@ -517,7 +518,7 @@
             <h1 class="text-base font-extrabold flex items-center gap-2 tracking-tight">
                 <span>POHODA</span>
                 <button type="button" onclick="window.handleHeaderUpdateClick()" class="cursor-pointer bg-[#0284C7] hover:bg-sky-600 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-lg shadow-sm border border-white/40 flex items-center gap-1.5" title="Verze aplikace • Kliknutím zkontrolujete nebo ručně potvrdíte novou aktualizaci">
-                    <span id="headerVersionBadge">v 439 • 2.11.2026</span>
+                    <span id="headerVersionBadge">v 440 • 3.11.2026</span>
                     <span id="ghUpdateBadge" class="hidden bg-[#EA580C] text-white text-[10px] px-1.5 py-0.5 rounded font-black animate-pulse flex items-center gap-0.5"><span class="material-icons text-[12px]">system_update_alt</span><span>NOVÁ</span></span>
                 </button>
             </h1>
@@ -2617,10 +2618,10 @@
 
     <script>
     (function() {
-        const CURRENT_SW_VERSION = 439;
+        const CURRENT_SW_VERSION = 440;
         const CURRENT_SW_VERSION_NAME = CURRENT_SW_VERSION;
-        const CURRENT_SW_RELEASE_DATE = "2.11.2026";
-        const CURRENT_SW_RELEASE_DATE_SPACED = "2. 11. 2026";
+        const CURRENT_SW_RELEASE_DATE = "3.11.2026";
+        const CURRENT_SW_RELEASE_DATE_SPACED = "3. 11. 2026";
         window.CURRENT_SW_VERSION = CURRENT_SW_VERSION;
         window.CURRENT_SW_VERSION_NAME = CURRENT_SW_VERSION_NAME;
         window.CURRENT_SW_RELEASE_DATE = CURRENT_SW_RELEASE_DATE;
@@ -6517,8 +6518,312 @@
             if (changed) saveLocal('customers', allCustomers);
         }
 
+        // --- LOKÁLNÍ CACHE MINIATUR (PŘEPRAVA & KONTEJNERY) S AUTOMATICKOU EXPIRACÍ 30 DNÍ PO STAVU HOTOVO ---
+        const MOBILE_THUMB_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 dní v milisekundách od přesunutí do HOTOVO
+        const MOBILE_THUMB_DB_NAME = 'KontejneryMobileThumbDB';
+        const MOBILE_THUMB_STORE = 'thumbs';
+        window._mobileThumbMemoryMap = window._mobileThumbMemoryMap || new Map();
+        window._mobileFullPhotoMemoryMap = window._mobileFullPhotoMemoryMap || new Map();
+        const _pendingThumbGenerations = new Set();
+        let _thumbDbPromise = null;
+
+        function _openMobileThumbIndexedDb() {
+            if (_thumbDbPromise) return _thumbDbPromise;
+            _thumbDbPromise = new Promise((resolve) => {
+                try {
+                    if (!window.indexedDB) return resolve(null);
+                    const req = window.indexedDB.open(MOBILE_THUMB_DB_NAME, 1);
+                    req.onupgradeneeded = (ev) => {
+                        const dbInstance = ev.target.result;
+                        if (!dbInstance.objectStoreNames.contains(MOBILE_THUMB_STORE)) {
+                            dbInstance.createObjectStore(MOBILE_THUMB_STORE, { keyPath: 'id' });
+                        }
+                    };
+                    req.onsuccess = (ev) => resolve(ev.target.result);
+                    req.onerror = () => resolve(null);
+                } catch (e) {
+                    resolve(null);
+                }
+            });
+            return _thumbDbPromise;
+        }
+
+        async function _hydrateMobileThumbsFromIndexedDb() {
+            try {
+                const idb = await _openMobileThumbIndexedDb();
+                if (!idb) return;
+                const tx = idb.transaction([MOBILE_THUMB_STORE], 'readonly');
+                const store = tx.objectStore(MOBILE_THUMB_STORE);
+                const req = store.getAll();
+                req.onsuccess = () => {
+                    const rows = req.result || [];
+                    const now = Date.now();
+                    let expiredIds = [];
+                    rows.forEach(r => {
+                        if (!r || !r.id || !r.thumbDataUrl) return;
+                        const isHotovo = ['HOTOVO', 'HOTOVÉ', 'REALIZOVÁNO', 'REALIZOVANÉ', 'VYŘÍZENO'].includes(String(r.status || '').toUpperCase());
+                        if (r.recordType === 'preprava' && isHotovo && r.completedAt > 0 && (now - r.completedAt) > MOBILE_THUMB_TTL_MS) {
+                            expiredIds.push(r.id);
+                        } else {
+                            window._mobileThumbMemoryMap.set(r.id, r.thumbDataUrl);
+                        }
+                    });
+                    if (expiredIds.length > 0) {
+                        try {
+                            const wtx = idb.transaction([MOBILE_THUMB_STORE], 'readwrite');
+                            const wstore = wtx.objectStore(MOBILE_THUMB_STORE);
+                            expiredIds.forEach(id => wstore.delete(id));
+                        } catch (e) {}
+                    }
+                };
+            } catch (e) {}
+        }
+        setTimeout(_hydrateMobileThumbsFromIndexedDb, 250);
+
+        function _parseTransportDateEpochForExpiry(t) {
+            if (!t) return 0;
+            const s = String(t.completionDate || t.transportDate || t.dateText || t.date || '').trim();
+            const mCz = s.match(/^(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{2,4})/);
+            if (mCz) {
+                let yr = Number(mCz[3]);
+                if (yr < 100) yr += 2000;
+                const ms = new Date(yr, Number(mCz[2]) - 1, Number(mCz[1])).getTime();
+                if (!isNaN(ms) && ms > 0) return ms;
+            }
+            const mIso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+            if (mIso) {
+                const ms = new Date(Number(mIso[1]), Number(mIso[2]) - 1, Number(mIso[3])).getTime();
+                if (!isNaN(ms) && ms > 0) return ms;
+            }
+            return Number(t.timestamp || 0);
+        }
+
+        window.isTransportExpiredPostHotovo30Days = function(t) {
+            if (!t) return false;
+            const st = String(t.status || '').trim().toUpperCase();
+            const isHotovo = ['HOTOVO', 'HOTOVÉ', 'REALIZOVÁNO', 'REALIZOVANÉ', 'VYŘÍZENO', 'DOKONČENO'].includes(st);
+            if (!isHotovo) return false;
+            const completedAt = Number(t.completedAt || 0) || _parseTransportDateEpochForExpiry(t);
+            if (!completedAt || completedAt <= 0) return false;
+            return (Date.now() - completedAt) > MOBILE_THUMB_TTL_MS;
+        };
+
+        window.buildMobileThumbCacheKey = function(recordType, recordId, fullPhotoUri) {
+            if (!fullPhotoUri) return '';
+            const tail = String(fullPhotoUri).slice(-28).replace(/[^a-zA-Z0-9]/g, '');
+            return `${recordType}_${recordId}_${String(fullPhotoUri).length}_${tail}`;
+        };
+
+        window.generateAndStoreMobileThumb = async function(cacheKey, recordType, recordId, fullPhotoUri, status = '', completedAt = 0) {
+            if (!cacheKey || !fullPhotoUri || _pendingThumbGenerations.has(cacheKey)) return;
+            if (!String(fullPhotoUri).startsWith('data:image/')) return;
+            _pendingThumbGenerations.add(cacheKey);
+            try {
+                const thumbDataUrl = await new Promise((resolve) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        try {
+                            const maxSide = 240;
+                            let w = img.width || 240;
+                            let h = img.height || 240;
+                            if (w > h) {
+                                if (w > maxSide) { h = Math.round((h * maxSide) / w); w = maxSide; }
+                            } else {
+                                if (h > maxSide) { w = Math.round((w * maxSide) / h); h = maxSide; }
+                            }
+                            const canvas = document.createElement('canvas');
+                            canvas.width = Math.max(1, w);
+                            canvas.height = Math.max(1, h);
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            resolve(canvas.toDataURL('image/jpeg', 0.68));
+                        } catch (err) {
+                            resolve(fullPhotoUri);
+                        }
+                    };
+                    img.onerror = () => resolve(fullPhotoUri);
+                    img.src = fullPhotoUri;
+                });
+
+                if (thumbDataUrl) {
+                    window._mobileThumbMemoryMap.set(cacheKey, thumbDataUrl);
+                    const idb = await _openMobileThumbIndexedDb();
+                    if (idb) {
+                        try {
+                            const tx = idb.transaction([MOBILE_THUMB_STORE], 'readwrite');
+                            tx.objectStore(MOBILE_THUMB_STORE).put({
+                                id: cacheKey,
+                                recordType,
+                                recordId,
+                                thumbDataUrl,
+                                status: String(status || ''),
+                                completedAt: Number(completedAt || 0),
+                                updatedAt: Date.now()
+                            });
+                        } catch (e) {}
+                    }
+                    document.querySelectorAll(`img[data-thumb-key="${cacheKey}"]`).forEach(imgEl => {
+                        if (imgEl.src !== thumbDataUrl) imgEl.src = thumbDataUrl;
+                    });
+                }
+            } catch (e) {
+            } finally {
+                _pendingThumbGenerations.delete(cacheKey);
+            }
+        };
+
+        window.getMobileListThumbUri = function(recordType, recordId, fullPhotoUri, status = '', completedAt = 0) {
+            if (!fullPhotoUri) return '';
+            const recKey = `${recordType}_${recordId}`;
+            window._mobileFullPhotoMemoryMap.set(recKey, fullPhotoUri);
+            const cacheKey = window.buildMobileThumbCacheKey(recordType, recordId, fullPhotoUri);
+            window._mobileFullPhotoMemoryMap.set(cacheKey, fullPhotoUri);
+            if (window._mobileThumbMemoryMap.has(cacheKey)) {
+                return window._mobileThumbMemoryMap.get(cacheKey);
+            }
+            if (String(fullPhotoUri).startsWith('data:image/') && fullPhotoUri.length > 18000) {
+                setTimeout(() => {
+                    window.generateAndStoreMobileThumb(cacheKey, recordType, recordId, fullPhotoUri, status, completedAt);
+                }, 10);
+            }
+            return fullPhotoUri;
+        };
+
+        window.resolveFullResolutionPhotoUri = function(srcOrThumb, recordId = null, recordType = 'preprava') {
+            if (recordId) {
+                const byRec = window._mobileFullPhotoMemoryMap.get(`${recordType}_${recordId}`);
+                if (byRec && byRec.length >= (srcOrThumb || '').length) return byRec;
+                if (recordType === 'preprava') {
+                    const t = (allTransports || []).find(x => String(x.id) === String(recordId));
+                    if (t) {
+                        const raw = t.containerImageUri || t.photo || (Array.isArray(t.photos) && t.photos[0]) || t.imageUri || '';
+                        if (raw && raw.length >= (srcOrThumb || '').length) return raw;
+                    }
+                } else if (recordType === 'kontejner') {
+                    const k = (allContainers || []).find(x => String(x.id) === String(recordId));
+                    if (k) {
+                        const raw = resolveContainerMainPhoto(k);
+                        if (raw && raw.length >= (srcOrThumb || '').length) return raw;
+                    }
+                }
+            }
+            return srcOrThumb || '';
+        };
+
+        window.pruneExpiredMobileTransportPhotos = async function(showFeedback = false) {
+            try {
+                const isMobileRuntime = Boolean(!window.IS_MASTER_PC_DATABASE || window.FORCE_IPHONE_APP_MODE || document.body.classList.contains('ios-app-mode') || localStorage.getItem('ko_ios_app_mode') === '1');
+                let strippedTransportsCount = 0;
+
+                if (isMobileRuntime && Array.isArray(allTransports)) {
+                    let changed = false;
+                    allTransports = allTransports.map(t => {
+                        if (!t || !window.isTransportExpiredPostHotovo30Days(t)) return t;
+                        const hasAnyInlinePhoto = Boolean(t.photo || (Array.isArray(t.photos) && t.photos.length) || t.imageUri || t.containerImageUri || t.containerImageUri2 || t.containerImageUri3 || t.deliveryPhotos || t.extraImages);
+                        if (!hasAnyInlinePhoto && t.photoArchivedInPc30d) return t;
+                        strippedTransportsCount++;
+                        changed = true;
+                        let cleanedContainersJson = t.containersJson || '';
+                        if (cleanedContainersJson) {
+                            try {
+                                const parsed = JSON.parse(cleanedContainersJson);
+                                if (Array.isArray(parsed)) {
+                                    cleanedContainersJson = JSON.stringify(parsed.map(it => ({ ...it, photos: [] })));
+                                }
+                            } catch (e) {}
+                        }
+                        return {
+                            ...t,
+                            photo: '',
+                            photos: [],
+                            imageUri: '',
+                            containerImageUri: '',
+                            containerImageUri2: '',
+                            containerImageUri3: '',
+                            deliveryPhotos: '',
+                            extraImages: '',
+                            containersJson: cleanedContainersJson,
+                            photoArchivedInPc30d: true
+                        };
+                    });
+                    if (changed) {
+                        saveLocal('transports', allTransports);
+                    }
+                }
+
+                // Vyčistíme expirované miniatury (>30 dní po HOTOVO) z IndexedDB i RAM mapy
+                const idb = await _openMobileThumbIndexedDb();
+                if (idb) {
+                    const tx = idb.transaction([MOBILE_THUMB_STORE], 'readwrite');
+                    const store = tx.objectStore(MOBILE_THUMB_STORE);
+                    const req = store.getAll();
+                    req.onsuccess = () => {
+                        const rows = req.result || [];
+                        const now = Date.now();
+                        rows.forEach(r => {
+                            if (!r || !r.id) return;
+                            const isHotovo = ['HOTOVO', 'HOTOVÉ', 'REALIZOVÁNO', 'REALIZOVANÉ', 'VYŘÍZENO'].includes(String(r.status || '').toUpperCase());
+                            if (r.recordType === 'preprava' && isHotovo && r.completedAt > 0 && (now - r.completedAt) > MOBILE_THUMB_TTL_MS) {
+                                store.delete(r.id);
+                                window._mobileThumbMemoryMap.delete(r.id);
+                            }
+                        });
+                    };
+                }
+
+                const prevPruned = Number(localStorage.getItem('ko_mobile_thumb_pruned_count') || 0);
+                if (strippedTransportsCount > 0) {
+                    localStorage.setItem('ko_mobile_thumb_pruned_count', String(prevPruned + strippedTransportsCount));
+                }
+                localStorage.setItem('ko_mobile_thumb_last_prune', new Date().toLocaleString('cs-CZ'));
+
+                if (showFeedback) {
+                    showToast(`✅ Cache miniatur vyčištěna (aktivní miniatury: ${window._mobileThumbMemoryMap.size}, uvolněno >30 dní po HOTOVO: ${strippedTransportsCount})`);
+                    renderCurrentView();
+                }
+                return strippedTransportsCount;
+            } catch (e) {
+                return 0;
+            }
+        };
+
+        window.warmUpMobileThumbnailsCache = async function(showFeedback = true) {
+            try {
+                let generated = 0;
+                for (const t of (allTransports || [])) {
+                    if (!t || window.isTransportExpiredPostHotovo30Days(t)) continue;
+                    const rawPhoto = t.containerImageUri || t.photo || (Array.isArray(t.photos) && t.photos[0]) || t.imageUri || '';
+                    if (rawPhoto && String(rawPhoto).startsWith('data:image/')) {
+                        const key = window.buildMobileThumbCacheKey('preprava', t.id, rawPhoto);
+                        if (!window._mobileThumbMemoryMap.has(key)) {
+                            await window.generateAndStoreMobileThumb(key, 'preprava', t.id, rawPhoto, t.status, t.completedAt || t.timestamp);
+                            generated++;
+                        }
+                    }
+                }
+                for (const k of (allContainers || [])) {
+                    if (!k) continue;
+                    const rawPhoto = resolveContainerMainPhoto(k);
+                    if (rawPhoto && String(rawPhoto).startsWith('data:image/')) {
+                        const key = window.buildMobileThumbCacheKey('kontejner', k.id, rawPhoto);
+                        if (!window._mobileThumbMemoryMap.has(key)) {
+                            await window.generateAndStoreMobileThumb(key, 'kontejner', k.id, rawPhoto, k.status, 0);
+                            generated++;
+                        }
+                    }
+                }
+                await window.pruneExpiredMobileTransportPhotos(false);
+                if (showFeedback) {
+                    showToast(`✅ Lokální cache miniatur aktualizována (v paměti ${window._mobileThumbMemoryMap.size} miniatur, nově vytvořeno: ${generated})`);
+                    renderCurrentView();
+                }
+            } catch (e) {}
+        };
+        setTimeout(() => { window.pruneExpiredMobileTransportPhotos(false); }, 1800);
+
         function applyIncomingSyncSnapshot(snap, isLocalRestore = false) {
             if (!snap || typeof snap !== 'object') return;
+            const isMobileLightPull = Boolean(!isLocalRestore && (!window.IS_MASTER_PC_DATABASE || window.FORCE_IPHONE_APP_MODE || document.body.classList.contains('ios-app-mode') || localStorage.getItem('ko_ios_app_mode') === '1'));
             if (Array.isArray(snap.deletedIds) && snap.deletedIds.length > 0) {
                 snap.deletedIds.forEach(delId => {
                     if (!delId) return;
@@ -6546,7 +6851,30 @@
                 allNotes = filterDel('notes', allNotes);
             }
             if (Array.isArray(snap.containers)) allContainers = mergeData('containers', snap.containers, allContainers);
-            if (Array.isArray(snap.transports)) allTransports = mergeData('transports', snap.transports, allTransports);
+            if (Array.isArray(snap.transports)) {
+                // Na mobilu u přeprav ve stavu HOTOVO starších než 30 dní nestahujeme těžké fotky (v Hlavním PC zůstávají trvale)
+                const incomingTransports = isMobileLightPull
+                    ? snap.transports.map(t => {
+                        if (!t || !window.isTransportExpiredPostHotovo30Days(t)) return t;
+                        return {
+                            ...t,
+                            photo: '',
+                            photos: [],
+                            imageUri: '',
+                            containerImageUri: '',
+                            containerImageUri2: '',
+                            containerImageUri3: '',
+                            deliveryPhotos: '',
+                            extraImages: '',
+                            photoArchivedInPc30d: true
+                        };
+                    })
+                    : snap.transports;
+                allTransports = mergeData('transports', incomingTransports, allTransports);
+                if (isMobileLightPull) {
+                    setTimeout(() => { window.pruneExpiredMobileTransportPhotos(false); }, 50);
+                }
+            }
             if (Array.isArray(snap.customers)) allCustomers = mergeData('customers', snap.customers, allCustomers);
             if (Array.isArray(snap.objednavky)) allExternalOrders = mergeData('objednavky', snap.objednavky, allExternalOrders);
             if (Array.isArray(snap.nabidky)) allNabidky = mergeData('nabidky', snap.nabidky, allNabidky);
@@ -6566,7 +6894,6 @@
                 allWaMessages = mergeData('whatsapp_messages', snap.whatsappMessages, allWaMessages);
                 try { updateWhatsappBadge(); } catch (e) {}
             }
-            const isMobileLightPull = Boolean(!isLocalRestore && (!window.IS_MASTER_PC_DATABASE || window.FORCE_IPHONE_APP_MODE || document.body.classList.contains('ios-app-mode') || localStorage.getItem('ko_ios_app_mode') === '1'));
             if (!isMobileLightPull && Array.isArray(snap.whatsappStaging)) {
                 allWaStaging = mergeData('whatsapp_staging', snap.whatsappStaging, allWaStaging);
                 try { updateWhatsappBadge(); } catch (e) {}
@@ -8211,9 +8538,10 @@
             showToast(saved ? "✅ Otočená fotografie byla uložena a synchronizována" : "Fotografie byla otočena");
         };
 
-        window.viewPhotoInNewTab = (src, tId = null) => {
-            if (!src) return;
-            window.openPhotoViewerModal(src, tId);
+        window.viewPhotoInNewTab = (src, tId = null, recordType = 'preprava') => {
+            const fullSrc = window.resolveFullResolutionPhotoUri ? window.resolveFullResolutionPhotoUri(src, tId, recordType) : src;
+            if (!fullSrc) return;
+            window.openPhotoViewerModal(fullSrc, tId);
         };
 
         window.rotateCompleteModalPhoto = async (idx, degrees = 90) => {
@@ -9719,7 +10047,10 @@
                     const hdrCls = isD2 ? 'bg-[#5D5342] text-white' : 'bg-[#1B5E8B] text-white';
                     const resolvedPhoto = resolveContainerMainPhoto(k);
                     const allKPhotos = extractPortablePhotosFromContainer(k);
-                    const photoSrc = resolvedPhoto || buildDefaultContainerSvgDataUri(k.designation || k.id, k.type || 'ISO Kontejner', isD2);
+                    const thumbKey = resolvedPhoto ? window.buildMobileThumbCacheKey('kontejner', k.id, resolvedPhoto) : '';
+                    const thumbPhotoSrc = resolvedPhoto
+                        ? window.getMobileListThumbUri('kontejner', k.id, resolvedPhoto, k.status, 0)
+                        : buildDefaultContainerSvgDataUri(k.designation || k.id, k.type || 'ISO Kontejner', isD2);
                     const sysNumBadge = k.systemNumber ? `<span class="px-1.5 py-0.5 rounded bg-white/25 text-white text-[10px] font-black">#${k.systemNumber}</span>` : '';
                     const shortDepoBadge = `<span class="px-1.5 py-0.5 rounded font-black text-[10px] text-white border border-white/60 ${isD2 ? 'bg-[#E65100]' : 'bg-[#0D47A1]'}">${isD2 ? 'D2' : 'D1'}</span>`;
                     grid._add = `<div onclick="openKontejnerModal('${k.id}')" class="${cardCls} rounded-xl shadow-md overflow-hidden cursor-pointer flex flex-col justify-between transition-all hover:shadow-lg">
@@ -9730,8 +10061,8 @@
                                     ${buildAgendaStatusSelectHtml('kontejner', k.id, k.status || 'SKLADEM', kStatusOpts)}
                                 </div>
                             </div>
-                            <div class="h-36 w-full bg-slate-200 overflow-hidden border-b border-black/10 relative">
-                                <img src="${photoSrc}" alt="${(k.designation || 'Kontejner').replace(/"/g, '&quot;')}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='${buildDefaultContainerSvgDataUri(k.designation || k.id, k.type || 'Kontejner', isD2)}'">
+                            <div class="h-36 w-full bg-slate-200 overflow-hidden border-b border-black/10 relative" onclick="event.stopPropagation(); ${resolvedPhoto ? `window.viewPhotoInNewTab('${thumbPhotoSrc}', '${k.id}', 'kontejner')` : `openKontejnerModal('${k.id}')`}">
+                                <img src="${thumbPhotoSrc}" ${thumbKey ? `data-thumb-key="${thumbKey}"` : ''} loading="lazy" alt="${(k.designation || 'Kontejner').replace(/"/g, '&quot;')}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='${buildDefaultContainerSvgDataUri(k.designation || k.id, k.type || 'Kontejner', isD2)}'">
                                 <span class="absolute bottom-1.5 right-1.5 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1"><span class="material-icons text-[11px]">photo_camera</span> ${resolvedPhoto ? `FOTO (${Math.max(1, allKPhotos.length)})` : 'NÁHLED'}</span>
                             </div>
                             <div class="p-3 space-y-1">
@@ -9768,11 +10099,14 @@
                         const isD2 = kd === 'Depo 2';
                         const rowCls = isD2 ? 'bg-[#FFFBF4] hover:bg-amber-50' : 'bg-[#F5FAFF] hover:bg-sky-50';
                         const resolvedPhoto = resolveContainerMainPhoto(k);
-                        const photoSrc = resolvedPhoto || buildDefaultContainerSvgDataUri(k.designation || k.id, k.type || 'ISO Kontejner', isD2);
+                        const thumbKey = resolvedPhoto ? window.buildMobileThumbCacheKey('kontejner', k.id, resolvedPhoto) : '';
+                        const thumbPhotoSrc = resolvedPhoto
+                            ? window.getMobileListThumbUri('kontejner', k.id, resolvedPhoto, k.status, 0)
+                            : buildDefaultContainerSvgDataUri(k.designation || k.id, k.type || 'ISO Kontejner', isD2);
                         const shortDepoBadge = `<span class="px-1.5 py-0.5 rounded font-black text-[10px] text-white ${isD2 ? 'bg-[#E65100]' : 'bg-[#0D47A1]'}">${isD2 ? 'D2' : 'D1'}</span>`;
                         const sysNumBadge = k.systemNumber ? `<span class="px-1.5 py-0.5 rounded bg-slate-200 text-slate-900 text-[10px] font-black mr-1">#${k.systemNumber}</span>` : '';
                         const oznTitle = `${k.systemNumber ? '#' + k.systemNumber + ' ' : ''}${k.designation || k.id}`;
-                        body._add = `<tr class="${rowCls} cursor-pointer" onclick="openKontejnerModal('${k.id}')"><td><div class="preprava-cell-clip"><div class="w-7 h-7 aspect-square rounded bg-slate-900 overflow-hidden border border-slate-300 shadow-sm inline-flex items-center justify-center align-middle"><img src="${photoSrc}" class="w-full h-full object-cover aspect-square" onerror="this.onerror=null;this.src='${buildDefaultContainerSvgDataUri(k.designation || k.id, k.type || 'Kontejner', isD2)}'"></div></div></td><td><div class="preprava-cell-clip font-extrabold text-[#0F3D5E]" title="${oznTitle.replace(/"/g, '&quot;')}">${sysNumBadge}${k.designation || k.id}</div></td><td><div class="preprava-cell-clip">${shortDepoBadge}</div></td><td><div class="preprava-cell-clip font-bold" title="${(k.type || '-').replace(/"/g, '&quot;')}">${k.type || '-'}</div></td><td onclick="event.stopPropagation()"><div class="preprava-cell-clip">${buildAgendaStatusSelectHtml('kontejner', k.id, k.status || 'SKLADEM', kStatusOpts)}</div></td><td><div class="preprava-cell-clip font-semibold" title="${(k.customerCompany || '-').replace(/"/g, '&quot;')}">${k.customerCompany || '-'}</div></td><td><div class="preprava-cell-clip text-xs text-gray-600" title="${(k.description || '-').replace(/"/g, '&quot;')}">${k.description || '-'}</div></td><td><div class="preprava-cell-clip text-right font-extrabold text-blue-800" title="${Number(k.price || 0).toLocaleString('cs-CZ')} Kč">${Number(k.price || 0).toLocaleString('cs-CZ')} Kč</div></td><td onclick="event.stopPropagation()"><div class="preprava-cell-clip text-right"><button onclick="printRecordCard('kontejner','${k.id}')" class="bg-slate-800 text-white px-1.5 py-0.5 rounded text-[11px] font-bold mr-1">🖨️</button><button onclick="shareRecordCardWhatsApp('kontejner','${k.id}')" class="bg-[#16A34A] text-white px-1.5 py-0.5 rounded text-[11px] font-bold mr-1">WA</button><button onclick="shareRecordCardEmail('kontejner','${k.id}')" class="bg-[#0284C7] text-white px-1.5 py-0.5 rounded text-[11px] font-bold mr-1">✉️</button><button onclick="openKontejnerModal('${k.id}')" class="bg-[#1B5E8B] text-white px-2 py-0.5 rounded text-[11px] font-bold mr-1">Upravit</button><button onclick="quickContainerToNabidka('${k.id}')" class="${isD2 ? 'bg-[#0369A1]' : 'bg-[#283593]'} text-white px-2 py-0.5 rounded text-[11px] font-bold mr-1">+ CN</button><button onclick="quickDeleteContainer('${k.id}')" class="bg-red-600 text-white px-1.5 py-0.5 rounded text-[11px] font-bold" title="Smazat">✕</button></div></td></tr>`;
+                        body._add = `<tr class="${rowCls} cursor-pointer" onclick="openKontejnerModal('${k.id}')"><td><div class="preprava-cell-clip"><div class="w-7 h-7 aspect-square rounded bg-slate-900 overflow-hidden border border-slate-300 shadow-sm inline-flex items-center justify-center align-middle" onclick="event.stopPropagation(); ${resolvedPhoto ? `window.viewPhotoInNewTab('${thumbPhotoSrc}', '${k.id}', 'kontejner')` : `openKontejnerModal('${k.id}')`}" title="Kliknutím načtete plnou fotografii"><img src="${thumbPhotoSrc}" ${thumbKey ? `data-thumb-key="${thumbKey}"` : ''} loading="lazy" class="w-full h-full object-cover aspect-square" onerror="this.onerror=null;this.src='${buildDefaultContainerSvgDataUri(k.designation || k.id, k.type || 'Kontejner', isD2)}'"></div></div></td><td><div class="preprava-cell-clip font-extrabold text-[#0F3D5E]" title="${oznTitle.replace(/"/g, '&quot;')}">${sysNumBadge}${k.designation || k.id}</div></td><td><div class="preprava-cell-clip">${shortDepoBadge}</div></td><td><div class="preprava-cell-clip font-bold" title="${(k.type || '-').replace(/"/g, '&quot;')}">${k.type || '-'}</div></td><td onclick="event.stopPropagation()"><div class="preprava-cell-clip">${buildAgendaStatusSelectHtml('kontejner', k.id, k.status || 'SKLADEM', kStatusOpts)}</div></td><td><div class="preprava-cell-clip font-semibold" title="${(k.customerCompany || '-').replace(/"/g, '&quot;')}">${k.customerCompany || '-'}</div></td><td><div class="preprava-cell-clip text-xs text-gray-600" title="${(k.description || '-').replace(/"/g, '&quot;')}">${k.description || '-'}</div></td><td><div class="preprava-cell-clip text-right font-extrabold text-blue-800" title="${Number(k.price || 0).toLocaleString('cs-CZ')} Kč">${Number(k.price || 0).toLocaleString('cs-CZ')} Kč</div></td><td onclick="event.stopPropagation()"><div class="preprava-cell-clip text-right"><button onclick="printRecordCard('kontejner','${k.id}')" class="bg-slate-800 text-white px-1.5 py-0.5 rounded text-[11px] font-bold mr-1">🖨️</button><button onclick="shareRecordCardWhatsApp('kontejner','${k.id}')" class="bg-[#16A34A] text-white px-1.5 py-0.5 rounded text-[11px] font-bold mr-1">WA</button><button onclick="shareRecordCardEmail('kontejner','${k.id}')" class="bg-[#0284C7] text-white px-1.5 py-0.5 rounded text-[11px] font-bold mr-1">✉️</button><button onclick="openKontejnerModal('${k.id}')" class="bg-[#1B5E8B] text-white px-2 py-0.5 rounded text-[11px] font-bold mr-1">Upravit</button><button onclick="quickContainerToNabidka('${k.id}')" class="${isD2 ? 'bg-[#0369A1]' : 'bg-[#283593]'} text-white px-2 py-0.5 rounded text-[11px] font-bold mr-1">+ CN</button><button onclick="quickDeleteContainer('${k.id}')" class="bg-red-600 text-white px-1.5 py-0.5 rounded text-[11px] font-bold" title="Smazat">✕</button></div></td></tr>`;
                     });
                 }
             } else if (currentTab === 'preprava') {
@@ -9935,18 +10269,26 @@
 
                     const cPhotos = extractAllTransportPhotosForCard(t);
                     const mainPhoto = cPhotos[0] || '';
+                    const thumbKey = mainPhoto ? window.buildMobileThumbCacheKey('preprava', t.id, mainPhoto) : '';
+                    const thumbPhotoSrc = mainPhoto ? window.getMobileListThumbUri('preprava', t.id, mainPhoto, t.status, t.completedAt || t.timestamp) : '';
+                    const isArchived30d = Boolean(!mainPhoto && (t.photoArchivedInPc30d || window.isTransportExpiredPostHotovo30Days(t)));
 
                     if (isIosDriverMode) {
                         const iosPhotoBoxHtml = mainPhoto
-                            ? `<div class="w-[110px] h-[110px] aspect-square rounded-lg overflow-hidden flex-shrink-0 relative border-2 ${isVraceni ? 'border-[#881337]' : 'border-[#1B5E8B]'} bg-slate-900 shadow-md" onclick="event.stopPropagation(); window.viewPhotoInNewTab('${mainPhoto}', '${t.id}')" title="Zobrazit a upravit fotografii">
-                                <img src="${mainPhoto}" alt="Foto přepravy" class="w-full h-full object-cover aspect-square">
+                            ? `<div class="w-[110px] h-[110px] aspect-square rounded-lg overflow-hidden flex-shrink-0 relative border-2 ${isVraceni ? 'border-[#881337]' : 'border-[#1B5E8B]'} bg-slate-900 shadow-md" onclick="event.stopPropagation(); window.viewPhotoInNewTab('${mainPhoto}', '${t.id}', 'preprava')" title="Zobrazit plnou fotografii">
+                                <img src="${thumbPhotoSrc}" ${thumbKey ? `data-thumb-key="${thumbKey}"` : ''} loading="lazy" alt="Foto přepravy" class="w-full h-full object-cover aspect-square">
                                 <span class="absolute bottom-1 right-1 ${isVraceni ? 'bg-[#881337]/95' : 'bg-[#0F172A]/90'} text-white text-[10px] font-black px-1 py-0.5 rounded shadow">📷 ${cPhotos.length}</span>
                                 <button type="button" onclick="event.stopPropagation(); window.rotateTransportPhoto('${t.id}', 0, 90)" class="absolute top-1 left-1 h-6 px-1.5 rounded-md bg-black/80 hover:bg-black text-white flex items-center justify-center text-[10px] font-black shadow z-10 border border-white/20 active:scale-95" title="Otočit fotografii o 90° doprava">↻ 90°</button>
                             </div>`
-                            : `<div class="w-[110px] h-[110px] aspect-square rounded-lg overflow-hidden flex-shrink-0 flex flex-col items-center justify-center border-2 border-dashed ${isVraceni ? 'bg-[#4C0519] border-rose-300' : 'bg-[#0F172A] border-sky-400/60'} shadow-md active:scale-95 transition-transform" onclick="event.stopPropagation(); quickPhotoForTransport('${t.id}')" title="Klepnutím vyfotíte přepravu">
-                                <span class="material-icons text-2xl ${isVraceni ? 'text-rose-200' : 'text-[#38BDF8]'}">add_a_photo</span>
-                                <span class="text-[9px] font-black text-white mt-0.5 tracking-wide">VYFOTIT</span>
-                            </div>`;
+                            : (isArchived30d
+                                ? `<div class="w-[110px] h-[110px] aspect-square rounded-lg overflow-hidden flex-shrink-0 flex flex-col items-center justify-center border-2 border-slate-400 bg-slate-800 text-white p-1.5 text-center shadow-md" onclick="event.stopPropagation(); showToast('Fotografie přepravy (>30 dní po HOTOVO) je uložena v archivu Hlavního PC')">
+                                    <span class="material-icons text-xl text-amber-300">inventory_2</span>
+                                    <span class="text-[9px] font-black leading-tight mt-1">ARCHIV V PC<br>(&gt;30 DNÍ)</span>
+                                </div>`
+                                : `<div class="w-[110px] h-[110px] aspect-square rounded-lg overflow-hidden flex-shrink-0 flex flex-col items-center justify-center border-2 border-dashed ${isVraceni ? 'bg-[#4C0519] border-rose-300' : 'bg-[#0F172A] border-sky-400/60'} shadow-md active:scale-95 transition-transform" onclick="event.stopPropagation(); quickPhotoForTransport('${t.id}')" title="Klepnutím vyfotíte přepravu">
+                                    <span class="material-icons text-2xl ${isVraceni ? 'text-rose-200' : 'text-[#38BDF8]'}">add_a_photo</span>
+                                    <span class="text-[9px] font-black text-white mt-0.5 tracking-wide">VYFOTIT</span>
+                                </div>`);
 
                         const iosInterniPoznamka = (t.internalNote || t.interniPoznamka || '').trim();
                         const isAlreadyHotovo = matchesAgendaStatusTabJs(t.status, 'HOTOVO');
@@ -10040,14 +10382,14 @@
                     }
 
                     const photoBoxHtml = mainPhoto
-                        ? `<div class="w-24 h-24 aspect-square rounded-lg overflow-hidden flex-shrink-0 relative border ${isVraceni ? 'border-[#881337]' : 'border-slate-300'} bg-slate-900 shadow-sm group" onclick="event.stopPropagation(); window.viewPhotoInNewTab('${mainPhoto}', '${t.id}')" title="Kliknutím zobrazíte a otočíte fotografii">
-                            <img src="${mainPhoto}" alt="Hlavní foto" class="w-full h-full object-cover aspect-square group-hover:scale-105 transition-transform duration-200">
+                        ? `<div class="w-24 h-24 aspect-square rounded-lg overflow-hidden flex-shrink-0 relative border ${isVraceni ? 'border-[#881337]' : 'border-slate-300'} bg-slate-900 shadow-sm group" onclick="event.stopPropagation(); window.viewPhotoInNewTab('${mainPhoto}', '${t.id}', 'preprava')" title="Kliknutím načtete plnou fotografii">
+                            <img src="${thumbPhotoSrc}" ${thumbKey ? `data-thumb-key="${thumbKey}"` : ''} loading="lazy" alt="Hlavní foto" class="w-full h-full object-cover aspect-square group-hover:scale-105 transition-transform duration-200">
                             <span class="absolute bottom-1 right-1 ${isVraceni ? 'bg-[#881337]/90' : 'bg-slate-900/80'} text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded shadow">📷 ${cPhotos.length}</span>
                             <button type="button" onclick="event.stopPropagation(); window.rotateTransportPhoto('${t.id}', 0, 90)" class="absolute top-1 left-1 h-6 px-1.5 rounded-md bg-black/80 hover:bg-black text-white flex items-center justify-center text-[10px] font-black shadow z-10 border border-white/20 active:scale-95 opacity-90 group-hover:opacity-100" title="Otočit fotografii o 90° doprava">↻ 90°</button>
                         </div>`
                         : `<div class="w-24 h-24 aspect-square rounded-lg overflow-hidden flex-shrink-0 flex flex-col items-center justify-center border ${isVraceni ? 'bg-[#4C0519] border-[#881337]' : 'bg-[#0F172A] border-[#1B5E8B]/40'} shadow-sm" title="Bez fotografie — kliknutím otevřete kartu">
                             <span class="material-icons text-2xl ${isVraceni ? 'text-rose-200' : 'text-sky-300'}">inventory_2</span>
-                            <span class="text-[10px] font-extrabold text-white/85 mt-0.5">FOTO</span>
+                            <span class="text-[10px] font-extrabold text-white/85 mt-0.5">${isArchived30d ? 'ARCHIV >30d' : 'FOTO'}</span>
                         </div>`;
 
                     grid._add = `<div onclick="openPrepravaModal('${t.id}')" class="${cardCls} rounded-xl shadow-md overflow-hidden cursor-pointer flex flex-col justify-between transition-all hover:shadow-lg">
@@ -10110,9 +10452,12 @@
                         const desigTxt = (t.designation || t.spz || '').trim();
                         const cPhotos = extractAllTransportPhotosForCard(t);
                         const mainPhoto = cPhotos[0] || '';
+                        const thumbKey = mainPhoto ? window.buildMobileThumbCacheKey('preprava', t.id, mainPhoto) : '';
+                        const thumbPhotoSrc = mainPhoto ? window.getMobileListThumbUri('preprava', t.id, mainPhoto, t.status, t.completedAt || t.timestamp) : '';
+                        const isArchived30d = Boolean(!mainPhoto && (t.photoArchivedInPc30d || window.isTransportExpiredPostHotovo30Days(t)));
                         const thumbCell = mainPhoto
-                            ? `<div class="w-7 h-7 aspect-square rounded bg-slate-900 overflow-hidden border border-slate-300 shadow-sm inline-flex items-center justify-center align-middle" onclick="event.stopPropagation(); viewPhotoInNewTab(this.src || this.querySelector('img')?.src || '')" title="Náhled hlavní foto (${cPhotos.length})"><img src="${mainPhoto}" class="w-full h-full object-cover aspect-square"></div>`
-                            : `<div class="w-7 h-7 aspect-square rounded bg-slate-900 text-white/80 text-[9px] font-extrabold inline-flex items-center justify-center align-middle" title="Bez foto"><span class="material-icons text-xs text-sky-300">inventory_2</span></div>`;
+                            ? `<div class="w-7 h-7 aspect-square rounded bg-slate-900 overflow-hidden border border-slate-300 shadow-sm inline-flex items-center justify-center align-middle" onclick="event.stopPropagation(); window.viewPhotoInNewTab('${mainPhoto}', '${t.id}', 'preprava')" title="Náhled miniatury (${cPhotos.length}) – kliknutím načtete plnou fotografii"><img src="${thumbPhotoSrc}" ${thumbKey ? `data-thumb-key="${thumbKey}"` : ''} loading="lazy" class="w-full h-full object-cover aspect-square"></div>`
+                            : `<div class="w-7 h-7 aspect-square rounded bg-slate-900 text-white/80 text-[9px] font-extrabold inline-flex items-center justify-center align-middle" title="${isArchived30d ? 'Fotografie v archivu PC (>30 dní po HOTOVO)' : 'Bez foto'}"><span class="material-icons text-xs ${isArchived30d ? 'text-amber-300' : 'text-sky-300'}">inventory_2</span></div>`;
                         body._add = `<tr class="${rowCls} cursor-pointer" onclick="openPrepravaModal('${t.id}')">
                             <td><div class="preprava-cell-clip font-extrabold text-[#0F3D5E] text-center" title="${datumPrepravy.replace(/"/g, '&quot;')}">${datumKratke}</div></td>
                             <td><div class="preprava-cell-clip font-bold text-slate-900" title="${fullCustTitle.replace(/"/g, '&quot;')}">${custTitleShort}</div></td>
@@ -10411,6 +10756,17 @@
                                 <button onclick="window.performUnifiedGitHubUpdate(true)" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow"><span class="material-icons text-sm">download</span> ZKONTROLOVAT A SPUSTIT AKTUALIZACI</button>
                                 <button onclick="window.openSwUpdateModal()" class="bg-slate-700 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl font-extrabold text-xs flex items-center gap-1.5 shadow"><span class="material-icons text-sm">settings_backup_restore</span> POKROČILÁ SPRÁVA VERZÍ</button>
                             </div>
+                        </div>
+                    </div>
+                    <div class="bg-emerald-50 border-2 border-emerald-400 rounded-xl p-4 space-y-3">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <h3 class="text-sm font-black text-emerald-950 flex items-center gap-1.5"><span class="material-icons text-base text-emerald-700">photo_size_select_large</span> Lokální cache miniatur (Přeprava & Kontejnery • expirace 30 dní po HOTOVO)</h3>
+                            <span class="bg-white border border-emerald-300 text-emerald-900 px-2.5 py-1 rounded-lg text-xs font-extrabold">Miniatury v paměti: ${(window._mobileThumbMemoryMap && window._mobileThumbMemoryMap.size) || 0} • Uvolněno &gt;30 dní po HOTOVO: ${localStorage.getItem('ko_mobile_thumb_pruned_count') || 0}</span>
+                        </div>
+                        <p class="text-xs text-slate-700 font-medium">V seznamech a na kartách sekcí <b>Přeprava</b> a <b>Kontejnery</b> se vykreslují lehké miniatury (240×240 px) a plná fotografie se načítá až po rozkliknutí detailu. U přeprav ve stavu <b>HOTOVO</b> se lokální fotky v mobilních aplikacích automaticky vymažou po <b>30 dnech</b> od dokončení (v Hlavním PC zůstávají uložené trvale).</p>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="window.warmUpMobileThumbnailsCache(true)" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl font-black text-xs flex items-center gap-1.5 shadow"><span class="material-icons text-sm">bolt</span> PŘEDGENEROVAT MINIATURY NYNÍ</button>
+                            <button onclick="window.pruneExpiredMobileTransportPhotos(true)" class="bg-teal-700 hover:bg-teal-800 text-white px-4 py-2 rounded-xl font-extrabold text-xs flex items-center gap-1.5 shadow"><span class="material-icons text-sm">cleaning_services</span> VYČISTIT FOTKY HOTOVO &gt; 30 DNÍ</button>
                         </div>
                     </div>
                 </div>`;
@@ -16078,11 +16434,16 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
             showToast('Fotografie byla odstraněna');
         };
 
-        window.viewPhotoInNewTab = (src) => {
-            if (!src) return;
+        window.viewPhotoInNewTab = (src, tId = null, recordType = 'preprava') => {
+            const fullSrc = window.resolveFullResolutionPhotoUri ? window.resolveFullResolutionPhotoUri(src, tId, recordType) : src;
+            if (!fullSrc) return;
+            if (typeof window.openPhotoViewerModal === 'function') {
+                window.openPhotoViewerModal(fullSrc, tId);
+                return;
+            }
             const w = window.open('');
             if (w) {
-                w.document.write(`<title>Náhled fotografie kontejneru</title><body style="margin:0;background:#0f172a;display:flex;align-items:center;justify-content:center;height:100vh;"><img src="${src}" style="max-width:98vw;max-height:98vh;object-fit:contain;border-radius:8px;box-shadow:0 10px 25px rgba(0,0,0,0.5);"></body>`);
+                w.document.write(`<title>Náhled fotografie kontejneru</title><body style="margin:0;background:#0f172a;display:flex;align-items:center;justify-content:center;height:100vh;"><img src="${fullSrc}" style="max-width:98vw;max-height:98vh;object-fit:contain;border-radius:8px;box-shadow:0 10px 25px rgba(0,0,0,0.5);"></body>`);
             }
         };
 
@@ -17440,7 +17801,7 @@ function buildShareTextSummary(type, id) {
     </script>
 
     <!-- ============================================================================ -->
-    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v439)      -->
+    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v440)      -->
     <!-- Zkrácená verze Přepravy: ostatní agendy jsou na iPhonu kompletně skryté.     -->
     <!-- ============================================================================ -->
     <style id="iphoneAppStyles">
