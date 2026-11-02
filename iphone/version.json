@@ -5,17 +5,5 @@
   "versionBadge": "v 418",
   "releaseDate": "2.11.2026",
   "maxKeptVersions": 3,
-  "keptVersions": ["v418","v417","v416"],
-  "files": [
-    "iphone/iphone.html",
-    "iphone/Kontejnery_iPhone_v418.html",
-    "iphone/Kontejnery_iPhone_v417.html",
-    "iphone/Kontejnery_iPhone_v416.html",
-    "iphone/Kontejnery_Preprava_iPhone_v418.ipa",
-    "iphone/Kontejnery_Preprava_iPhone_v417.ipa",
-    "iphone/Kontejnery_Preprava_iPhone_v416.ipa",
-    "iphone/Kontejnery_iPhone_v418.mobileconfig",
-    "iphone/Kontejnery_iPhone_v417.mobileconfig",
-    "iphone/Kontejnery_iPhone_v416.mobileconfig"
-  ]
+  "keptVersions": ["v418","v417","v416"]
 }
