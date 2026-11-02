@@ -1666,13 +1666,13 @@
         </div>
     </div>
 
-    <!-- MODAL: DOKONČENÍ PŘEPRAVY (HOTOVO) DLE PŘEDLOHY -->
+        <!-- MODAL: DOKONČENÍ PŘEPRAVY (HOTOVO) DLE PŘEDLOHY -->
     <div id="transportCompleteModal" class="modal fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
         <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-200 my-auto animate-in fade-in duration-150">
             <!-- Záhlaví: Zelený pruh s fajfkou a křížkem -->
-            <div class="bg-[#15803D] text-white px-4 py-3.5 flex justify-between items-center shadow-md">
+            <div class="bg-[#15803D] text-white px-4 py-3 flex justify-between items-center shadow-md">
                 <div class="flex items-center gap-2.5">
-                    <span class="w-8 h-8 rounded-full bg-white text-[#15803D] flex items-center justify-center font-black shadow-sm">
+                    <span class="w-7 h-7 rounded-full bg-white text-[#15803D] flex items-center justify-center font-black shadow-sm">
                         <span class="material-icons text-xl font-black">check</span>
                     </span>
                     <h3 class="font-black text-lg tracking-wide uppercase">DOKONČENÍ PŘEPRAVY</h3>
@@ -1683,43 +1683,43 @@
             </div>
 
             <!-- Tělo dialogu: 4 číslované karty -->
-            <div class="p-4 space-y-3.5 max-h-[85vh] overflow-y-auto">
-                <!-- 1. DATUM PŘEPRAVY (Zelený rámeček) -->
-                <div class="relative rounded-2xl border-2 border-[#166534] bg-[#f0fdf4] p-3.5 shadow-sm cursor-pointer active:scale-[0.99] transition">
-                    <span class="block text-xs font-black text-[#15803d] uppercase tracking-wide">1. DATUM PŘEPRAVY</span>
-                    <div id="completeTransportDateDisplay" class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1">01.11.2026 • NEDĚLE</div>
+            <div class="p-4 space-y-3 max-h-[85vh] overflow-y-auto">
+                <!-- 1. DATUM PŘEPRAVY (Zelený rámeček dle Androidu) -->
+                <div class="relative rounded-xl border-2 border-[#15803D] bg-[#ECFDF5] p-3 shadow-sm cursor-pointer active:scale-[0.99] transition">
+                    <span class="block text-[11px] font-black text-[#15803D] uppercase tracking-wide">1. DATUM PŘEPRAVY</span>
+                    <div id="completeTransportDateDisplay" class="text-xl sm:text-2xl font-black text-[#0F172A] tracking-tight mt-0.5">01.11.2026 • NEDĚLE</div>
                     <!-- Nativní datepicker pokrývající celou kartu pro jednoduché kliknutí v iOS i na PC -->
                     <input type="date" id="completeTransportDateInput" onchange="onCompleteTransportDateChange(this.value)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10">
                 </div>
 
-                <!-- 2. FIRMA + LOKALITA (Modrý rámeček) -->
-                <div class="rounded-2xl border-2 border-[#0284c7] bg-white p-3.5 shadow-sm">
-                    <span class="block text-xs font-black text-[#0369a1] uppercase tracking-wide">2. FIRMA + LOKALITA</span>
-                    <div class="grid grid-cols-2 gap-2.5 mt-2">
-                        <input type="text" id="completeTransportCompanyInput" class="w-full h-12 px-3 rounded-xl border border-slate-300 font-extrabold text-slate-900 text-sm focus:border-[#0284c7] outline-none shadow-inner" placeholder="Firma">
-                        <input type="text" id="completeTransportLocalityInput" class="w-full h-12 px-3 rounded-xl border border-slate-300 font-extrabold text-slate-900 text-sm focus:border-[#0284c7] outline-none shadow-inner" placeholder="Lokalita">
+                <!-- 2. FIRMA + LOKALITA (Modrý rámeček dle Androidu) -->
+                <div class="rounded-xl border-2 border-[#0284C7] bg-white p-3 shadow-sm">
+                    <span class="block text-[11px] font-black text-[#0284C7] uppercase tracking-wide">2. FIRMA + LOKALITA</span>
+                    <div class="grid grid-cols-2 gap-2 mt-1.5">
+                        <input type="text" id="completeTransportCompanyInput" class="w-full h-11 px-3 rounded-lg border border-slate-300 font-extrabold text-[#0F172A] text-sm focus:border-[#0284C7] outline-none shadow-sm" placeholder="Firma / Zákazník">
+                        <input type="text" id="completeTransportLocalityInput" class="w-full h-11 px-3 rounded-lg border border-slate-300 font-extrabold text-[#0F172A] text-sm focus:border-[#0284C7] outline-none shadow-sm" placeholder="Lokalita">
                     </div>
                 </div>
 
-                <!-- 3. PŘEPRAVCE (Oranžový rámeček) -->
-                <div class="rounded-2xl border-2 border-[#ea580c] bg-white p-3.5 shadow-sm">
-                    <span class="block text-xs font-black text-[#c2410c] uppercase tracking-wide">3. PŘEPRAVCE</span>
-                    <div class="mt-2 space-y-2.5">
-                        <select id="completeTransportCarrierSelect" onchange="if(this.value==='__CUSTOM__') window.onCustomCarrierCompletePrompt()" class="w-full h-12 px-3 rounded-xl border border-slate-300 bg-white font-extrabold text-slate-900 text-sm focus:border-[#ea580c] outline-none shadow-sm cursor-pointer">
+                <!-- 3. PŘEPRAVCE (Oranžový rámeček dle Androidu) -->
+                <div class="rounded-xl border-2 border-[#EA580C] bg-white p-3 shadow-sm">
+                    <span class="block text-[11px] font-black text-[#EA580C] uppercase tracking-wide">3. PŘEPRAVCE</span>
+                    <div class="mt-1.5 space-y-2">
+                        <select id="completeTransportCarrierSelect" onchange="if(this.value==='__CUSTOM__') window.onCustomCarrierCompletePrompt()" class="w-full h-11 px-3 rounded-lg border border-slate-300 bg-white font-extrabold text-[#0F172A] text-sm focus:border-[#EA580C] outline-none shadow-sm cursor-pointer">
                             <option value="Kontejnery Autodoprava">Kontejnery Autodoprava</option>
                             <option value="Kontejnery Ostrava">Kontejnery Ostrava</option>
                             <option value="Externí smluvní dopravce">Externí smluvní dopravce</option>
                             <option value="__CUSTOM__">+ Dopsat jiného přepravce...</option>
                         </select>
-                        <div class="grid grid-cols-2 gap-2.5">
-                            <select id="completeTransportVehicleSelect" onchange="if(this.value==='__CUSTOM__') window.onCustomVehicleCompletePrompt()" class="w-full h-12 px-3 rounded-xl border border-slate-300 bg-white font-extrabold text-slate-900 text-sm focus:border-[#ea580c] outline-none shadow-sm cursor-pointer">
+                        <div class="grid grid-cols-2 gap-2">
+                            <select id="completeTransportVehicleSelect" onchange="if(this.value==='__CUSTOM__') window.onCustomVehicleCompletePrompt()" class="w-full h-11 px-3 rounded-lg border border-slate-300 bg-white font-extrabold text-[#0F172A] text-sm focus:border-[#EA580C] outline-none shadow-sm cursor-pointer">
                                 <option value="MAN">MAN</option>
                                 <option value="Volvo">Volvo</option>
                                 <option value="Scania">Scania</option>
                                 <option value="Mercedes">Mercedes</option>
                                 <option value="__CUSTOM__">+ Dopsat jiné vozidlo...</option>
                             </select>
-                            <select id="completeTransportDriverSelect" onchange="if(this.value==='__CUSTOM__') window.onCustomDriverCompletePrompt()" class="w-full h-12 px-3 rounded-xl border border-slate-300 bg-white font-extrabold text-slate-900 text-sm focus:border-[#ea580c] outline-none shadow-sm cursor-pointer">
+                            <select id="completeTransportDriverSelect" onchange="if(this.value==='__CUSTOM__') window.onCustomDriverCompletePrompt()" class="w-full h-11 px-3 rounded-lg border border-slate-300 bg-white font-extrabold text-[#0F172A] text-sm focus:border-[#EA580C] outline-none shadow-sm cursor-pointer">
                                 <option value="Martin">Martin</option>
                                 <option value="Petr">Petr</option>
                                 <option value="Pavel">Pavel</option>
@@ -1730,18 +1730,21 @@
                     </div>
                 </div>
 
-                <!-- 4. VLOŽIT FOTOGRAFIE Z PŘEPRAVY (MAX. 3) (Tyrkysový/zelený rámeček) -->
-                <div class="rounded-2xl border-2 border-[#0f766e] bg-white p-3.5 shadow-sm">
-                    <span class="block text-xs font-black text-[#0f766e] uppercase tracking-wide">4. VLOŽIT FOTOGRAFIE Z PŘEPRAVY (MAX. 3)</span>
-                    <div id="completeTransportPhotoSlots" class="grid grid-cols-3 gap-2 mt-2.5 mb-2.5">
+                <!-- 4. VLOŽIT FOTOGRAFIE Z PŘEPRAVY (MAX. 3) (Tyrkysový rámeček dle Androidu) -->
+                <div class="rounded-xl border-2 border-[#0F766E] bg-white p-3 shadow-sm">
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span class="block text-[11px] font-black text-[#0F766E] uppercase tracking-wide">4. VLOŽIT FOTOGRAFIE Z PŘEPRAVY (MAX. 3)</span>
+                        <span id="completeTransportPhotoCount" class="text-xs font-black text-[#0F766E]">0/3</span>
+                    </div>
+                    <div id="completeTransportPhotoSlots" class="grid grid-cols-3 gap-2 mb-2">
                         <!-- Vykresluje se dynamicky z JS: Foto 1/3, Foto 2/3, Foto 3/3 -->
                     </div>
-                    <div class="grid grid-cols-2 gap-2.5 pt-1">
-                        <button type="button" onclick="triggerCompletePhotoCamera()" class="h-12 rounded-xl bg-[#0f766e] hover:bg-[#115e59] active:scale-95 text-white font-black text-xs uppercase flex items-center justify-center gap-1.5 shadow transition">
-                            <span class="material-icons text-lg">photo_camera</span> FOTIT
+                    <div class="grid grid-cols-2 gap-2 pt-0.5">
+                        <button type="button" onclick="triggerCompletePhotoCamera()" class="h-11 rounded-lg bg-[#0F766E] hover:bg-[#115E59] active:scale-95 text-white font-black text-xs uppercase flex items-center justify-center gap-1.5 shadow transition">
+                            <span class="material-icons text-base">photo_camera</span> FOTIT
                         </button>
-                        <button type="button" onclick="triggerCompletePhotoGallery()" class="h-12 rounded-xl border-2 border-[#0f766e] text-[#0f766e] hover:bg-teal-50 active:scale-95 font-black text-xs uppercase flex items-center justify-center gap-1.5 shadow-sm transition">
-                            <span class="material-icons text-lg">photo_library</span> GALERIE
+                        <button type="button" onclick="triggerCompletePhotoGallery()" class="h-11 rounded-lg border-2 border-[#0F766E] bg-[#F0FDFA] text-[#0F766E] hover:bg-teal-100 active:scale-95 font-black text-xs uppercase flex items-center justify-center gap-1.5 shadow-sm transition">
+                            <span class="material-icons text-base">photo_library</span> GALERIE
                         </button>
                     </div>
                     <input type="file" id="completePhotoCameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleCompletePhotoUpload(this)">
@@ -1750,11 +1753,11 @@
 
                 <!-- Tlačítka dole: HOTOVO a ZRUŠIT -->
                 <div class="space-y-2 pt-1">
-                    <button type="button" onclick="confirmCompleteTransport()" class="w-full h-14 btn-hotovo-3d text-white text-base font-black rounded-2xl flex items-center justify-center gap-2 shadow-lg">
+                    <button type="button" onclick="confirmCompleteTransport()" class="w-full h-12 btn-hotovo-3d text-white text-base font-black rounded-xl flex items-center justify-center gap-2 shadow-lg">
                         <span class="material-icons text-2xl">check_circle</span>
                         <span>HOTOVO</span>
                     </button>
-                    <button type="button" onclick="closeTransportCompleteModal()" class="w-full h-11 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black rounded-xl flex items-center justify-center transition">
+                    <button type="button" onclick="closeTransportCompleteModal()" class="w-full h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black rounded-xl flex items-center justify-center transition">
                         <span>ZRUŠIT</span>
                     </button>
                 </div>
@@ -7085,8 +7088,24 @@
             }
         };
 
-        window._activeCompleteTransportId = null;
+                window._activeCompleteTransportId = null;
         window._completeModalPhotos = [];
+
+        window.getCurrentDateCzechFormatted = () => {
+            const now = new Date();
+            const da = now.getDate();
+            const mo = now.getMonth() + 1;
+            const yr = now.getFullYear();
+            const dayNames = ['NEDĚLE', 'PONDĚLÍ', 'ÚTERÝ', 'STŘEDA', 'ČTVRTEK', 'PÁTEK', 'SOBOTA'];
+            const dayName = dayNames[now.getDay()] || 'NEDĚLE';
+            const dd = String(da).padStart(2, '0');
+            const mm = String(mo).padStart(2, '0');
+            return {
+                iso: `${yr}-${mm}-${dd}`,
+                cz: `${dd}.${mm}.${yr}`,
+                dayName: dayName
+            };
+        };
 
         window.triggerCompletePhotoCamera = () => {
             const inp = document.getElementById('completePhotoCameraInput');
@@ -7134,23 +7153,25 @@
         window.renderCompleteModalPhotoSlots = () => {
             const container = document.getElementById('completeTransportPhotoSlots');
             if (!container) return;
-            const slots = [];
             const photos = window._completeModalPhotos || [];
+            const countEl = document.getElementById('completeTransportPhotoCount');
+            if (countEl) countEl.textContent = `${photos.length}/3`;
+            const slots = [];
             for (let i = 0; i < 3; i++) {
                 const photo = photos[i];
                 if (photo) {
                     slots.push(`
-                        <div class="relative h-24 rounded-2xl overflow-hidden border-2 border-[#0f766e] bg-slate-900 shadow-sm group">
+                        <div class="relative h-[86px] rounded-xl overflow-hidden border-2 border-[#0F766E] bg-slate-900 shadow-sm group cursor-pointer" onclick="viewPhotoInNewTab('${photo}')">
                             <img src="${photo}" alt="Foto ${i + 1}" class="w-full h-full object-cover">
-                            <button type="button" onclick="window.removeCompleteModalPhoto(${i})" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-rose-600 hover:bg-rose-700 text-white flex items-center justify-center text-xs font-black shadow z-10">✕</button>
-                            <span class="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-black/75 text-white text-[10px] font-black">Foto ${i + 1}/3</span>
+                            <button type="button" onclick="event.stopPropagation(); window.removeCompleteModalPhoto(${i})" class="absolute top-1 right-1 w-6 h-6 rounded-md bg-[#881337] hover:bg-rose-700 text-white flex items-center justify-center text-xs font-black shadow z-10" title="Smazat foto">✕</button>
+                            <span class="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-black/80 text-white text-[9px] font-black">${i + 1}/3</span>
                         </div>
                     `);
                 } else {
                     slots.push(`
-                        <div onclick="window.triggerCompletePhotoCamera()" class="h-24 rounded-2xl border-2 border-dashed border-teal-300 bg-teal-50/60 flex flex-col items-center justify-center text-[#0f766e] cursor-pointer hover:bg-teal-100/60 active:scale-95 transition">
-                            <span class="material-icons text-2xl">add_a_photo</span>
-                            <span class="text-[11px] font-black mt-1">Foto ${i + 1}/3</span>
+                        <div onclick="window.triggerCompletePhotoCamera()" class="h-[86px] rounded-xl border border-[#0F766E]/50 bg-[#F0FDFA] flex flex-col items-center justify-center text-[#0F766E] cursor-pointer hover:bg-teal-100/70 active:scale-95 transition shadow-sm" title="Klepnutím vložíte foto ${i + 1}">
+                            <span class="material-icons text-2xl text-[#0F766E]/75">add_a_photo</span>
+                            <span class="text-[10px] font-bold text-[#0F766E]/90 mt-1">Foto ${i + 1}/3</span>
                         </div>
                     `);
                 }
@@ -7167,7 +7188,7 @@
             const da = Number(m[3]);
             const d = new Date(yr, mo - 1, da);
             const dayNames = ['NEDĚLE', 'PONDĚLÍ', 'ÚTERÝ', 'STŘEDA', 'ČTVRTEK', 'PÁTEK', 'SOBOTA'];
-            const dayName = !isNaN(d.getTime()) ? dayNames[d.getDay()] : '';
+            const dayName = !isNaN(d.getTime()) ? dayNames[d.getDay()] : 'NEDĚLE';
             const dd = String(da).padStart(2, '0');
             const mm = String(mo).padStart(2, '0');
             const cz = `${dd}.${mm}.${yr}`;
@@ -7193,7 +7214,7 @@
             const today = window.getCurrentDateCzechFormatted();
             let initialIso = today.iso;
             let initialCz = today.cz;
-            let initialDayName = today.dayName ? today.dayName.toUpperCase() : 'NEDĚLE';
+            let initialDayName = today.dayName;
 
             const existingDate = (t.transportDate || t.dateText || t.date || '').trim();
             const czMatch = existingDate.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})/);
@@ -7204,7 +7225,7 @@
                 const d = new Date(yr, mo - 1, da);
                 if (!isNaN(d.getTime())) {
                     const dayNames = ['NEDĚLE', 'PONDĚLÍ', 'ÚTERÝ', 'STŘEDA', 'ČTVRTEK', 'PÁTEK', 'SOBOTA'];
-                    initialDayName = dayNames[d.getDay()];
+                    initialDayName = dayNames[d.getDay()] || initialDayName;
                     initialIso = `${yr}-${String(mo).padStart(2, '0')}-${String(da).padStart(2, '0')}`;
                     initialCz = `${String(da).padStart(2, '0')}.${String(mo).padStart(2, '0')}.${yr}`;
                 }
@@ -7245,62 +7266,24 @@
 
             // Fotografie (max. 3)
             const existingPhotos = Array.isArray(t.photos) ? [...t.photos] : (t.photo ? [t.photo] : []);
-            window._completeModalPhotos = existingPhotos.slice(0, 3);
+            window._completeModalPhotos = existingPhotos.filter(Boolean).slice(0, 3);
             window.renderCompleteModalPhotoSlots();
 
             const modal = document.getElementById('transportCompleteModal');
-            if (modal) modal.classList.remove('hidden');
-        };
-
-        window.ensureSelectHasOption = (selectEl, val) => {
-            if (!selectEl || !val) return;
-            const exists = Array.from(selectEl.options).some(o => o.value === val);
-            if (!exists) {
-                const opt = document.createElement('option');
-                opt.value = val;
-                opt.textContent = val;
-                const customOpt = selectEl.querySelector('option[value="__CUSTOM__"]');
-                if (customOpt) selectEl.insertBefore(opt, customOpt);
-                else selectEl.appendChild(opt);
-            }
-        };
-
-        window.onCustomCarrierCompletePrompt = () => {
-            const val = prompt('Zadejte název přepravce:', '');
-            const sel = document.getElementById('completeTransportCarrierSelect');
-            if (val && val.trim()) {
-                window.ensureSelectHasOption(sel, val.trim());
-                sel.value = val.trim();
-            } else if (sel) {
-                sel.value = 'Kontejnery Autodoprava';
-            }
-        };
-
-        window.onCustomVehicleCompletePrompt = () => {
-            const val = prompt('Zadejte označení / SPZ vozidla:', '');
-            const sel = document.getElementById('completeTransportVehicleSelect');
-            if (val && val.trim()) {
-                window.ensureSelectHasOption(sel, val.trim());
-                sel.value = val.trim();
-            } else if (sel) {
-                sel.value = localStorage.getItem('ko_ios_favorite_vehicle') || 'MAN';
-            }
-        };
-
-        window.onCustomDriverCompletePrompt = () => {
-            const val = prompt('Zadejte jméno řidiče:', '');
-            const sel = document.getElementById('completeTransportDriverSelect');
-            if (val && val.trim()) {
-                window.ensureSelectHasOption(sel, val.trim());
-                sel.value = val.trim();
-            } else if (sel) {
-                sel.value = localStorage.getItem('ko_iphone_driver_name') || 'Martin';
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.style.display = 'flex';
+                modal.style.visibility = 'visible';
+                modal.style.pointerEvents = 'auto';
             }
         };
 
         window.closeTransportCompleteModal = () => {
             const modal = document.getElementById('transportCompleteModal');
-            if (modal) modal.classList.add('hidden');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.style.display = 'none';
+            }
             window._activeCompleteTransportId = null;
             window._completeModalPhotos = [];
         };
@@ -7326,15 +7309,16 @@
             const finalVehicle = document.getElementById('completeTransportVehicleSelect')?.value || 'MAN';
             const finalDriver = document.getElementById('completeTransportDriverSelect')?.value || 'Martin';
 
-            // Spojení fotek: zachovat původní a přidat nově nahrané z modálu
-            const existingPhotos = Array.isArray(t.photos) ? [...t.photos] : (t.photo ? [t.photo] : []);
-            const modalPhotos = window._completeModalPhotos || [];
-            for (const p of modalPhotos) {
-                if (!existingPhotos.includes(p)) {
-                    existingPhotos.unshift(p);
+            // Spojení fotek: nově nahrané z modálu mají prioritu, doplněné do max 3
+            const modalPhotos = (window._completeModalPhotos || []).filter(Boolean);
+            const existingPhotos = Array.isArray(t.photos) ? [...t.photos].filter(Boolean) : (t.photo ? [t.photo] : []);
+            const mergedPhotos = [...modalPhotos];
+            for (const p of existingPhotos) {
+                if (!mergedPhotos.includes(p) && mergedPhotos.length < 3) {
+                    mergedPhotos.push(p);
                 }
             }
-            const primaryPhoto = modalPhotos[0] || existingPhotos[0] || '';
+            const primaryPhoto = mergedPhotos[0] || '';
 
             const updated = {
                 ...t,
@@ -7352,7 +7336,7 @@
                 spz: finalVehicle,
                 vehicle: finalVehicle,
                 driver: finalDriver,
-                photos: existingPhotos,
+                photos: mergedPhotos,
                 photo: primaryPhoto,
                 containerImageUri: primaryPhoto,
                 completedAt: Date.now(),
@@ -7361,8 +7345,12 @@
 
             upsert('transports', allTransports, t.id, updated);
             window.closeTransportCompleteModal();
-            renderCurrentView();
-            showToast(`Přeprava uložena mezi hotové (${finalVehicle} • ${finalDriver})`);
+            if (typeof window.iosFilterPrepravaStatus === 'function') {
+                window.iosFilterPrepravaStatus('HOTOVO');
+            } else {
+                renderCurrentView();
+            }
+            showToast(`Přeprava dokončena a uložena do Hotové (${finalVehicle} • ${finalDriver})`);
         };
 
         window.quickSetAgendaStatus = (agendaType, id, newStatus) => {
