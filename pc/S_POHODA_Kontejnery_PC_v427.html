@@ -3032,9 +3032,9 @@ try {
             });
             allCustomers = [...map.values()];
             saveLocal('customers', allCustomers);
-            updateAdresarBadge();
-            renderCurrentView();
-            showToast(`Adresář načten: ${allCustomers.filter(c => c.isAdresar !== false).length} firem a kontaktů`);
+            if (typeof window.updateAdresarBadge === 'function') window.updateAdresarBadge();
+            if (typeof window.renderCurrentView === 'function') window.renderCurrentView();
+            if (typeof window.showToast === 'function') window.showToast(`Adresář načten: ${allCustomers.filter(c => c.isAdresar !== false).length} firem a kontaktů`);
         };
 
         if (allCustomers.filter(c => c.isAdresar).length < 1000) {
@@ -3119,7 +3119,7 @@ try {
         let currentDepo = 'Depo 1', currentTab = (!window.IS_PC_APP && (window.FORCE_IPHONE_APP_MODE || (/iPhone|iPod|iPad/i.test(navigator.userAgent || '') && !window.IS_PC_APP) || localStorage.getItem('ko_ios_app_mode') === '1')) ? 'preprava' : 'objednavky', currentViewMode = 'grid', currentPolozkyFilter = 'VŠE';
         let currentZakazkaId = null, currentNabidkaId = null, currentFakturaId = null, currentFakturaIsZalohova = false, currentCustomerId = null, currentOrderId = null, currentContainerId = null, currentTransportId = null, currentPolozkaId = null, pendingPohodaNabidky = [], pendingPohodaMode = 'nabidky', pendingPohodaFaktury = [], pendingPohodaIsZalohova = false;
 
-        window.showToast = (msg) => {
+        var showToast = window.showToast = (msg) => {
             const el = document.getElementById('toastNotification');
             const msgEl = document.getElementById('toastMessage');
             if (msgEl) msgEl.innerText = msg;
@@ -8038,11 +8038,20 @@ try {
             const defMap = window.AGENDA_DEFAULT_COL_WIDTHS[tableKey] || {};
             if (!window.agendaColWidths[tableKey]) window.agendaColWidths[tableKey] = Object.assign({}, defMap);
             if (tableKey === 'preprava') {
-                if (window.agendaColWidths.preprava.datum > 80) window.agendaColWidths.preprava.datum = 70;
-                if (window.agendaColWidths.preprava.firma > 95) window.agendaColWidths.preprava.firma = 85;
-                if (window.agendaColWidths.preprava.lokalita > 95) window.agendaColWidths.preprava.lokalita = 85;
-                if (window.agendaColWidths.preprava.druh > 110) window.agendaColWidths.preprava.druh = 90;
-                if (window.agendaColWidths.preprava.foto > 60) window.agendaColWidths.preprava.foto = 55;
+                const isIosMode = document.body.classList.contains('ios-app-mode') || window.FORCE_IPHONE_APP_MODE === true;
+                if (isIosMode) {
+                    if (window.agendaColWidths.preprava.datum > 80) window.agendaColWidths.preprava.datum = 70;
+                    if (window.agendaColWidths.preprava.firma > 95) window.agendaColWidths.preprava.firma = 85;
+                    if (window.agendaColWidths.preprava.lokalita > 95) window.agendaColWidths.preprava.lokalita = 85;
+                    if (window.agendaColWidths.preprava.druh > 110) window.agendaColWidths.preprava.druh = 90;
+                    if (window.agendaColWidths.preprava.foto > 60) window.agendaColWidths.preprava.foto = 55;
+                } else {
+                    if (window.agendaColWidths.preprava.datum < 110) window.agendaColWidths.preprava.datum = 135;
+                    if (window.agendaColWidths.preprava.firma < 150) window.agendaColWidths.preprava.firma = 220;
+                    if (window.agendaColWidths.preprava.lokalita < 150) window.agendaColWidths.preprava.lokalita = 210;
+                    if (window.agendaColWidths.preprava.druh < 140) window.agendaColWidths.preprava.druh = 180;
+                    if (window.agendaColWidths.preprava.foto < 65) window.agendaColWidths.preprava.foto = 75;
+                }
             }
             return Number(window.agendaColWidths[tableKey][colKey] || defMap[colKey] || 120);
         };
@@ -8154,7 +8163,7 @@ try {
             }
         };
 
-        window.renderCurrentView = () => {
+        var renderCurrentView = window.renderCurrentView = () => {
             const grid = document.getElementById('dynamicGrid'), list = document.getElementById('dynamicList'), head = document.getElementById('listHead'), body = document.getElementById('listBody'), bar = document.getElementById('containerFilterBar');
             const colGroup = document.getElementById('listColGroup'), mainTbl = document.getElementById('mainDataTable');
             if (colGroup) colGroup.innerHTML = '';
@@ -9282,11 +9291,13 @@ try {
                             : `<span class="bg-[#1B5E8B] text-white text-[10px] font-black px-1.5 py-0.5 rounded align-middle">EXPEDICE</span>`;
                         const datumPrepravy = (t.transportDate || t.dateText || t.date || '').trim() || '—';
                         const mDate = datumPrepravy.match(/^(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{2,4})/);
-                        const datumKratke = mDate ? `${mDate[1].padStart(2, '0')}.${mDate[2].padStart(2, '0')}.${mDate[3].length === 4 ? mDate[3].slice(2) : mDate[3]}` : datumPrepravy;
+                        const datumKratke = isIosDriverMode
+                            ? (mDate ? `${mDate[1].padStart(2, '0')}.${mDate[2].padStart(2, '0')}.${mDate[3].length === 4 ? mDate[3].slice(2) : mDate[3]}` : datumPrepravy)
+                            : datumPrepravy;
                         const fullCustTitle = (t.customerCompany || t.company || t.customerName || '').trim() || '—';
-                        const custTitleShort = fullCustTitle.length > 10 ? fullCustTitle.slice(0, 10) : fullCustTitle;
+                        const custTitleShort = (isIosDriverMode && fullCustTitle.length > 10) ? fullCustTitle.slice(0, 10) : fullCustTitle;
                         const fullLokalita = (t.destinationLocation || t.customerAddress || '').trim() || '—';
-                        const lokalitaShort = fullLokalita.length > 10 ? fullLokalita.slice(0, 10) : fullLokalita;
+                        const lokalitaShort = (isIosDriverMode && fullLokalita.length > 10) ? fullLokalita.slice(0, 10) : fullLokalita;
                         const desigTxt = (t.designation || t.spz || '').trim();
                         const cPhotos = extractAllTransportPhotosForCard(t);
                         const mainPhoto = cPhotos[0] || '';
