@@ -1,14 +1,6 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-    <script id="iphoneModeGuardScript">
-window.FORCE_IPHONE_APP_MODE = true;
-window.IS_PC_APP = false;
-try {
-    localStorage.setItem("ko_ios_app_mode", "1");
-    localStorage.setItem("ko_ios_role", "PŘEPRAVCE");
-} catch(e){}
-</script>
     <script id="appEnvironmentInitScript">
         (function() {
             try {
@@ -23,7 +15,7 @@ try {
                     window.IS_PC_APP = false;
                     localStorage.setItem('ko_ios_app_mode', '1');
                 } else {
-                    window.IS_PC_APP = true;
+                    window.IS_PC_APP = false;
                     window.FORCE_IPHONE_APP_MODE = false;
                     localStorage.setItem('ko_ios_app_mode', '0');
                     sessionStorage.removeItem('ko_iphone_session_active');
@@ -122,8 +114,15 @@ try {
         .bg-\[\#052E16\] { background-color: #052E16 !important; }
         .border-\[\#022C22\] { border-color: #022C22 !important; }
     </style>
+    <script>
+        window.FORCE_IPHONE_APP_MODE = true;
+        try {
+            localStorage.setItem('ko_ios_app_mode', '1');
+            localStorage.setItem('ko_ios_role', 'PŘEPRAVCE');
+        } catch(e) {}
+    </script>
 </head>
-<body id="appBody" class="ios-app-mode flex flex-col h-screen overflow-hidden relative bg-[#e6eff7]">
+<body id="appBody" class="flex flex-col h-screen overflow-hidden relative bg-[#e6eff7]">
 
     <!-- PŘIHLÁŠENÍ DO APLIKACE ERP & MOBIL -->
     <div id="loginOverlay" class="fixed inset-0 bg-gradient-to-b from-[#0F172A] via-[#0A2E6E] to-[#0F172A] z-[9999] flex flex-col items-center justify-center text-white p-4 overflow-y-auto">
@@ -141,7 +140,7 @@ try {
             </div>
 
             <!-- Přepínač PC vs Řidič -->
-            <div id="loginTabsContainer" style="display:none" class="hidden grid grid-cols-2 gap-1.5 p-1 bg-slate-800/90 border border-slate-700/80 rounded-xl w-full mb-3.5">
+            <div id="loginTabsContainer" class="grid grid-cols-2 gap-1.5 p-1 bg-slate-800/90 border border-slate-700/80 rounded-xl w-full mb-3.5">
                 <button type="button" id="tabBtnPcLogin" onclick="window.switchLoginTab('pc')" class="py-2 text-xs font-black rounded-lg transition-all bg-[#0284C7] text-white shadow-md flex items-center justify-center gap-1.5 cursor-pointer">
                     <span class="material-icons text-sm">desktop_windows</span> PC / ERP
                 </button>
@@ -156,7 +155,7 @@ try {
             <div id="loginErrorBox" class="hidden"></div>
 
             <!-- FORMULÁŘ 1: PC / ERP PŘIHLÁŠENÍ (PREMA / MARKÉTA) -->
-            <div id="pcLoginForm" style="display:none" class="w-full space-y-3 hidden">
+            <div id="pcLoginForm" class="w-full space-y-3">
                 <div class="text-left">
                     <label class="block text-[11px] font-black text-sky-200 uppercase tracking-wider mb-1 px-1">Přihlašovací jméno</label>
                     <div class="relative">
@@ -199,7 +198,7 @@ try {
             </div>
 
             <!-- FORMULÁŘ 2: ŘIDIČ MOBILNÍ / IPHONE APLIKACE -->
-            <div id="driverLoginForm" style="display:block" class="w-full space-y-3">
+            <div id="driverLoginForm" class="w-full space-y-3 hidden">
                 <div class="text-left">
                     <label class="block text-[11px] font-black text-sky-200 uppercase tracking-wider mb-1 px-1">Jméno řidiče</label>
                     <div class="relative">
@@ -355,7 +354,7 @@ try {
             }
 
             // Na PC:
-            window.IS_PC_APP = true;
+            window.IS_PC_APP = false;
             window.FORCE_IPHONE_APP_MODE = false;
             if (document.body) document.body.classList.remove('ios-app-mode');
             if (tabsContainer) tabsContainer.style.display = 'none';
@@ -399,7 +398,7 @@ try {
 
         window.loginPcUser = function(displayName, showWelcomeToast) {
             var userClean = displayName || 'Prema';
-            window.IS_PC_APP = true;
+            window.IS_PC_APP = false;
             window.FORCE_IPHONE_APP_MODE = false;
             try {
                 localStorage.setItem('ko_logged_user_name', userClean);
@@ -3416,7 +3415,7 @@ try {
             } catch(e) {}
 
             // Striktní vynucení PC ERP zobrazení:
-            window.IS_PC_APP = true;
+            window.IS_PC_APP = false;
             window.FORCE_IPHONE_APP_MODE = false;
             if (document.body.classList.contains('ios-app-mode')) {
                 document.body.classList.remove('ios-app-mode');
@@ -3462,7 +3461,7 @@ try {
         };
 
         window.forcePcErpMode = () => {
-            window.IS_PC_APP = true;
+            window.IS_PC_APP = false;
             window.FORCE_IPHONE_APP_MODE = false;
             document.body.classList.remove('ios-app-mode');
             try {
@@ -3759,7 +3758,7 @@ try {
                 if (oldGuard) oldGuard.remove();
                 const guardScript = document.createElement('script');
                 guardScript.id = 'pcModeGuardScript';
-                guardScript.textContent = 'window.IS_PC_APP = true; window.FORCE_IPHONE_APP_MODE = false; try { localStorage.setItem("ko_ios_app_mode","0"); sessionStorage.removeItem("ko_iphone_session_active"); localStorage.removeItem("ko_iphone_session_active"); } catch(e){}';
+                guardScript.textContent = 'window.IS_PC_APP = false; window.FORCE_IPHONE_APP_MODE = false; try { localStorage.setItem("ko_ios_app_mode","0"); sessionStorage.removeItem("ko_iphone_session_active"); localStorage.removeItem("ko_iphone_session_active"); } catch(e){}';
                 headEl.insertBefore(guardScript, headEl.firstChild);
 
                 if (includeDataSnapshot) {
@@ -5416,7 +5415,7 @@ try {
                         try { startListeners(); } catch (e) {}
                     }
                 } else {
-                    window.IS_PC_APP = true;
+                    window.IS_PC_APP = false;
                     window.FORCE_IPHONE_APP_MODE = false;
                     document.body.classList.remove('ios-app-mode');
                     try { localStorage.setItem('ko_ios_app_mode', '0'); } catch (e) {}
@@ -17626,7 +17625,7 @@ class DriverPrepravaViewController: UIViewController {
                     openIphoneInstallModal();
                 }
             } else {
-                window.IS_PC_APP = true;
+                window.IS_PC_APP = false;
                 window.FORCE_IPHONE_APP_MODE = false;
                 document.body.classList.remove('ios-app-mode');
                 try { localStorage.setItem('ko_ios_app_mode', '0'); } catch (e) {}
