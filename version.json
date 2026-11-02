@@ -1,32 +1,32 @@
 {
   "system": "Kontejnery Ostrava • Stormware Pohoda ERP",
-  "currentVersion": 433,
-  "versionCode": 433,
-  "versionName": "433.0",
-  "versionBadge": "v 433",
+  "currentVersion": 434,
+  "versionCode": 434,
+  "versionName": "434.0",
+  "versionBadge": "v 434",
   "releaseDate": "2.11.2026",
   "maxKeptVersions": 3,
   "keptVersions": [
+    "v434",
     "v433",
-    "v432",
-    "v431"
+    "v432"
   ],
   "platforms": {
     "pc": {
       "folder": "pc/",
-      "version": 433,
+      "version": 434,
       "entryFile": "pc/index.html",
       "versionJson": "pc/version.json"
     },
     "android": {
       "folder": "android/",
-      "version": 433,
-      "versionCode": 433,
-      "apkPath": "android/Kontejnery_Ostrava_Android_v433.apk"
+      "version": 434,
+      "versionCode": 434,
+      "apkPath": "android/Kontejnery_Ostrava_Android_v434.apk"
     },
     "iphone": {
       "folder": "iphone/",
-      "version": 433,
+      "version": 434,
       "entryFile": "iphone/iphone.html",
       "versionJson": "iphone/version.json"
     }
