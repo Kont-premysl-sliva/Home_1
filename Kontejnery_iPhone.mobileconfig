@@ -16,15 +16,15 @@
             <key>Label</key>
             <string>Přeprava KO</string>
             <key>PayloadDescription</key>
-            <string>Mobilní aplikace pro řidiče (Sekce Přeprava) • Kontejnery Ostrava v 419</string>
+            <string>Mobilní aplikace pro řidiče (Sekce Přeprava) • Kontejnery Ostrava v 423</string>
             <key>PayloadDisplayName</key>
             <string>Přeprava KO – Řidič (iPhone)</string>
             <key>PayloadIdentifier</key>
-            <string>cz.kontejneryostrava.ios.webclip.v419</string>
+            <string>cz.kontejneryostrava.ios.webclip.v423</string>
             <key>PayloadType</key>
             <string>com.apple.webClip.managed</string>
             <key>PayloadUUID</key>
-            <string>6A4E8F12-90B1-4C3D-A812-000000000419</string>
+            <string>6A4E8F12-90B1-4C3D-A812-000000000423</string>
             <key>PayloadVersion</key>
             <integer>1</integer>
             <key>Precomposed</key>
@@ -34,11 +34,11 @@
         </dict>
     </array>
     <key>PayloadDescription</key>
-    <string>Nainstaluje zkrácenou mobilní aplikaci Přeprava KO pro řidiče (v 419) na plochu iPhone v režimu celé obrazovky.</string>
+    <string>Nainstaluje zkrácenou mobilní aplikaci Přeprava KO pro řidiče (v 423) na plochu iPhone v režimu celé obrazovky.</string>
     <key>PayloadDisplayName</key>
-    <string>Přeprava KO • Aplikace pro řidiče (iPhone) • v 419</string>
+    <string>Přeprava KO • Aplikace pro řidiče (iPhone) • v 423</string>
     <key>PayloadIdentifier</key>
-    <string>cz.kontejneryostrava.ios.profile.v419</string>
+    <string>cz.kontejneryostrava.ios.profile.v423</string>
     <key>PayloadOrganization</key>
     <string>Kontejnery Ostrava s.r.o.</string>
     <key>PayloadRemovalDisallowed</key>
@@ -46,7 +46,7 @@
     <key>PayloadType</key>
     <string>Configuration</string>
     <key>PayloadUUID</key>
-    <string>9B7C2D45-11E2-4F8A-B419-000000000419</string>
+    <string>9B7C2D45-11E2-4F8A-B423-000000000423</string>
     <key>PayloadVersion</key>
     <integer>1</integer>
 </dict>
