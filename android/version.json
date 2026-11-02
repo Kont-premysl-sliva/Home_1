@@ -2,15 +2,15 @@
   "platform": "ANDROID_VERZE",
   "folder": "android/",
   "applicationId": "com.aistudio.containerscanner.cxkqab",
-  "currentVersion": 429,
-  "versionCode": 429,
-  "versionName": "429.0",
+  "currentVersion": 431,
+  "versionCode": 431,
+  "versionName": "431.0",
   "releaseDate": "2.11.2026",
   "maxKeptVersions": 3,
-  "keptVersions": ["v429","v428","v427"],
+  "keptVersions": ["v431","v430","v429"],
   "files": [
-    "android/Kontejnery_Ostrava_Android_v429.json",
-    "android/Kontejnery_Ostrava_Android_v428.json",
-    "android/Kontejnery_Ostrava_Android_v427.json"
+    "android/Kontejnery_Ostrava_Android_v431.json",
+    "android/Kontejnery_Ostrava_Android_v430.json",
+    "android/Kontejnery_Ostrava_Android_v429.json"
   ]
 }
