@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Přeprava KO">
     <meta name="theme-color" content="#0F172A">
-    <title>Instalace Přeprava KO (Android & iPhone) • Kontejnery Ostrava</title>
+    <title>Instalace Přeprava KO (iPhone & Android) • Kontejnery Ostrava</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="public/assets/ko_print_logo.png">
     <link rel="icon" type="image/x-icon" href="Kontejnery_Ostrava.ico">
@@ -50,108 +50,67 @@
             </div>
             <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-1.5 flex-wrap">
-                    <span id="platformPill" class="bg-[#0284C7] text-white text-[10px] font-black px-2 py-0.5 rounded uppercase">Mobilní aplikace pro řidiče</span>
-                    <span id="verBadge" class="bg-[#16A34A]/30 border border-[#4ADE80]/50 text-[#4ADE80] text-[10px] font-black px-2 py-0.5 rounded">v 418</span>
+                    <span id="platformPill" class="bg-[#0284C7] text-white text-[10px] font-black px-2 py-0.5 rounded uppercase">Apple iPhone • iOS</span>
+                    <span id="verBadge" class="bg-[#16A34A]/30 border border-[#4ADE80]/50 text-[#4ADE80] text-[10px] font-black px-2 py-0.5 rounded">v 419</span>
                 </div>
                 <h1 class="text-lg font-black tracking-tight text-white mt-0.5 truncate">PŘEPRAVA KO – ŘIDIČ</h1>
-                <p class="text-xs text-[#94A3B8] font-semibold">Přeprava + Kontejnery • Bez instalace souborů</p>
+                <p class="text-xs text-[#94A3B8] font-semibold">Pouze přihlášení pro řidiče • Přeprava + GitHub</p>
             </div>
         </div>
 
-        <!-- PŘEPÍNAČ PLATFORMY (ANDROID / iPHONE) -->
+        <!-- PŘEPÍNAČ PLATFORMY (iPHONE / ANDROID) -->
         <div class="bg-[#1E293B] p-1.5 rounded-xl border border-[#334155] grid grid-cols-2 gap-1.5 text-xs font-black">
-            <button id="tabBtnAndroid" type="button" onclick="switchPlatform('android')" class="py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all bg-[#15803D] text-white shadow">
-                <span class="material-icons text-base">android</span>
-                <span>ANDROID</span>
-            </button>
-            <button id="tabBtnIos" type="button" onclick="switchPlatform('ios')" class="py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all bg-transparent text-[#94A3B8] hover:text-white">
+            <button id="tabBtnIos" type="button" onclick="switchPlatform('ios')" class="py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all bg-[#0284C7] text-white shadow">
                 <span class="material-icons text-base">phone_iphone</span>
                 <span>APPLE iPHONE</span>
             </button>
+            <button id="tabBtnAndroid" type="button" onclick="switchPlatform('android')" class="py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all bg-transparent text-[#94A3B8] hover:text-white">
+                <span class="material-icons text-base">android</span>
+                <span>ANDROID</span>
+            </button>
         </div>
 
         <!-- ===================================================================== -->
-        <!-- SEKCE: ANDROID (CHROME / SAMSUNG INTERNET / BEZ SOUBORU APK)          -->
+        <!-- SEKCE: APPLE iPHONE (VÝCHOZÍ PRO QR KÓD ŘIDIČE)                       -->
         <!-- ===================================================================== -->
-        <div id="sectionAndroid" class="space-y-4">
-            <!-- 1. HLAVNÍ METODA: JEDNODUCHÁ INSTALACE NA PLOCHU BEZ APK -->
+        <div id="sectionIos" class="space-y-4">
+            <!-- 1. OKAMŽITÉ SPUŠTĚNÍ A AKTUALIZACE V SAFARI (PŘIHLÁŠENÍ ŘIDIČE) -->
             <div class="bg-[#0F172A]/95 border-2 border-[#4ADE80] rounded-2xl p-4 shadow-2xl space-y-3 pulse-card">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-extrabold text-[#4ADE80] uppercase tracking-wider flex items-center gap-1.5">
-                        <span class="material-icons text-base">verified</span> 1. Rychlá instalace na plochu (bez APK)
+                        <span class="material-icons text-base">phone_iphone</span> 1. Spustit aktualizovanou iPhone verzi
                     </span>
-                    <span class="bg-[#16A34A] text-white text-[10px] font-black px-2 py-0.5 rounded">DOPORUČENO</span>
+                    <span class="bg-[#16A34A] text-white text-[10px] font-black px-2 py-0.5 rounded">PRO ŘIDIČE</span>
                 </div>
                 <p class="text-xs text-[#E2E8F0] leading-relaxed">
-                    Aplikace pro řidiče se spustí v Google Chrome a přidá se na plochu telefonu. <b>Nemusíte stahovat ani povolovat žádný soubor APK:</b>
+                    Otevře nejnovější aktualizaci <b>Přeprava KO</b> s <b>přihlášením výhradně pro řidiče</b> (Martin / Volvo_2017):
                 </p>
-
-                <button id="btnPwaInstall" type="button" onclick="triggerAndroidPwaInstall()" class="ios-btn w-full py-3.5 px-4 bg-gradient-to-r from-[#16A34A] to-[#059669] text-white text-sm shadow-lg gap-2">
-                    <span class="material-icons text-xl">install_mobile</span>
-                    <span id="btnPwaText">NAINSTALOVAT NA PLOCHU (ANDROID)</span>
-                </button>
-
-                <a href="iphone.html?driver=1" class="ios-btn w-full py-3 px-4 bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs shadow-md gap-2">
-                    <span class="material-icons text-base">open_in_browser</span>
-                    <span>SPUSTIT IHNED V PROHLÍŽEČI CHROME</span>
+                <a id="btnOpenIosSafari" href="iphone.html?iphone=1" onclick="openIphoneDriverAppNow(event)" class="ios-btn w-full py-3.5 px-4 bg-gradient-to-r from-[#16A34A] to-[#059669] text-white text-sm shadow-lg gap-2">
+                    <span class="material-icons text-xl">login</span>
+                    <span>OTEVŘÍT PŘIHLÁŠENÍ ŘIDIČE (iPHONE)</span>
                 </a>
-
-                <!-- 3 KROKY PRO ANDROID -->
-                <div class="bg-[#1E293B] border border-[#334155] rounded-xl p-3 space-y-2 text-xs text-[#E2E8F0]">
+                <div class="bg-[#1E293B] border border-[#334155] rounded-xl p-3 space-y-1 text-xs text-[#E2E8F0]">
                     <div class="font-extrabold text-[#38BDF8] flex items-center gap-1">
-                        <span class="material-icons text-sm">touch_app</span> Jak přidat na plochu v Google Chrome:
+                        <span class="material-icons text-sm">add_to_home_screen</span> Přidání ikony na plochu iPhonu:
                     </div>
-                    <div class="flex items-start gap-2">
-                        <span class="bg-[#0284C7] text-white font-black w-5 h-5 rounded-md flex items-center justify-center shrink-0 text-[11px]">1</span>
-                        <div>Klepněte na modré tlačítko <b>Spustit ihned v prohlížeči Chrome</b>.</div>
-                    </div>
-                    <div class="flex items-start gap-2">
-                        <span class="bg-[#0284C7] text-white font-black w-5 h-5 rounded-md flex items-center justify-center shrink-0 text-[11px]">2</span>
-                        <div>Vpravo nahoře v Chrome klepněte na <b>3 tečky (⋮)</b> a zvolte <b>„Nainstalovat aplikaci“</b> (nebo <b>„Přidat na plochu“</b>).</div>
-                    </div>
-                    <div class="flex items-start gap-2">
-                        <span class="bg-[#16A34A] text-white font-black w-5 h-5 rounded-md flex items-center justify-center shrink-0 text-[11px]">3</span>
-                        <div>Hotovo! Ikona <b>Přeprava KO</b> je na ploše. Otevírá se na celou obrazovku a aktualizuje se sama automaticky.</div>
-                    </div>
+                    <div>Po otevření klepněte v Safari dole na <b>Sdílet ⎋</b> a zvolte <b>Přidat na plochu</b>.</div>
                 </div>
             </div>
 
-            <!-- 2. VOLITELNÁ METODA: NATIVNÍ BALÍČEK .APK PRO ADMINISTRÁTORA / DISPEČINK -->
-            <div class="bg-[#0F172A]/95 border border-[#475569] rounded-2xl p-4 shadow-xl space-y-2.5">
+            <!-- 2. INSTALACE PROFILU NA PLOCHU iPHONU (.MOBILECONFIG) -->
+            <div class="bg-[#0F172A]/95 border border-[#38BDF8]/60 rounded-2xl p-4 shadow-xl space-y-3">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-extrabold text-[#94A3B8] uppercase tracking-wider flex items-center gap-1.5">
-                        <span class="material-icons text-base">download</span> Pro administrátora: soubor .APK
+                    <span class="text-xs font-extrabold text-[#38BDF8] uppercase tracking-wider flex items-center gap-1.5">
+                        <span class="material-icons text-base">verified</span> 2. Instalace iOS profilu na plochu
                     </span>
-                    <span class="bg-[#334155] text-slate-300 text-[10px] font-black px-2 py-0.5 rounded">NATIVNÍ ANDROID</span>
+                    <span class="bg-[#0284C7] text-white text-[10px] font-black px-2 py-0.5 rounded">PROFIL iOS</span>
                 </div>
-                <p class="text-xs text-[#94A3B8] leading-relaxed">
-                    Plná instalace kompletního programu pro vedení skladů, tisk protokolů a fakturace (vyžaduje povolení instalace APK).
+                <p class="text-xs text-[#CBD5E1] leading-relaxed">
+                    Nainstaluje ikonu <b>Přeprava KO</b> přímo na plochu iPhonu v režimu celé obrazovky:
                 </p>
-                <a href="https://github.com/Kont-premysl-sliva/Home_1/releases/latest/download/app-release.apk" class="ios-btn w-full py-2.5 px-3 bg-[#334155] hover:bg-[#475569] text-white text-xs gap-1.5 shadow">
-                    <span class="material-icons text-base">android</span>
-                    <span>STÁHNOUT PLNOU APLIKACI .APK (PRO DISPEČINK)</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- ===================================================================== -->
-        <!-- SEKCE: APPLE iPHONE (iOS • PROFIL .MOBILECONFIG NEBO SAFARI)          -->
-        <!-- ===================================================================== -->
-        <div id="sectionIos" class="space-y-4 hidden">
-            <!-- 1. HLAVNÍ TLAČÍTKO: OKAMŽITÁ INSTALACE NA PLOCHU iPHONU (PROFIL) -->
-            <div class="bg-[#0F172A]/95 border-2 border-[#4ADE80] rounded-2xl p-4 shadow-2xl space-y-3 pulse-card">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-extrabold text-[#4ADE80] uppercase tracking-wider flex items-center gap-1.5">
-                        <span class="material-icons text-base">verified</span> 1. Nejrychlejší instalace do iPhonu
-                    </span>
-                    <span class="bg-[#16A34A] text-white text-[10px] font-black px-2 py-0.5 rounded">DOPORUČENO</span>
-                </div>
-                <p class="text-xs text-[#E2E8F0] leading-relaxed">
-                    Klepněte na zelené tlačítko níže. Do iPhonu se přímo z GitHubu nainstaluje ikona <b>Přeprava KO</b> v režimu celé obrazovky:
-                </p>
-                <a id="btnInstallProfile" href="Kontejnery_iPhone.mobileconfig" onclick="triggerDirectProfileInstall(event)" class="ios-btn w-full py-3.5 px-4 bg-gradient-to-r from-[#16A34A] to-[#059669] text-white text-sm shadow-lg gap-2">
-                    <span class="material-icons text-xl">install_mobile</span>
-                    <span>NAINSTALOVAT APLIKACI DO iPHONU</span>
+                <a id="btnInstallProfile" href="Kontejnery_iPhone.mobileconfig" onclick="triggerDirectProfileInstall(event)" class="ios-btn w-full py-3 px-4 bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs shadow-lg gap-2">
+                    <span class="material-icons text-lg">install_mobile</span>
+                    <span>STÁHNOUT PROFIL DO iPHONU (.mobileconfig)</span>
                 </a>
 
                 <!-- 3 KROKY PO KLEPNUTÍ -->
@@ -160,26 +119,9 @@
                         <span class="material-icons text-sm">touch_app</span> Co potvrdit v iPhonu po klepnutí:
                     </div>
                     <div><b>1.</b> V okně Safari klepněte na <b>Povolit</b> (Allow) a poté <b>Zavřít</b>.</div>
-                    <div><b>2.</b> Otevřete v iPhonu <b>Nastavení</b> → hned nahoře klepněte na <b>Profil byl stažen</b>.</div>
-                    <div><b>3.</b> Vpravo nahoře klepněte na <b>Instalovat</b> a potvrďte. Ikona <b>Přeprava KO</b> je ihned na ploše!</div>
+                    <div><b>2.</b> Otevřete v iPhonu <b>Nastavení</b> → nahoře klepněte na <b>Profil byl stažen</b>.</div>
+                    <div><b>3.</b> Vpravo nahoře klepněte na <b>Instalovat</b>. Ikona <b>Přeprava KO</b> je na ploše!</div>
                 </div>
-            </div>
-
-            <!-- 2. PŘIDAT V SAFARI NA PLOCHU -->
-            <div class="bg-[#0F172A]/95 border border-[#38BDF8]/60 rounded-2xl p-4 shadow-xl space-y-3">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-extrabold text-[#38BDF8] uppercase tracking-wider flex items-center gap-1.5">
-                        <span class="material-icons text-base">phone_iphone</span> 2. Otevřít přímo v Safari (bez profilu)
-                    </span>
-                    <span class="bg-[#0284C7] text-white text-[10px] font-black px-2 py-0.5 rounded">BEZ NASTAVENÍ</span>
-                </div>
-                <p class="text-xs text-[#CBD5E1] leading-relaxed">
-                    Otevře aplikaci <b>Přeprava KO</b> ihned v Safari. Na plochu ji přidáte dole přes tlačítko <b>Sdílet ⎋ → Přidat na plochu</b>:
-                </p>
-                <a href="iphone.html?iphone=1&install=1" class="ios-btn w-full py-3.5 px-4 bg-[#0284C7] hover:bg-[#0369A1] text-white text-sm shadow-lg gap-2">
-                    <span class="material-icons text-xl">open_in_new</span>
-                    <span>SPUSTIT PŘEPRAVA KO V SAFARI</span>
-                </a>
             </div>
 
             <!-- 3. SOUBOR .IPA -->
@@ -200,19 +142,59 @@
             </div>
         </div>
 
-        <!-- SDÍLENÍ ODKAZU A QR KÓD (PRO OBĚ PLATFORMY) -->
-        <div class="bg-[#0F172A]/95 border border-[#334155] rounded-2xl p-4 shadow-xl space-y-3 text-center">
-            <div class="text-xs font-extrabold text-white uppercase tracking-wider">Přímý odkaz pro instalaci řidičům</div>
-            <div class="bg-white p-2.5 rounded-xl inline-block shadow-md">
-                <img id="qrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=6&data=https%3A%2F%2Fkont-premysl-sliva.github.io%2FHome_1%2Finstall.html" alt="QR Kód" class="w-40 h-40">
+        <!-- ===================================================================== -->
+        <!-- SEKCE: ANDROID (CHROME / SAMSUNG INTERNET / BEZ SOUBORU APK)          -->
+        <!-- ===================================================================== -->
+        <div id="sectionAndroid" class="space-y-4 hidden">
+            <div class="bg-[#0F172A]/95 border-2 border-[#4ADE80] rounded-2xl p-4 shadow-2xl space-y-3 pulse-card">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-extrabold text-[#4ADE80] uppercase tracking-wider flex items-center gap-1.5">
+                        <span class="material-icons text-base">verified</span> 1. Rychlá instalace na plochu (Android)
+                    </span>
+                    <span class="bg-[#16A34A] text-white text-[10px] font-black px-2 py-0.5 rounded">DOPORUČENO</span>
+                </div>
+                <p class="text-xs text-[#E2E8F0] leading-relaxed">
+                    Aplikace pro řidiče se spustí v Google Chrome s přihlášením řidiče:
+                </p>
+
+                <button id="btnPwaInstall" type="button" onclick="triggerAndroidPwaInstall()" class="ios-btn w-full py-3.5 px-4 bg-gradient-to-r from-[#16A34A] to-[#059669] text-white text-sm shadow-lg gap-2">
+                    <span class="material-icons text-xl">install_mobile</span>
+                    <span id="btnPwaText">OTEVŘÍT APLIKACI PRO ŘIDIČE</span>
+                </button>
+
+                <a href="iphone.html?iphone=1" onclick="openIphoneDriverAppNow(event)" class="ios-btn w-full py-3 px-4 bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs shadow-md gap-2">
+                    <span class="material-icons text-base">open_in_browser</span>
+                    <span>SPUSTIT IHNED V PROHLÍŽEČI CHROME</span>
+                </a>
             </div>
-            <input id="directUrlInput" type="text" readonly value="https://kont-premysl-sliva.github.io/Home_1/install.html" class="w-full px-3 py-2 rounded-lg bg-[#1E293B] border border-[#475569] text-[#38BDF8] font-mono text-[11px] font-bold text-center">
+
+            <div class="bg-[#0F172A]/95 border border-[#475569] rounded-2xl p-4 shadow-xl space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-extrabold text-[#94A3B8] uppercase tracking-wider flex items-center gap-1.5">
+                        <span class="material-icons text-base">download</span> Pro administrátora: soubor .APK
+                    </span>
+                    <span class="bg-[#334155] text-slate-300 text-[10px] font-black px-2 py-0.5 rounded">NATIVNÍ ANDROID</span>
+                </div>
+                <a href="https://github.com/Kont-premysl-sliva/Home_1/releases/latest/download/app-release.apk" class="ios-btn w-full py-2.5 px-3 bg-[#334155] hover:bg-[#475569] text-white text-xs gap-1.5 shadow">
+                    <span class="material-icons text-base">android</span>
+                    <span>STÁHNOUT PLNOU APLIKACI .APK</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- SDÍLENÍ ODKAZU A QR KÓD -->
+        <div class="bg-[#0F172A]/95 border border-[#334155] rounded-2xl p-4 shadow-xl space-y-3 text-center">
+            <div class="text-xs font-extrabold text-white uppercase tracking-wider">Přímý QR kód a odkaz pro iPhone řidiče</div>
+            <div class="bg-white p-2.5 rounded-xl inline-block shadow-md">
+                <img id="qrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=https%3A%2F%2Fkont-premysl-sliva.github.io%2FHome_1%2Fiphone.html%3Fiphone%3D1" alt="QR Kód" class="w-40 h-40">
+            </div>
+            <input id="directUrlInput" type="text" readonly value="https://kont-premysl-sliva.github.io/Home_1/iphone.html?iphone=1" class="w-full px-3 py-2 rounded-lg bg-[#1E293B] border border-[#475569] text-[#38BDF8] font-mono text-[11px] font-bold text-center">
             <div class="grid grid-cols-2 gap-2">
                 <button type="button" onclick="copyInstallLink()" class="ios-btn py-2.5 bg-[#334155] text-white text-xs gap-1.5">
-                    <span class="material-icons text-sm">content_copy</span> ZKOPÍROVAT ODKAZ
+                    <span class="material-icons text-sm">content_copy</span> ZKOPÍROVAT
                 </button>
                 <button type="button" onclick="shareWhatsAppLink()" class="ios-btn py-2.5 bg-[#16A34A] text-white text-xs gap-1.5">
-                    <span class="material-icons text-sm">share</span> POSLAT NA WHATSAPP
+                    <span class="material-icons text-sm">share</span> WHATSAPP
                 </button>
             </div>
         </div>
@@ -221,7 +203,60 @@
     <script>
         let deferredPrompt = null;
 
-        // Zachycení nativní PWA instalace pro Android Chrome
+        function getCurrentVersionNum() {
+            const b = document.getElementById('verBadge');
+            const m = b ? (b.textContent || '').match(/\d+/) : null;
+            return m ? m[0] : '418';
+        }
+
+        function getDriverIphoneUrl() {
+            const ver = getCurrentVersionNum();
+            return `iphone.html?iphone=1&v=${ver}&t=${Date.now()}`;
+        }
+
+        function openIphoneDriverAppNow(event) {
+            if (event) event.preventDefault();
+            try {
+                localStorage.setItem('ko_ios_app_mode', '1');
+                localStorage.setItem('ko_ios_role', 'PŘEPRAVCE');
+                localStorage.removeItem('ko_cached_github_html');
+                localStorage.removeItem('ko_cached_cloud_html');
+            } catch (e) {}
+            window.location.href = getDriverIphoneUrl();
+        }
+
+        function triggerDirectProfileInstall(event) {
+            const ver = getCurrentVersionNum();
+            const a = document.getElementById('btnInstallProfile');
+            if (a) {
+                a.href = `Kontejnery_iPhone.mobileconfig?v=${ver}`;
+            }
+        }
+
+        function copyInstallLink() {
+            const inp = document.getElementById('directUrlInput');
+            const url = inp ? inp.value : 'https://kont-premysl-sliva.github.io/Home_1/iphone.html?iphone=1';
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('Odkaz pro iPhone zkopírován:\n' + url);
+                }).catch(() => {
+                    alert('Odkaz:\n' + url);
+                });
+            } else if (inp) {
+                inp.select();
+                document.execCommand('copy');
+                alert('Odkaz pro iPhone zkopírován:\n' + url);
+            }
+        }
+
+        function shareWhatsAppLink() {
+            const ver = getCurrentVersionNum();
+            const inp = document.getElementById('directUrlInput');
+            const url = inp ? inp.value : `https://kont-premysl-sliva.github.io/Home_1/iphone.html?iphone=1&v=${ver}`;
+            const msg = `Kontejnery Ostrava – Mobilní aplikace Přeprava KO pro řidiče (iPhone v ${ver}): ${url}`;
+            window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+        }
+
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -236,12 +271,11 @@
         function triggerAndroidPwaInstall() {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
+                deferredPrompt.userChoice.then(() => {
                     deferredPrompt = null;
                 });
             } else {
-                // Přechod přímo do mobilní aplikace pro řidiče
-                window.location.href = 'iphone.html?driver=1';
+                openIphoneDriverAppNow();
             }
         }
 
@@ -255,28 +289,63 @@
             if (platform === 'android') {
                 secAndroid?.classList.remove('hidden');
                 secIos?.classList.add('hidden');
-                btnAndroid.className = 'py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all bg-[#15803D] text-white shadow';
-                btnIos.className = 'py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all bg-transparent text-[#94A3B8] hover:text-white';
+                if (btnAndroid) btnAndroid.className = 'py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all bg-[#15803D] text-white shadow';
+                if (btnIos) btnIos.className = 'py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all bg-transparent text-[#94A3B8] hover:text-white';
                 if (pill) pill.textContent = 'Android • Google Chrome';
             } else {
                 secAndroid?.classList.add('hidden');
                 secIos?.classList.remove('hidden');
-                btnAndroid.className = 'py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all bg-transparent text-[#94A3B8] hover:text-white';
-                btnIos.className = 'py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all bg-[#0284C7] text-white shadow';
+                if (btnAndroid) btnAndroid.className = 'py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all bg-transparent text-[#94A3B8] hover:text-white';
+                if (btnIos) btnIos.className = 'py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all bg-[#0284C7] text-white shadow';
                 if (pill) pill.textContent = 'Apple iPhone • iOS';
+            }
+        }
+
+        function autoDetectPlatform() {
+            try {
+                const params = new URLSearchParams(window.location.search || '');
+                const p = params.get('platform') || params.get('mode') || '';
+                if (p === 'ios' || p === 'iphone' || params.get('iphone') === '1') {
+                    switchPlatform('ios');
+                    return;
+                }
+                if (p === 'android') {
+                    switchPlatform('android');
+                    return;
+                }
+                const ua = navigator.userAgent || '';
+                const isIos = /iPhone|iPod|iPad/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+                const isAndroid = /Android/i.test(ua);
+                if (isIos) {
+                    switchPlatform('ios');
+                } else if (isAndroid) {
+                    switchPlatform('android');
+                } else {
+                    switchPlatform('ios');
+                }
+            } catch (e) {
+                switchPlatform('ios');
             }
         }
 
         function initDynamicInstallUrls() {
             try {
-                const currentCleanUrl = window.location.href.split('?')[0].split('#')[0];
+                const ver = getCurrentVersionNum();
+                const baseDir = window.location.href.split('?')[0].split('#')[0].replace(/\/install(\/index\.html|\.html)?$/i, '');
+                const targetIphoneUrl = baseDir.startsWith('http')
+                    ? `${baseDir}/iphone.html?iphone=1&v=${ver}`
+                    : `https://kont-premysl-sliva.github.io/Home_1/iphone.html?iphone=1&v=${ver}`;
                 const inp = document.getElementById('directUrlInput');
                 const qr = document.getElementById('qrImg');
-                if (inp && currentCleanUrl.startsWith('http')) {
-                    inp.value = currentCleanUrl;
-                    if (qr) {
-                        qr.src = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=6&data=" + encodeURIComponent(currentCleanUrl);
-                    }
+                const openBtn = document.getElementById('btnOpenIosSafari');
+                if (openBtn) {
+                    openBtn.href = `iphone.html?iphone=1&v=${ver}`;
+                }
+                if (inp) {
+                    inp.value = targetIphoneUrl;
+                }
+                if (qr) {
+                    qr.src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=" + encodeURIComponent(targetIphoneUrl);
                 }
             } catch (e) {
                 console.error(e);
