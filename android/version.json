@@ -2,15 +2,15 @@
   "platform": "ANDROID_VERZE",
   "folder": "android/",
   "applicationId": "com.aistudio.containerscanner.cxkqab",
-  "currentVersion": 451,
-  "versionCode": 451,
-  "versionName": "451.0",
+  "currentVersion": 452,
+  "versionCode": 452,
+  "versionName": "452.0",
   "releaseDate": "3.11.2026",
   "maxKeptVersions": 3,
-  "keptVersions": ["v451","v450","v449"],
+  "keptVersions": ["v452","v451","v450"],
   "files": [
+    "android/Kontejnery_Ostrava_Android_v452.json",
     "android/Kontejnery_Ostrava_Android_v451.json",
-    "android/Kontejnery_Ostrava_Android_v450.json",
-    "android/Kontejnery_Ostrava_Android_v449.json"
+    "android/Kontejnery_Ostrava_Android_v450.json"
   ]
 }
