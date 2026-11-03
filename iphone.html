@@ -11,16 +11,17 @@ try {
 </script>
     
     
+    
     <script id="appEnvironmentInitScript">
         (function() {
             try {
                 var p = (window.location.pathname || '').toLowerCase();
                 var s = new URLSearchParams(window.location.search || '');
-                var isIosUrl = p.indexOf('/iphone') !== -1 || p.indexOf('iphone.html') !== -1 || s.get('iphone') === '1' || s.get('mode') === 'iphone';
+                var isIosUrl = p.indexOf('/iphone') !== -1 || p.indexOf('iphone.html') !== -1 || s.get('iphone') === '1' || s.get('android') === '1' || s.get('mobile') === '1' || s.get('mode') === 'iphone' || s.get('mode') === 'android';
                 var isPcUrl = p.indexOf('/pc') !== -1 || p.indexOf('pc_v') !== -1 || s.get('pc') === '1' || s.get('mode') === 'pc';
-                var isIosDevice = /iPhone|iPod|iPad/i.test(navigator.userAgent || '');
+                var isMobileDevice = /iPhone|iPod|iPad|Android/i.test(navigator.userAgent || '');
 
-                if (window.FORCE_IPHONE_APP_MODE === true || isIosUrl || (!isPcUrl && isIosDevice)) {
+                if (window.FORCE_IPHONE_APP_MODE === true || isIosUrl || (!isPcUrl && isMobileDevice)) {
                     window.FORCE_IPHONE_APP_MODE = true;
                     window.IS_PC_APP = false;
                     localStorage.setItem('ko_ios_app_mode', '1');
@@ -139,7 +140,7 @@ try {
             <!-- Verze aplikace a datum -->
             <div class="inline-flex items-center gap-1.5 bg-sky-950/80 border border-sky-400/40 text-sky-200 px-3 py-1 rounded-full text-xs font-black shadow-inner mb-4">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="loginVersionDisplay">v 440 • 3.11.2026</span>
+                <span id="loginVersionDisplay">v 441 • 3.11.2026</span>
             </div>
 
             <!-- Přepínač PC vs Řidič -->
@@ -526,7 +527,7 @@ try {
             <h1 class="text-base font-extrabold flex items-center gap-2 tracking-tight">
                 <span>POHODA</span>
                 <button type="button" onclick="window.handleHeaderUpdateClick()" class="cursor-pointer bg-[#0284C7] hover:bg-sky-600 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-lg shadow-sm border border-white/40 flex items-center gap-1.5" title="Verze aplikace • Kliknutím zkontrolujete nebo ručně potvrdíte novou aktualizaci">
-                    <span id="headerVersionBadge">v 440 • 3.11.2026</span>
+                    <span id="headerVersionBadge">v 441 • 3.11.2026</span>
                     <span id="ghUpdateBadge" class="hidden bg-[#EA580C] text-white text-[10px] px-1.5 py-0.5 rounded font-black animate-pulse flex items-center gap-0.5"><span class="material-icons text-[12px]">system_update_alt</span><span>NOVÁ</span></span>
                 </button>
             </h1>
@@ -596,7 +597,7 @@ try {
         <button onclick="setTab('poznamky')" id="tab-poznamky" class="sub-tab sub-tab-inactive px-3 py-2 text-xs whitespace-nowrap flex items-center gap-1.5 bg-amber-50 font-bold text-amber-950 border border-amber-300 rounded-t" title="Rychlé poznámky a úkoly ve stylu Outlooku">
             <span class="material-icons text-sm text-amber-700">sticky_note_2</span><span>POZNÁMKY</span><span id="badge-poznamky" class="bg-amber-600 text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-full">0</span>
         </button>
-        <button onclick="setTab('databaze')" id="tab-databaze" class="sub-tab sub-tab-inactive px-3 py-2 text-xs whitespace-nowrap flex items-center gap-1.5 bg-sky-900 font-extrabold text-white border border-sky-400 rounded-t" title="Správa databáze: Záloha Databáze, Reindexace, Synchronizace, PC ERP, Položky, Události, Nastavení na GitHub, QR kód pro instalaci iPhone">
+        <button onclick="setTab('databaze')" id="tab-databaze" class="sub-tab sub-tab-inactive px-3 py-2 text-xs whitespace-nowrap flex items-center gap-1.5 bg-sky-900 font-extrabold text-white border border-sky-400 rounded-t" title="Správa databáze: Záloha Databáze, Reindexace, Synchronizace, PC ERP, Položky, Události, Nastavení na GitHub, QR kód pro instalaci iPhone, QR kód pro instalaci Android">
             <span class="material-icons text-sm text-amber-300">storage</span><span>DATABÁZE</span>
         </button>
     </div>
@@ -2626,7 +2627,7 @@ try {
 
     <script>
     (function() {
-        const CURRENT_SW_VERSION = 440;
+        const CURRENT_SW_VERSION = 441;
         const CURRENT_SW_VERSION_NAME = CURRENT_SW_VERSION;
         const CURRENT_SW_RELEASE_DATE = "3.11.2026";
         const CURRENT_SW_RELEASE_DATE_SPACED = "3. 11. 2026";
@@ -8956,7 +8957,8 @@ try {
                     { key: 'POLOZKY', label: `📦 Položky (${polCount})`, activeBg: 'bg-[#0369A1]' },
                     { key: 'UDALOSTI', label: `📜 Události (${evCount})`, activeBg: 'bg-[#4338CA]' },
                     { key: 'GITHUB_NASTAVENI', label: '🔑 Nastavení na GitHub', activeBg: 'bg-[#334155]' },
-                    { key: 'QR_IPHONE', label: '📱 QR kód pro instalaci iPhone', activeBg: 'bg-[#0F766E]' }
+                    { key: 'QR_IPHONE', label: '📱 QR kód pro instalaci iPhone', activeBg: 'bg-[#0F766E]' },
+                    { key: 'QR_ANDROID', label: '🤖 QR kód pro instalaci Android', activeBg: 'bg-[#15803D]' }
                 ];
                 subBar.innerHTML = tabs.map((t, idx) => {
                     const isSel = selectedSub === t.key;
@@ -9303,7 +9305,8 @@ try {
                 POLOZKY: 'DATABÁZE — POLOŽKY (KONTEJNERY, VYBAVENÍ & PŘEPRAVA)',
                 UDALOSTI: 'DATABÁZE — UDÁLOSTI (ASYMETRICKÁ HISTORIE ZMĚN V DÁVKÁCH PO 50)',
                 GITHUB_NASTAVENI: 'DATABÁZE — NASTAVENÍ NA GITHUB (CESTA & TOKEN OVĚŘENÍ)',
-                QR_IPHONE: 'DATABÁZE — QR KÓD PRO INSTALACI IPHONE'
+                QR_IPHONE: 'DATABÁZE — QR KÓD PRO INSTALACI IPHONE',
+                QR_ANDROID: 'DATABÁZE — QR KÓD PRO INSTALACI ANDROID (CHROME BEZ APK + SOUBOR APK)'
             };
             document.getElementById('activeAgendaText').innerText = currentTab === 'databaze'
                 ? (dbSubTitles[activeDbSub] || 'DATABÁZE — SPRÁVA HLAVNÍ DATABÁZE')
@@ -10866,6 +10869,126 @@ try {
                                 <li>Klepněte na zobrazený odkaz pro otevření v prohlížeči <b>Safari</b>.</li>
                                 <li>Dole v Safari klepněte na ikonu <b>Sdílet</b> a zvolte <b>Přidat na plochu</b>.</li>
                             </ol>
+                        </div>
+                    </div>
+                </div>`;
+            } else if (subKey === 'QR_ANDROID') {
+                const androidChromeUrl = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?android=1&install=1';
+                const androidApkUrl = 'https://raw.githubusercontent.com/Kont-premysl-sliva/Home_1/main/android/Kontejnery_Ostrava_Android_latest.apk';
+                grid._add = `
+                <div class="space-y-6">
+                    <!-- KARTA 1: DOPORUČENÁ RYCHLÁ INSTALACE PŘES PROHLÍŽEČ CHROME (STEJNĚ JAKO NA IPHONU) -->
+                    <div class="bg-white rounded-2xl border-2 border-emerald-600 shadow-lg p-6 space-y-5">
+                        <div class="flex items-center justify-between flex-wrap gap-3 border-b border-slate-200 pb-4">
+                            <div class="flex items-center gap-3">
+                                <span class="w-12 h-12 rounded-xl bg-emerald-700 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">android</span></span>
+                                <div>
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <h2 class="text-lg font-black text-slate-900">1. RYCHLÁ INSTALACE ANDROID PŘES PROHLÍŽEČ CHROME (BEZ SOUBORU .APK)</h2>
+                                        <span class="bg-emerald-100 text-emerald-900 border border-emerald-400 text-[10px] font-black px-2 py-0.5 rounded-full">DOPORUČENO • STEJNĚ SNADNÉ JAKO IPHONE</span>
+                                    </div>
+                                    <p class="text-xs text-slate-600 font-semibold">Naskenujte fotoaparátem Android telefonu — otevře se v Google Chrome a 1 kliknutím přidáte ikonu na plochu (bez zapínání vývojářského režimu a bez varování)</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <button onclick="window.openAndroidInstallModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer">
+                                    <span class="material-icons text-sm">qr_code_scanner</span> OTEVŘÍT VELKÝ QR KÓD & NÁVOD CHROME
+                                </button>
+                                <button onclick="window.shareAndroidInstallWhatsApp()" class="bg-[#16A34A] hover:bg-green-700 text-white px-3.5 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer">
+                                    <span class="material-icons text-sm">share</span> POSLAT ODKAZ NA WHATSAPP
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                            <div class="flex flex-col items-center justify-center bg-emerald-50/70 border-2 border-emerald-500 rounded-2xl p-4">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=${encodeURIComponent(androidChromeUrl)}" alt="QR Android Chrome" class="w-48 h-48 rounded-lg shadow-sm bg-white p-2">
+                                <span class="mt-2 text-[11px] font-black text-emerald-950 text-center">Naskenujte přes Fotoaparát / Google Lens v Androidu</span>
+                                <span class="mt-0.5 text-[10px] font-bold text-emerald-700">Otevře se rovnou v prohlížeči Chrome</span>
+                            </div>
+                            <div class="md:col-span-2 space-y-3 text-xs text-slate-700">
+                                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5">
+                                    <div class="flex items-center justify-between gap-2 mb-1">
+                                        <span class="font-black text-emerald-950 text-sm">Přímá adresa pro prohlížeč Google Chrome na Androidu:</span>
+                                        <button type="button" onclick="window.copyAndroidInstallUrl()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-2.5 py-1 rounded text-[11px] font-extrabold flex items-center gap-1 cursor-pointer">
+                                            <span class="material-icons text-xs">content_copy</span> Kopírovat odkaz
+                                        </button>
+                                    </div>
+                                    <code id="androidChromeUrlCode" class="block bg-white border border-emerald-300 rounded px-2.5 py-1.5 font-mono text-xs text-emerald-900 select-all break-all">${androidChromeUrl}</code>
+                                </div>
+
+                                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2">
+                                    <div class="font-black text-slate-900 text-xs uppercase tracking-wider">Postup instalace přes Chrome (trvá 10 vteřin):</div>
+                                    <ol class="list-decimal list-inside space-y-1.5 font-semibold text-slate-800">
+                                        <li>Otevřete na Android telefonu <b>Fotoaparát</b> a namiřte jej na zelený QR kód vlevo.</li>
+                                        <li>Po otevření stránky v prohlížeči <b>Google Chrome</b> klepněte nahoře na zelené tlačítko <b>„📲 Přidat aplikaci na plochu telefonu (Chrome)“</b> (nebo v menu Chrome <b>⋮</b> zvolte <b>Přidat na plochu / Nainstalovat aplikaci</b>).</li>
+                                        <li>Potvrďte <b>Přidat / Nainstalovat</b> — na ploše telefonu se vytvoří ikona <b>Kontejnery Ostrava</b> v režimu celé obrazovky. <b>Žádné prostředí pro vývojáře ani povolování neznámých zdrojů není potřeba!</b></li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KARTA 2: VOLITELNÁ INSTALACE SOUBORU .APK + SROVNÁNÍ CHROME VS. APK -->
+                    <div class="bg-white rounded-2xl border-2 border-slate-300 shadow p-6 space-y-5">
+                        <div class="flex items-center justify-between flex-wrap gap-3 border-b border-slate-200 pb-4">
+                            <div class="flex items-center gap-3">
+                                <span class="w-11 h-11 rounded-xl bg-slate-800 text-amber-400 flex items-center justify-center shadow"><span class="material-icons text-xl">system_security_update</span></span>
+                                <div>
+                                    <h3 class="text-base font-black text-slate-900">2. VOLITELNÁ INSTALACE CELÉHO SOUBORU .APK & SROVNÁNÍ VARIANT</h3>
+                                    <p class="text-xs text-slate-600 font-semibold">Kdy stačí rychlá instalace přes prohlížeč Chrome a jaké jsou výhody plného souboru .APK</p>
+                                </div>
+                            </div>
+                            <button onclick="window.downloadAndroidApkDirect()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer">
+                                <span class="material-icons text-sm text-amber-400">download</span> STÁHNOUT INSTALAČNÍ SOUBOR .APK (v ${CURRENT_SW_VERSION_NAME})
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                            <div class="flex flex-col items-center justify-center bg-slate-50 border border-slate-300 rounded-2xl p-4">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data=${encodeURIComponent(androidApkUrl)}" alt="QR Android APK" class="w-40 h-40 rounded-lg shadow-sm bg-white p-2">
+                                <span class="mt-2 text-[11px] font-black text-slate-800 text-center">QR kód pro přímé stažení souboru .APK</span>
+                                <span class="text-[10px] text-slate-500 text-center mt-0.5">Ani pro .APK se nezapíná vývojářský režim (jen souhlas s instalací z prohlížeče)</span>
+                            </div>
+
+                            <div class="lg:col-span-2 overflow-x-auto">
+                                <table class="w-full text-xs border-collapse border border-slate-300 rounded-xl overflow-hidden">
+                                    <thead>
+                                        <tr class="bg-slate-800 text-white text-left">
+                                            <th class="p-2.5 font-black">Vlastnost / Funkce</th>
+                                            <th class="p-2.5 font-black text-emerald-300">Přes prohlížeč Chrome (PWA)</th>
+                                            <th class="p-2.5 font-black text-amber-300">Celý soubor .APK</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-200 font-semibold text-slate-700">
+                                        <tr class="bg-emerald-50/40">
+                                            <td class="p-2.5 font-black text-slate-900">Nutnost zapínat „Prostředí pro vývojáře“</td>
+                                            <td class="p-2.5 text-emerald-800 font-black">✅ NE — nikdy se nic nepovoluje</td>
+                                            <td class="p-2.5 text-slate-800 font-bold">✅ NE — jen 1× povolit instalaci z Chrome</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2.5 font-black text-slate-900">Rychlost instalace na další telefony</td>
+                                            <td class="p-2.5 text-emerald-800 font-black">⚡ Za 5 vteřin přes QR kód (jako iPhone)</td>
+                                            <td class="p-2.5">Stažení balíčku (~15 MB) a spuštění instalátoru</td>
+                                        </tr>
+                                        <tr class="bg-emerald-50/40">
+                                            <td class="p-2.5 font-black text-slate-900">Napojení na Hlavní PC & cache miniatur (30 dní po HOTOVO)</td>
+                                            <td class="p-2.5 text-emerald-800 font-black">✅ ANO — 100% plná podpora</td>
+                                            <td class="p-2.5 text-emerald-800 font-black">✅ ANO — 100% plná podpora</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2.5 font-black text-slate-900">Ruční schvalování aktualizací jedním kliknutím</td>
+                                            <td class="p-2.5 text-emerald-800 font-black">✅ Okamžitě v prohlížeči bez přeinstalace</td>
+                                            <td class="p-2.5">Přes stažení nové verze z GitHubu / cloudu</td>
+                                        </tr>
+                                        <tr class="bg-amber-50/50">
+                                            <td class="p-2.5 font-black text-slate-900">Hlavní výhody instalace celého souboru .APK</td>
+                                            <td class="p-2.5 text-slate-600">Běží v zabezpečeném prostředí Google Chrome</td>
+                                            <td class="p-2.5 text-amber-950 font-bold">🔒 Nativní systémový otisk prstu Androidu, přímé ukládání souborů do paměti telefonu bez limitů prohlížeče a systémový Android tisk</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>`;
@@ -17809,7 +17932,7 @@ function buildShareTextSummary(type, id) {
     </script>
 
     <!-- ============================================================================ -->
-    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v440)      -->
+    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v441)      -->
     <!-- Zkrácená verze Přepravy: ostatní agendy jsou na iPhonu kompletně skryté.     -->
     <!-- ============================================================================ -->
     <style id="iphoneAppStyles">
@@ -17895,8 +18018,27 @@ function buildShareTextSummary(type, id) {
                 <button type="button" id="iosTopSyncBtn" onclick="window.triggerIosManualSync(this)" class="w-8 h-8 rounded-lg bg-[#0284C7] hover:bg-sky-500 text-white border border-sky-400/60 flex items-center justify-center shadow-sm shrink-0 active:scale-95" title="Synchronizovat data (GitHub / Cloud)">
                     <span class="material-icons text-base" id="iosTopSyncIcon">sync</span>
                 </button>
-                <button type="button" onclick="openIphoneInstallModal()" class="w-8 h-8 rounded-lg bg-[#1E293B] hover:bg-[#334155] text-cyan-400 border border-cyan-500/40 flex items-center justify-center shadow-sm shrink-0 active:scale-95" title="Instalace ikony na plochu iPhone">
+                <button type="button" onclick="window.openMobileInstallHelper()" class="w-8 h-8 rounded-lg bg-[#1E293B] hover:bg-[#334155] text-cyan-400 border border-cyan-500/40 flex items-center justify-center shadow-sm shrink-0 active:scale-95" title="Instalace ikony aplikace na plochu telefonu (Chrome / iPhone)">
                     <span class="material-icons text-base">install_mobile</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- PŘÍMÁ INSTALAČNÍ LIŠTA PRO ANDROID CHROME (Zobrazí se v prohlížeči Chrome na Androidu dokud není spuštěno z plochy) -->
+        <div id="androidOnScreenInstallBanner" class="hidden bg-gradient-to-r from-[#064E3B] via-[#047857] to-[#0F172A] px-2.5 py-2 border-b border-emerald-400/50 text-white">
+            <div class="flex items-center justify-between gap-2 mb-1.5">
+                <div class="flex items-center gap-1.5 text-[11px] font-extrabold text-emerald-100">
+                    <span class="material-icons text-sm text-emerald-300">android</span>
+                    <span>RYCHLÁ INSTALACE DO ANDROIDU PŘES CHROME (BEZ .APK)</span>
+                </div>
+                <button type="button" onclick="dismissIosOnScreenBanner()" class="text-[10px] font-bold text-emerald-200 hover:text-white px-2 py-0.5 rounded bg-white/10">Skrýt ✕</button>
+            </div>
+            <div class="grid grid-cols-3 gap-1.5">
+                <button type="button" onclick="window.triggerAndroidChromeInstall()" class="col-span-2 ios-rect-btn h-9 bg-[#16A34A] hover:bg-green-600 text-white text-[11px] font-black gap-1.5 shadow-md border-2 border-emerald-200">
+                    <span class="material-icons text-sm">add_to_home_screen</span> 📲 PŘIDAT NA PLOCHU (CHROME)
+                </button>
+                <button type="button" onclick="window.openAndroidInstallModal()" class="ios-rect-btn h-9 bg-[#1E293B] text-amber-300 text-[10px] font-extrabold gap-1 shadow border border-amber-400/50">
+                    <span class="material-icons text-xs">download</span> QR / .APK
                 </button>
             </div>
         </div>
@@ -18128,20 +18270,34 @@ function buildShareTextSummary(type, id) {
             );
         }
 
+        function isAndroidDeviceOrMode() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('android') === '1' || params.get('mode') === 'android') return true;
+            return /Android/i.test(navigator.userAgent || '');
+        }
+
         function updateIosOnScreenBannerVisibility() {
-            const banner = document.getElementById('iosOnScreenInstallBanner');
-            if (!banner) return;
+            const iosBanner = document.getElementById('iosOnScreenInstallBanner');
+            const androidBanner = document.getElementById('androidOnScreenInstallBanner');
             const dismissed = localStorage.getItem('ko_ios_banner_dismissed') === '1';
-            if (!isIosStandaloneInstalled() && !dismissed) {
-                banner.classList.remove('hidden');
+            if (isIosStandaloneInstalled() || dismissed) {
+                iosBanner?.classList.add('hidden');
+                androidBanner?.classList.add('hidden');
+                return;
+            }
+            if (isAndroidDeviceOrMode()) {
+                androidBanner?.classList.remove('hidden');
+                iosBanner?.classList.add('hidden');
             } else {
-                banner.classList.add('hidden');
+                iosBanner?.classList.remove('hidden');
+                androidBanner?.classList.add('hidden');
             }
         }
 
         window.dismissIosOnScreenBanner = function() {
             try { localStorage.setItem('ko_ios_banner_dismissed', '1'); } catch (e) {}
             document.getElementById('iosOnScreenInstallBanner')?.classList.add('hidden');
+            document.getElementById('androidOnScreenInstallBanner')?.classList.add('hidden');
         };
 
         window.openIosSafariArrowGuide = function() {
@@ -18432,6 +18588,139 @@ function buildShareTextSummary(type, id) {
 
             if (typeof window.handleTransportPhotoFile === 'function') {
                 window.handleTransportPhotoFile(input, targetKind);
+            }
+        };
+
+        // Podpora přímé instalace přes Google Chrome na Androidu (beforeinstallprompt) + modální okno QR Android
+        window._deferredChromeInstallPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            window._deferredChromeInstallPrompt = e;
+            document.getElementById('androidOnScreenInstallBanner')?.classList.remove('hidden');
+        });
+
+        window.triggerAndroidChromeInstall = async function() {
+            if (window._deferredChromeInstallPrompt) {
+                try {
+                    window._deferredChromeInstallPrompt.prompt();
+                    const choice = await window._deferredChromeInstallPrompt.userChoice;
+                    if (choice && choice.outcome === 'accepted') {
+                        window._deferredChromeInstallPrompt = null;
+                        document.getElementById('androidOnScreenInstallBanner')?.classList.add('hidden');
+                        if (typeof showToast === 'function') showToast('Ikona Kontejnery Ostrava byla přidána na plochu Androidu!');
+                    }
+                    return;
+                } catch (err) {}
+            }
+            window.openAndroidInstallModal();
+        };
+
+        window.downloadAndroidApkDirect = function() {
+            const apkUrl = 'https://raw.githubusercontent.com/Kont-premysl-sliva/Home_1/main/android/Kontejnery_Ostrava_Android_latest.apk';
+            window.open(apkUrl, '_blank');
+        };
+
+        window.copyAndroidInstallUrl = function() {
+            const url = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?android=1&install=1';
+            navigator.clipboard?.writeText(url);
+            if (typeof showToast === 'function') {
+                showToast('Odkaz pro instalaci Android přes Chrome zkopírován!');
+            } else {
+                alert('Přímý instalační odkaz pro Google Chrome na Androidu byl zkopírován:\n' + url);
+            }
+        };
+
+        window.shareAndroidInstallWhatsApp = function() {
+            const ver = window.CURRENT_SW_VERSION_NAME || '441';
+            const url = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?android=1&install=1';
+            const txt = `Kontejnery Ostrava — Rychlá instalace mobilní aplikace pro Android přes prohlížeč Chrome bez APK (v ${ver}): ${url}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');
+        };
+
+        window.openAndroidInstallModal = function() {
+            const ver = window.CURRENT_SW_VERSION_NAME || '441';
+            const androidChromeUrl = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?android=1&install=1';
+            let modal = document.getElementById('androidInstallModal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'androidInstallModal';
+                modal.className = 'fixed inset-0 z-[10050] bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-3 overflow-y-auto';
+                document.body.appendChild(modal);
+            }
+            modal.innerHTML = `
+                <div class="bg-[#0F172A] border-2 border-emerald-500 rounded-2xl max-w-lg w-full text-white shadow-2xl overflow-hidden my-auto">
+                    <div class="bg-gradient-to-r from-[#064E3B] to-[#047857] px-4 py-3 flex items-center justify-between border-b border-emerald-400/40">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-300/40 flex items-center justify-center"><span class="material-icons text-emerald-300">android</span></span>
+                            <div>
+                                <div class="font-black text-sm leading-tight">INSTALACE PRO ANDROID (v ${ver})</div>
+                                <div class="text-[10px] text-emerald-200 font-bold">Přes prohlížeč Google Chrome (jako iPhone) nebo soubor .APK</div>
+                            </div>
+                        </div>
+                        <button type="button" onclick="document.getElementById('androidInstallModal')?.classList.add('hidden')" class="w-8 h-8 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center cursor-pointer">
+                            <span class="material-icons text-base">close</span>
+                        </button>
+                    </div>
+                    <div class="p-4 space-y-3.5 text-xs">
+                        <div class="bg-emerald-950/60 border border-emerald-500/50 rounded-xl p-3 space-y-2.5">
+                            <div class="font-black text-emerald-300 text-xs flex items-center gap-1.5">
+                                <span class="material-icons text-sm">bolt</span> 1. DOPORUČENO: Přidat na plochu v prohlížeči Chrome (bez .APK)
+                            </div>
+                            <button type="button" onclick="window.triggerAndroidChromeInstallDirectPrompt()" class="w-full h-11 bg-[#16A34A] hover:bg-green-600 text-white font-black rounded-xl shadow-lg flex items-center justify-center gap-2 border-2 border-emerald-200 text-xs cursor-pointer">
+                                <span class="material-icons text-base">add_to_home_screen</span>
+                                <span>📲 PŘIDAT IKONU NA PLOCHU TELEFONU (CHROME)</span>
+                            </button>
+                            <ol class="list-decimal list-inside space-y-1 text-[11px] text-slate-200 font-semibold">
+                                <li>Pokud jste na telefonu v <b>Google Chrome</b>, klepněte na zelené tlačítko výše nebo vpravo nahoře na <b>⋮ (tři tečky)</b> a zvolte <b>Přidat na plochu / Nainstalovat aplikaci</b>.</li>
+                                <li>Na ploše Androidu se ihned vytvoří ikona <b>Kontejnery Ostrava</b> — <b>bez zapínání vývojářského režimu</b>!</li>
+                            </ol>
+                        </div>
+
+                        <div class="bg-slate-900 border border-slate-700 rounded-xl p-3 flex flex-col items-center text-center space-y-2">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data=${encodeURIComponent(androidChromeUrl)}" alt="QR Android Chrome" class="w-36 h-36 rounded-lg bg-white p-1.5 shadow">
+                            <div class="text-[11px] font-bold text-emerald-300">Naskenujte fotoaparátem dalšího Android telefonu pro otevření v Chrome</div>
+                            <div class="flex items-center gap-2 w-full">
+                                <button type="button" onclick="window.copyAndroidInstallUrl()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 rounded-lg font-extrabold text-[11px] border border-slate-600 cursor-pointer">Kopírovat odkaz</button>
+                                <button type="button" onclick="window.shareAndroidInstallWhatsApp()" class="flex-1 bg-[#16A34A] hover:bg-green-700 text-white py-2 rounded-lg font-extrabold text-[11px] cursor-pointer">WhatsApp</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900/90 border border-amber-500/40 rounded-xl p-3 flex items-center justify-between gap-3">
+                            <div class="text-left">
+                                <div class="font-black text-amber-300 text-[11px]">2. VOLITELNĚ: Klasický soubor .APK</div>
+                                <div class="text-[10px] text-slate-300">Pro nativní čtečku otisků prstů a systémové úložiště (bez vývojářského režimu)</div>
+                            </div>
+                            <button type="button" onclick="window.downloadAndroidApkDirect()" class="shrink-0 bg-amber-600 hover:bg-amber-500 text-slate-950 font-black px-3 py-2 rounded-lg text-[11px] flex items-center gap-1 cursor-pointer">
+                                <span class="material-icons text-sm">download</span> .APK
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+            modal.classList.remove('hidden');
+        };
+
+        window.triggerAndroidChromeInstallDirectPrompt = async function() {
+            if (window._deferredChromeInstallPrompt) {
+                try {
+                    window._deferredChromeInstallPrompt.prompt();
+                    const choice = await window._deferredChromeInstallPrompt.userChoice;
+                    if (choice && choice.outcome === 'accepted') {
+                        window._deferredChromeInstallPrompt = null;
+                        document.getElementById('androidInstallModal')?.classList.add('hidden');
+                        document.getElementById('androidOnScreenInstallBanner')?.classList.add('hidden');
+                    }
+                    return;
+                } catch (e) {}
+            }
+            alert('V prohlížeči Google Chrome klepněte vpravo nahoře na ikonu ⋮ (tři tečky) a zvolte „Přidat na plochu“ nebo „Nainstalovat aplikaci“. Ikona Kontejnery Ostrava se ihned vytvoří na ploše telefonu bez stahování APK.');
+        };
+
+        window.openMobileInstallHelper = function() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('android') === '1' || params.get('mode') === 'android' || /Android/i.test(navigator.userAgent || '')) {
+                window.openAndroidInstallModal();
+            } else {
+                window.openIphoneInstallModal();
             }
         };
 
@@ -18807,15 +19096,18 @@ class DriverPrepravaViewController: UIViewController {
             document.body.removeChild(a);
         };
 
-        // Automatické zapnutí iPhone režimu řidiče na iOS zařízeních nebo při parametru ?iphone=1
+        // Automatické zapnutí mobilního režimu řidiče na iOS / Android zařízeních nebo při parametru ?iphone=1 / ?android=1
         function bootIphoneModeIfNeeded() {
             const isIphoneEnv = Boolean(
                 window.FORCE_IPHONE_APP_MODE === true ||
                 (location.pathname || '').toLowerCase().includes('/iphone') ||
                 (location.pathname || '').toLowerCase().includes('iphone.html') ||
                 new URLSearchParams(window.location.search).get('iphone') === '1' ||
+                new URLSearchParams(window.location.search).get('android') === '1' ||
+                new URLSearchParams(window.location.search).get('mobile') === '1' ||
                 new URLSearchParams(window.location.search).get('mode') === 'iphone' ||
-                (!window.IS_PC_APP && /iPhone|iPod|iPad/i.test(navigator.userAgent || ''))
+                new URLSearchParams(window.location.search).get('mode') === 'android' ||
+                (!window.IS_PC_APP && /iPhone|iPod|iPad|Android/i.test(navigator.userAgent || ''))
             );
 
             if (isIphoneEnv) {
@@ -18831,8 +19123,12 @@ class DriverPrepravaViewController: UIViewController {
                     }
                 }
                 const params = new URLSearchParams(window.location.search);
-                if (params.get('install') === '1' && typeof openIphoneInstallModal === 'function') {
-                    openIphoneInstallModal();
+                if (params.get('install') === '1') {
+                    if (params.get('android') === '1' || params.get('mode') === 'android' || /Android/i.test(navigator.userAgent || '')) {
+                        if (typeof window.openAndroidInstallModal === 'function') window.openAndroidInstallModal();
+                    } else if (typeof openIphoneInstallModal === 'function') {
+                        openIphoneInstallModal();
+                    }
                 }
             } else {
                 window.IS_PC_APP = true;
