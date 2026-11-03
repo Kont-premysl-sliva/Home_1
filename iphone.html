@@ -141,7 +141,7 @@ try {
             <!-- Verze aplikace a datum -->
             <div class="inline-flex items-center gap-1.5 bg-sky-950/80 border border-sky-400/40 text-sky-200 px-3 py-1 rounded-full text-xs font-black shadow-inner mb-4">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="loginVersionDisplay">v 443 • 3.11.2026</span>
+                <span id="loginVersionDisplay">v 445 • 3.11.2026</span>
             </div>
 
             <!-- Přepínač PC vs Řidič -->
@@ -528,14 +528,14 @@ try {
             <h1 class="text-base font-extrabold flex items-center gap-2 tracking-tight">
                 <span>POHODA</span>
                 <button type="button" onclick="window.handleHeaderUpdateClick()" class="cursor-pointer bg-[#0284C7] hover:bg-sky-600 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-lg shadow-sm border border-white/40 flex items-center gap-1.5" title="Verze aplikace • Kliknutím zkontrolujete nebo ručně potvrdíte novou aktualizaci">
-                    <span id="headerVersionBadge">v 443 • 3.11.2026</span>
+                    <span id="headerVersionBadge">v 445 • 3.11.2026</span>
                     <span id="ghUpdateBadge" class="hidden bg-[#EA580C] text-white text-[10px] px-1.5 py-0.5 rounded font-black animate-pulse flex items-center gap-0.5"><span class="material-icons text-[12px]">system_update_alt</span><span>NOVÁ</span></span>
                 </button>
             </h1>
         </div>
         <div class="flex-grow"></div>
         <div class="flex items-center gap-2.5 mr-4">
-            <div onclick="window.openDatabazeSubSection('ZALOHA')" class="flex items-center gap-1.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-300/70 text-amber-200 px-2.5 py-1 rounded-lg text-[11px] font-black cursor-pointer shadow-sm" title="PC Aplikace je označena jako Hlavní zdroj dat (Master databáze). Kliknutím otevřete sekci DATABÁZE -> Záloha Databáze.">
+            <div onclick="window.openDatabazeSubSection('ZALOHA')" class="flex items-center gap-1.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-300/70 text-amber-200 px-2.5 py-1 rounded-lg text-[11px] font-black cursor-pointer shadow-sm" title="PC Aplikace je označena jako Hlavní zdroj dat (Master databáze). Kliknutím otevřete sekci DATABÁZE -> SPRÁVA DATABÁZE.">
                 <span class="material-icons text-sm text-amber-300">verified_user</span>
                 <span>HLAVNÍ PC (MASTER)</span>
                 <span id="pcMasterRecordCountBadge" class="bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded text-[10px] font-black">DB</span>
@@ -568,7 +568,7 @@ try {
                 <option value="preprava">🚚 PŘEPRAVA</option>
                 <option value="whatsapp">💬 WHATSAPP (Přeprava)</option>
                 <option value="poznamky">📌 POZNÁMKY (Outlook)</option>
-                <option value="databaze">🗄️ DATABÁZE (Správa & Zálohy)</option>
+                <option value="databaze">🗄️ DATABÁZE (SPRÁVA DATABÁZE)</option>
             </select>
         </div>
     </div>
@@ -598,7 +598,7 @@ try {
         <button onclick="setTab('poznamky')" id="tab-poznamky" class="sub-tab sub-tab-inactive px-3 py-2 text-xs whitespace-nowrap flex items-center gap-1.5 bg-amber-50 font-bold text-amber-950 border border-amber-300 rounded-t" title="Rychlé poznámky a úkoly ve stylu Outlooku">
             <span class="material-icons text-sm text-amber-700">sticky_note_2</span><span>POZNÁMKY</span><span id="badge-poznamky" class="bg-amber-600 text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-full">0</span>
         </button>
-        <button onclick="setTab('databaze')" id="tab-databaze" class="sub-tab sub-tab-inactive px-3 py-2 text-xs whitespace-nowrap flex items-center gap-1.5 bg-sky-900 font-extrabold text-white border border-sky-400 rounded-t" title="Správa databáze: Záloha Databáze, Reindexace, Synchronizace, PC ERP, Položky, Události, Nastavení na GitHub, QR kód pro instalaci iPhone, QR kód pro instalaci Android">
+        <button onclick="setTab('databaze')" id="tab-databaze" class="sub-tab sub-tab-inactive px-3 py-2 text-xs whitespace-nowrap flex items-center gap-1.5 bg-sky-900 font-extrabold text-white border border-sky-400 rounded-t" title="SPRÁVA DATABÁZE: Reindexace, Synchronizace, PC ERP, Nastavení na GitHUB, Instalace Iphone, Instalace Android, Položky, Události">
             <span class="material-icons text-sm text-amber-300">storage</span><span>DATABÁZE</span>
         </button>
     </div>
@@ -2231,7 +2231,7 @@ try {
             <div class="bg-[#1B5E8B] text-white px-4 py-3.5 flex justify-between items-center">
                 <div class="flex items-center gap-2">
                     <span class="material-icons text-amber-300">verified_user</span>
-                    <h2 class="font-extrabold text-sm tracking-wide">HLAVNÍ PC (MASTER) • ZÁLOHA DATABÁZE & AKTUALIZACE • <span id="swModalCurrentVer">v 437</span></h2>
+                    <h2 class="font-extrabold text-sm tracking-wide">HLAVNÍ PC (MASTER) • SPRÁVA DATABÁZE & AKTUALIZACE • <span id="swModalCurrentVer">v 445</span></h2>
                 </div>
                 <button onclick="closeModals()" class="hover:bg-white/15 rounded-full p-1"><span class="material-icons">close</span></button>
             </div>
@@ -2285,6 +2285,7 @@ try {
                     </div>
 
                     <input type="file" id="localJsonBackupInput" accept=".json,application/json" class="hidden" onchange="window.restoreFromLocalJsonFile(event)">
+                    <input type="file" id="restoreBackupFileInput" accept=".json,application/json" class="hidden" onchange="window.restoreFromLocalJsonFile(event)">
 
                     <div class="grid grid-cols-2 gap-2 pt-1">
                         <button type="button" onclick="loadBackupFromGitHub()" class="bg-[#15803D] hover:bg-emerald-800 text-white font-extrabold py-2 px-2 rounded-lg text-[11px] flex items-center justify-center gap-1 shadow cursor-pointer" title="Načíst a bezpečně sloučit zálohu ze složky ZALOHA_DAT na GitHubu">
@@ -2622,13 +2623,83 @@ try {
         </div>
     </div>
 
+    <!-- ŽIVÝ TACHOMETR PRŮBĚHU AKCÍ SPRÁVY DATABÁZE (MODAL S POPISEM CO SE DĚJE A VÝSLEDKEM DOKONČENÍ) -->
+    <div id="spravaDbTachoModal" class="fixed inset-0 z-[9990] hidden bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-[#0F172A] text-white rounded-2xl shadow-2xl max-w-xl w-full overflow-hidden border-2 border-[#38BDF8] transition-all" id="spravaModalCard">
+            <div class="bg-[#1E293B] px-5 py-3.5 flex items-center justify-between border-b border-slate-700">
+                <div class="flex items-center gap-2.5">
+                    <span class="material-icons text-amber-400" id="spravaModalHdrIcon">speed</span>
+                    <div>
+                        <div class="text-[10px] font-black uppercase tracking-widest text-sky-400">SPRÁVA DATABÁZE • TACHOMETR OPERACE</div>
+                        <h3 id="spravaModalTitle" class="text-sm font-black text-white tracking-wide">Probíhá databázová akce...</h3>
+                    </div>
+                </div>
+                <button type="button" onclick="window.closeSpravaDbTachoModal()" class="text-slate-300 hover:text-white hover:bg-white/10 rounded-lg p-1.5 transition cursor-pointer" title="Zavřít okno tachometru">
+                    <span class="material-icons text-lg">close</span>
+                </button>
+            </div>
+            <div class="p-5 space-y-4">
+                <div class="flex flex-col sm:flex-row items-center gap-5 bg-[#1E293B]/90 border border-slate-700 rounded-2xl p-4">
+                    <div id="spravaModalTachoBox" class="w-[140px] h-[140px] shrink-0 bg-[#0F172A] border-2 border-[#38BDF8] rounded-2xl relative flex items-center justify-center shadow-inner">
+                        <svg viewBox="0 0 120 120" class="w-full h-full">
+                            <circle cx="60" cy="65" r="42" fill="none" stroke="#334155" stroke-width="9" stroke-linecap="round"
+                                stroke-dasharray="183.26 263.89" transform="rotate(145 60 65)" />
+                            <circle id="spravaModalTachoArc" cx="60" cy="65" r="42" fill="none" stroke="#38BDF8" stroke-width="9" stroke-linecap="round"
+                                stroke-dasharray="183.26 263.89" stroke-dashoffset="183.26" transform="rotate(145 60 65)"
+                                style="transition: stroke-dashoffset 0.28s ease, stroke 0.28s ease;" />
+                            <g id="spravaModalTachoNeedle" transform="rotate(145 60 65)" style="transition: transform 0.28s ease;">
+                                <line x1="60" y1="65" x2="94" y2="65" stroke="#38BDF8" stroke-width="3.5" stroke-linecap="round" id="spravaModalTachoNeedleLine" />
+                            </g>
+                            <circle cx="60" cy="65" r="4.5" fill="#FFFFFF" />
+                        </svg>
+                        <div class="absolute bottom-2 inset-x-0 flex flex-col items-center leading-tight">
+                            <span id="spravaModalTachoPct" class="text-[22px] font-black text-[#38BDF8]">0 %</span>
+                            <span id="spravaModalTachoBadge" class="text-[9px] font-black text-amber-300 tracking-wider uppercase">PROBÍHÁ...</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 w-full space-y-2.5 min-w-0">
+                        <div class="text-[11px] font-extrabold uppercase tracking-wider text-sky-300 flex items-center gap-1.5">
+                            <span class="material-icons text-sm animate-spin text-[#38BDF8]" id="spravaModalSpinIcon">sync</span>
+                            <span id="spravaModalPhaseLabel">Právě prováděná operace:</span>
+                        </div>
+                        <div id="spravaModalStepDesc" class="text-sm font-black text-white bg-[#0F172A] border border-slate-700 rounded-xl p-3 leading-snug">
+                            Zahajuji operaci...
+                        </div>
+                        <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden border border-slate-700">
+                            <div id="spravaModalProgressBar" class="bg-sky-500 h-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ŽIVÝ SEZNAM KROKŮ (CO SE DĚJE) -->
+                <div class="bg-[#0B1324] border border-slate-800 rounded-xl p-3 space-y-1.5 max-h-40 overflow-y-auto" id="spravaModalStepsList"></div>
+
+                <!-- VÝSLEDKOVÝ PANEL PO ÚSPĚŠNÉM DOKONČENÍ -->
+                <div id="spravaModalResultBanner" class="hidden bg-emerald-950/90 border-2 border-emerald-400 rounded-xl p-4 text-emerald-100 space-y-1.5 shadow-lg">
+                    <div class="flex items-center gap-2 text-emerald-300 font-black text-xs uppercase tracking-wider">
+                        <span class="material-icons text-lg text-emerald-400">verified</span>
+                        <span>INFORMACE O ÚSPĚŠNÉM DOKONČENÍ AKCE</span>
+                    </div>
+                    <div id="spravaModalResultText" class="text-xs sm:text-sm font-extrabold text-white leading-relaxed"></div>
+                </div>
+
+                <div class="flex justify-end items-center gap-2 pt-1">
+                    <button type="button" id="spravaModalCloseBtn" onclick="window.closeSpravaDbTachoModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-5 py-2.5 rounded-xl text-xs flex items-center gap-1.5 shadow-md cursor-pointer">
+                        <span class="material-icons text-sm">check_circle</span>
+                        <span id="spravaModalCloseBtnText">ZAVŘÍT OKNO TACHOMETRU</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="toastNotification" class="fixed bottom-5 right-5 z-[10000] hidden bg-sky-700 text-white px-4 py-2.5 rounded-xl shadow-xl font-bold text-xs flex items-center gap-2">
         <span class="material-icons text-sm">check_circle</span><span id="toastMessage">Uloženo</span>
     </div>
 
     <script>
     (function() {
-        const CURRENT_SW_VERSION = 443;
+        const CURRENT_SW_VERSION = 445;
         const CURRENT_SW_VERSION_NAME = CURRENT_SW_VERSION;
         const CURRENT_SW_RELEASE_DATE = "3.11.2026";
         const CURRENT_SW_RELEASE_DATE_SPACED = "3. 11. 2026";
@@ -4586,25 +4657,36 @@ try {
         };
 
         window.restoreMasterSafetySnapshot = async () => {
+            if (typeof window.runSpravaDbActionWithTachometer === 'function') {
+                return await window.runSpravaDbActionWithTachometer(
+                    'Obnova hlavní PC databáze z lokálního záchranného bodu (IndexedDB)',
+                    async (step) => {
+                        await step(25, 'Načítám lokální záchranný snímek z IndexedDB (KontejneryMasterDB)...', 160);
+                        const snap = await _loadFromMasterIndexedDb('master_safety_snapshot');
+                        const snapTime = localStorage.getItem('ko_master_safety_snapshot_time') || 'poslední uložený stav';
+                        if (!snap || typeof snap !== 'object') {
+                            throw new Error('V lokální paměti PC zatím není uložen žádný záchranný bod.');
+                        }
+                        await step(70, `Bezpečně slučuji záznamy ze záchranného bodu (${snapTime}) do PC databáze...`, 200);
+                        applyIncomingSyncSnapshot(snap, true);
+                        syncContactsFromDocsToAdresar();
+                        updateDropdowns();
+                        window.updateMasterRecordCountBadges();
+                        const { totalRecords } = window.getMasterDatabaseStats();
+                        return `Obnoven lokální záchranný bod (${snapTime}) • Celkem ${totalRecords} záznamů v PC`;
+                    }
+                );
+            }
             try {
                 const snap = await _loadFromMasterIndexedDb('master_safety_snapshot');
-                const snapTime = localStorage.getItem('ko_master_safety_snapshot_time') || 'poslední uložený stav';
-                if (!snap || typeof snap !== 'object') {
-                    alert("V lokální paměti PC zatím není uložen žádný záchranný bod (vytváří se automaticky před každou synchronizací nebo zálohou).");
-                    return;
-                }
-                if (!confirm(`Obnovit hlavní PC databázi z lokálního záchranného bodu (${snapTime})?\nTato akce bezpečně sloučí všechna data ze záchranného bodu zpět do PC.`)) {
-                    return;
-                }
+                if (!snap || typeof snap !== 'object') return;
                 applyIncomingSyncSnapshot(snap, true);
                 syncContactsFromDocsToAdresar();
                 updateDropdowns();
                 renderCurrentView();
                 window.updateMasterRecordCountBadges();
                 showToast("✅ Obnoven lokální záchranný bod PC databáze!");
-            } catch (e) {
-                alert("Chyba při obnově záchranného bodu: " + e.message);
-            }
+            } catch (e) {}
         };
 
         window.downloadFullDatabaseToPcOnly = (customSnapObj = null) => {
@@ -4643,20 +4725,37 @@ try {
             reader.onload = async (ev) => {
                 try {
                     const text = String(ev.target?.result || '');
-                    const parsed = JSON.parse(text);
-                    if (!parsed || typeof parsed !== 'object') {
-                        throw new Error("Soubor neobsahuje platný JSON objekt databáze.");
+                    if (typeof window.runSpravaDbActionWithTachometer === 'function') {
+                        await window.runSpravaDbActionWithTachometer(
+                            `Obnova a sloučení databáze ze souboru (${file.name})`,
+                            async (step) => {
+                                await step(25, `Kontroluji strukturu souboru ${file.name}...`, 160);
+                                const parsed = JSON.parse(text);
+                                if (!parsed || typeof parsed !== 'object') {
+                                    throw new Error("Soubor neobsahuje platný JSON objekt databáze.");
+                                }
+                                await step(55, 'Ukládám lokální záchranný bod před sloučením...', 160);
+                                await window.saveMasterSafetySnapshot();
+                                await step(82, `Bezpečně slučuji záznamy ze souboru ${file.name} do Hlavní PC databáze...`, 200);
+                                applyIncomingSyncSnapshot(parsed, true);
+                                syncContactsFromDocsToAdresar();
+                                pushSyncToMobileBridgeAndServer();
+                                updateDropdowns();
+                                window.updateMasterRecordCountBadges();
+                                const { totalRecords } = window.getMasterDatabaseStats();
+                                return `Soubor ${file.name} byl úspěšně sloučen • Celkem ${totalRecords} záznamů v PC databázi`;
+                            }
+                        );
+                    } else {
+                        const parsed = JSON.parse(text);
+                        await window.saveMasterSafetySnapshot();
+                        applyIncomingSyncSnapshot(parsed, true);
+                        syncContactsFromDocsToAdresar();
+                        pushSyncToMobileBridgeAndServer();
+                        updateDropdowns();
+                        renderCurrentView();
+                        window.updateMasterRecordCountBadges();
                     }
-                    await window.saveMasterSafetySnapshot();
-                    applyIncomingSyncSnapshot(parsed, true);
-                    syncContactsFromDocsToAdresar();
-                    pushSyncToMobileBridgeAndServer();
-                    updateDropdowns();
-                    renderCurrentView();
-                    window.updateMasterRecordCountBadges();
-                    const { totalRecords } = window.getMasterDatabaseStats();
-                    showToast(`✅ Databáze obnovena ze souboru ${file.name} (${totalRecords} záznamů)!`);
-                    alert(`Databáze byla úspěšně načtena a sloučena ze souboru v PC:\n📄 Soubor: ${file.name}\n📊 Celkem záznamů v PC: ${totalRecords}`);
                 } catch (err) {
                     alert("Chyba při načítání záložního souboru z PC: " + err.message);
                 } finally {
@@ -4741,6 +4840,9 @@ try {
         };
 
         window.loadBackupFromGitHub = async () => {
+            if (typeof window.loadBackupFromGitHubWithTacho === 'function') {
+                return await window.loadBackupFromGitHubWithTacho();
+            }
             const repoInput = document.getElementById('ghRepoInput');
             const branchInput = document.getElementById('ghBranchInput');
             const tokenInput = document.getElementById('ghTokenInput');
@@ -8954,18 +9056,18 @@ try {
                 const evCount = (allEvents || []).length;
                 const polCount = (allCatalogItems || []).length;
                 const tabs = [
-                    { key: 'ZALOHA', label: '💾 Záloha Databáze', activeBg: 'bg-[#047857]' },
+                    { key: 'ZALOHA', label: '🛠️ SPRÁVA DATABÁZE', activeBg: 'bg-[#047857]' },
                     { key: 'REINDEXACE', label: '🔄 Reindexace', activeBg: 'bg-[#B45309]' },
                     { key: 'SYNCHRONIZACE', label: '☁️ Synchronizace', activeBg: 'bg-[#0284C7]' },
                     { key: 'PC_ERP', label: '🖥️ PC ERP', activeBg: 'bg-[#1D4ED8]' },
+                    { key: 'GITHUB_NASTAVENI', label: '🔑 Nastavení na GitHUB', activeBg: 'bg-[#334155]' },
+                    { key: 'QR_IPHONE', label: '📱 Instalace Iphone', activeBg: 'bg-[#0F766E]' },
+                    { key: 'QR_ANDROID', label: '🤖 Instalace Android', activeBg: 'bg-[#15803D]' },
                     { key: 'POLOZKY', label: `📦 Položky (${polCount})`, activeBg: 'bg-[#0369A1]' },
-                    { key: 'UDALOSTI', label: `📜 Události (${evCount})`, activeBg: 'bg-[#4338CA]' },
-                    { key: 'GITHUB_NASTAVENI', label: '🔑 Nastavení na GitHub', activeBg: 'bg-[#334155]' },
-                    { key: 'QR_IPHONE', label: '📱 QR kód pro instalaci iPhone', activeBg: 'bg-[#0F766E]' },
-                    { key: 'QR_ANDROID', label: '🤖 QR kód pro instalaci Android', activeBg: 'bg-[#15803D]' }
+                    { key: 'UDALOSTI', label: `📜 Události (${evCount})`, activeBg: 'bg-[#4338CA]' }
                 ];
                 subBar.innerHTML = tabs.map((t, idx) => {
-                    const isSel = selectedSub === t.key;
+                    const isSel = selectedSub === t.key || (t.key === 'ZALOHA' && selectedSub === 'SPRAVA_DATABAZE');
                     return `<button type="button" onclick="setAgendaSubTab('databaze', '${t.key}')" class="flex-1 px-2.5 h-full text-[11px] font-extrabold whitespace-nowrap flex items-center justify-center transition ${isSel ? t.activeBg + ' text-white border-b-2 border-white shadow-inner font-black' : 'text-slate-200 hover:bg-white/10'} ${idx < tabs.length - 1 ? 'border-r border-white/20' : ''}">${t.label}</button>`;
                 }).join('');
                 return;
@@ -9302,18 +9404,18 @@ try {
             const depoLabelTxt = currentDepo === 'VŠE' ? 'VŠECHNA DEPA (1 + 2)' : currentDepo.toUpperCase();
             const activeDbSub = window.agendaSubTabByTab['databaze'] || 'ZALOHA';
             const dbSubTitles = {
-                ZALOHA: 'DATABÁZE — ZÁLOHA DATABÁZE (GITHUB ZALOHA_DAT + PC)',
-                REINDEXACE: 'DATABÁZE — REINDEXACE A KONTROLA INTEGRITY DAT',
-                SYNCHRONIZACE: 'DATABÁZE — SYNCHRONIZACE & RUČNÍ AKTUALIZACE SW',
-                PC_ERP: 'DATABÁZE — PC ERP INTEGRACE (STORMWARE POHODA)',
+                ZALOHA: 'DATABÁZE — SPRÁVA DATABÁZE (REINDEXACE, SYNCHRONIZACE, PC ERP, GITHUB, INSTALACE IPHONE & ANDROID)',
+                REINDEXACE: 'SPRÁVA DATABÁZE — SEKCE: REINDEXACE',
+                SYNCHRONIZACE: 'SPRÁVA DATABÁZE — SEKCE: SYNCHRONIZACE',
+                PC_ERP: 'SPRÁVA DATABÁZE — SEKCE: PC ERP (STORMWARE POHODA)',
                 POLOZKY: 'DATABÁZE — POLOŽKY (KONTEJNERY, VYBAVENÍ & PŘEPRAVA)',
                 UDALOSTI: 'DATABÁZE — UDÁLOSTI (ASYMETRICKÁ HISTORIE ZMĚN V DÁVKÁCH PO 50)',
-                GITHUB_NASTAVENI: 'DATABÁZE — NASTAVENÍ NA GITHUB (CESTA & TOKEN OVĚŘENÍ)',
-                QR_IPHONE: 'DATABÁZE — QR KÓD PRO INSTALACI IPHONE',
-                QR_ANDROID: 'DATABÁZE — QR KÓD PRO INSTALACI ANDROID (CHROME BEZ APK + SOUBOR APK)'
+                GITHUB_NASTAVENI: 'SPRÁVA DATABÁZE — SEKCE: NASTAVENÍ NA GITHUB',
+                QR_IPHONE: 'SPRÁVA DATABÁZE — SEKCE: INSTALACE IPHONE',
+                QR_ANDROID: 'SPRÁVA DATABÁZE — SEKCE: INSTALACE ANDROID'
             };
             document.getElementById('activeAgendaText').innerText = currentTab === 'databaze'
-                ? (dbSubTitles[activeDbSub] || 'DATABÁZE — SPRÁVA HLAVNÍ DATABÁZE')
+                ? (dbSubTitles[activeDbSub] || 'DATABÁZE — SPRÁVA DATABÁZE')
                 : (currentTab === 'polozky'
                     ? 'POLOŽKY — KONTEJNERY, VYBAVENÍ & PŘEPRAVA'
                     : (currentTab === 'whatsapp' ? `${depoLabelTxt} — WHATSAPP SKUPINA "PŘEPRAVA"` : (currentTab === 'udalosti' ? 'HISTORIE ZMĚN VE VŠECH APLIKACÍCH (UDÁLOSTI)' : (currentTab === 'poznamky' ? 'POZNÁMKY (OUTLOOK STYL)' : `${depoLabelTxt} — ${currentTab.toUpperCase()}`))));
@@ -9322,7 +9424,7 @@ try {
                     bannerEl.className = 'bg-[#047857] text-white px-3.5 py-2 rounded-lg font-extrabold text-xs flex items-center gap-1.5 shadow-sm';
                     btnAddEl.className = 'bg-[#047857] hover:bg-emerald-800 text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-1 shadow-sm';
                     const lbl = document.getElementById('btnAddLabel');
-                    if (lbl) lbl.innerText = activeDbSub === 'POLOZKY' ? '+ NOVÁ POLOŽKA' : (activeDbSub === 'UDALOSTI' ? '+ ZAPSAT UDÁLOST' : '💾 ZÁLOHOVAT DB');
+                    if (lbl) lbl.innerText = activeDbSub === 'POLOZKY' ? '+ NOVÁ POLOŽKA' : (activeDbSub === 'UDALOSTI' ? '+ ZAPSAT UDÁLOST' : '🛠️ SPRÁVA & ZÁLOHA DB');
                 } else if (currentTab === 'objednavky') {
                     bannerEl.className = isDepo2Active ? 'bg-[#E65100] text-white px-3.5 py-2 rounded-lg font-extrabold text-xs flex items-center gap-1.5 shadow-sm' : 'bg-[#1565C0] text-white px-3.5 py-2 rounded-lg font-extrabold text-xs flex items-center gap-1.5 shadow-sm';
                     btnAddEl.className = isDepo2Active ? 'bg-[#E65100] hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-1 shadow-sm' : 'bg-[#1565C0] hover:bg-blue-800 text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-1 shadow-sm';
@@ -10622,380 +10724,1334 @@ try {
             }
         };
 
-        window.saveDatabazeGitHubSettings = () => {
-            const repoEl = document.getElementById('dbGhRepoInput');
-            const branchEl = document.getElementById('dbGhBranchInput');
-            const backupFolderEl = document.getElementById('dbGhBackupFolderInput');
-            const tokenEl = document.getElementById('dbGhTokenInput');
-            const repoVal = (repoEl ? repoEl.value : '').trim().replace(/^https:\/\/github\.com\//, '').replace(/\/$/, '') || DEFAULT_GH_REPO;
-            const branchVal = (branchEl ? branchEl.value : '').trim() || 'main';
-            const folderVal = (backupFolderEl ? backupFolderEl.value : '').trim() || 'ZALOHA_DAT';
-            const tokenVal = (tokenEl ? tokenEl.value : '').trim() || DEFAULT_GH_TOKEN;
-            localStorage.setItem('ko_gh_repo', repoVal);
-            localStorage.setItem('ko_gh_branch', branchVal);
-            localStorage.setItem('ko_gh_backup_folder', folderVal);
-            localStorage.setItem('ko_gh_token', tokenVal);
-            const modalRepo = document.getElementById('ghRepoInput'); if (modalRepo) modalRepo.value = repoVal;
-            const modalBranch = document.getElementById('ghBranchInput'); if (modalBranch) modalBranch.value = branchVal;
-            const modalToken = document.getElementById('ghTokenInput'); if (modalToken) modalToken.value = tokenVal;
-            showToast(`✅ Nastavení GitHubu uloženo (${repoVal} • větev ${branchVal})`);
-            renderCurrentView();
+        // --- TACHOMETR SPRÁVY DATABÁZE & VŠECH AKCÍ (S POPISEM PRŮBĚHU A VÝSLEDKEM DOKONČENÍ) ---
+        window.__lastSpravaDbTachoState = window.__lastSpravaDbTachoState || (() => {
+            try {
+                const saved = JSON.parse(localStorage.getItem('ko_last_sprava_tacho_state') || 'null');
+                if (saved && typeof saved === 'object') return saved;
+            } catch (e) {}
+            return {
+                active: false,
+                finished: false,
+                isError: false,
+                actionTitle: 'Připraveno ke spuštění akce',
+                percent: 0,
+                stepDesc: 'Klikněte na libovolnou akci v sekcích Správy databáze (Zálohování, Reindexace, Synchronizace, PC ERP, Nastavení na GitHUB, Instalace Iphone, Instalace Android).',
+                resultText: '',
+                steps: [],
+                timestampCz: ''
+            };
+        })();
+
+        window.closeSpravaDbTachoModal = () => {
+            const modal = document.getElementById('spravaDbTachoModal');
+            if (modal) modal.classList.add('hidden');
+        };
+
+        window.openSpravaDbTachoModal = () => {
+            const modal = document.getElementById('spravaDbTachoModal');
+            if (modal) modal.classList.remove('hidden');
+            window.updateSpravaTachometerUi(window.__lastSpravaDbTachoState);
+        };
+
+        window.updateSpravaTachometerUi = (state) => {
+            if (!state) return;
+            window.__lastSpravaDbTachoState = state;
+            try {
+                localStorage.setItem('ko_last_sprava_tacho_state', JSON.stringify({
+                    ...state,
+                    active: false
+                }));
+            } catch (e) {}
+
+            const clamped = Math.max(0, Math.min(100, Math.round(Number(state.percent) || 0)));
+            const arcTotal = 251.2;
+            const dashOffset = arcTotal - (arcTotal * clamped) / 100;
+            const angleDeg = -90 + (clamped * 1.8);
+
+            // Aktualizace v horním modalu #swUpdateModal pokud je otevřený
+            if (typeof window.updatePcTachometer === 'function') {
+                window.updatePcTachometer(clamped, state.actionTitle, state.stepDesc);
+            }
+
+            // Aktualizace jak modalu #spravaDbTachoModal, tak inline karty v sekci SPRÁVA DATABÁZE
+            const prefixes = ['spravaModal', 'spravaInline'];
+            prefixes.forEach(prefix => {
+                const arcEl = document.getElementById(prefix + 'TachoArc');
+                const needleEl = document.getElementById(prefix + 'TachoNeedle');
+                const pctEl = document.getElementById(prefix + 'TachoPct');
+                const titleEl = document.getElementById(prefix + 'ActionTitle');
+                const stepEl = document.getElementById(prefix + 'StepDesc');
+                const barEl = document.getElementById(prefix + 'ProgressBar');
+                const stepsListEl = document.getElementById(prefix + 'StepsList');
+                const resBannerEl = document.getElementById(prefix + 'ResultBanner');
+                const resTextEl = document.getElementById(prefix + 'ResultText');
+                const badgeEl = document.getElementById(prefix + 'StatusBadge');
+
+                if (arcEl) arcEl.style.strokeDashoffset = String(dashOffset);
+                if (needleEl) needleEl.style.transform = `rotate(${angleDeg}deg)`;
+                if (pctEl) {
+                    pctEl.innerText = `${clamped}%`;
+                    pctEl.className = state.isError
+                        ? 'text-2xl font-black text-red-600 leading-none'
+                        : (clamped >= 100 ? 'text-2xl font-black text-emerald-700 leading-none' : 'text-2xl font-black text-sky-700 leading-none');
+                }
+                if (titleEl) titleEl.innerText = state.actionTitle || 'Akce Správy databáze';
+                if (stepEl) stepEl.innerText = state.stepDesc || '';
+                if (barEl) {
+                    barEl.style.width = `${clamped}%`;
+                    barEl.className = state.isError
+                        ? 'h-full bg-gradient-to-r from-red-600 to-rose-500 transition-all duration-300'
+                        : 'h-full bg-gradient-to-r from-sky-600 via-teal-500 to-emerald-500 transition-all duration-300';
+                }
+                if (badgeEl) {
+                    if (state.active) {
+                        badgeEl.className = 'bg-amber-500 text-slate-950 px-3 py-1 rounded-full text-xs font-black animate-pulse';
+                        badgeEl.innerText = `⏳ PROBÍHÁ (${clamped}%)`;
+                    } else if (state.isError) {
+                        badgeEl.className = 'bg-red-600 text-white px-3 py-1 rounded-full text-xs font-black';
+                        badgeEl.innerText = `❌ CHYBA AKCE`;
+                    } else if (state.finished) {
+                        badgeEl.className = 'bg-emerald-600 text-white px-3 py-1 rounded-full text-xs font-black';
+                        badgeEl.innerText = `✅ DOKONČENO (100%) • ${state.timestampCz || ''}`;
+                    } else {
+                        badgeEl.className = 'bg-slate-700 text-emerald-300 px-3 py-1 rounded-full text-xs font-black';
+                        badgeEl.innerText = `PŘIPRAVENO`;
+                    }
+                }
+                if (stepsListEl && Array.isArray(state.steps)) {
+                    stepsListEl.innerHTML = state.steps.map(s => {
+                        const icon = s.status === 'done' ? '✅' : (s.status === 'error' ? '❌' : '⏳');
+                        const cls = s.status === 'done'
+                            ? 'text-emerald-900 font-bold'
+                            : (s.status === 'error' ? 'text-red-700 font-extrabold' : 'text-sky-900 font-extrabold');
+                        return `<div class="${cls} flex items-center justify-between gap-2 py-0.5 border-b border-slate-200/60 last:border-0">
+                            <span>${icon} ${s.text}</span>
+                            <span class="text-[10px] font-mono text-slate-500">${s.pct}%</span>
+                        </div>`;
+                    }).join('');
+                    stepsListEl.scrollTop = stepsListEl.scrollHeight;
+                }
+                if (resBannerEl && resTextEl) {
+                    if (state.finished && state.resultText) {
+                        resBannerEl.classList.remove('hidden');
+                        resBannerEl.className = state.isError
+                            ? 'bg-red-50 border-2 border-red-500 rounded-xl p-3.5 flex items-start gap-3 shadow-sm'
+                            : 'bg-emerald-50 border-2 border-emerald-500 rounded-xl p-3.5 flex items-start gap-3 shadow-sm';
+                        resTextEl.className = state.isError
+                            ? 'text-xs font-bold text-red-900 mt-0.5 leading-relaxed'
+                            : 'text-xs font-bold text-emerald-900 mt-0.5 leading-relaxed';
+                        resTextEl.innerText = state.resultText;
+                    } else {
+                        resBannerEl.classList.add('hidden');
+                    }
+                }
+            });
+
+            const closeBtn = document.getElementById('spravaModalCloseBtn');
+            const statusFoot = document.getElementById('spravaModalFooterStatus');
+            if (closeBtn) {
+                if (state.active) {
+                    closeBtn.className = 'bg-slate-600 text-white px-5 py-2 rounded-xl font-black text-xs cursor-pointer';
+                    closeBtn.innerText = 'SKRÝT OKNO (BĚŽÍ NA POZADÍ)';
+                } else {
+                    closeBtn.className = 'bg-emerald-700 hover:bg-emerald-800 text-white px-6 py-2.5 rounded-xl font-black text-xs shadow cursor-pointer';
+                    closeBtn.innerText = '✓ ZAVŘÍT PŘEHLED AKCE';
+                }
+            }
+            if (statusFoot) {
+                statusFoot.innerText = state.active
+                    ? `⏳ Probíhá: ${state.stepDesc}`
+                    : (state.finished ? `✅ Hotovo (${state.timestampCz || 'nyní'})` : 'Připraveno');
+            }
+        };
+
+        window.runSpravaDbActionWithTachometer = async (actionTitle, runnerFn, options = {}) => {
+            const pause = (ms) => new Promise(r => setTimeout(r, ms));
+            const stepsLog = [];
+            const nowCz = () => new Date().toLocaleTimeString('cs-CZ');
+            const state = {
+                active: true,
+                finished: false,
+                isError: false,
+                actionTitle: actionTitle,
+                percent: 5,
+                stepDesc: `Zahajuji akci: ${actionTitle}...`,
+                resultText: '',
+                steps: stepsLog,
+                timestampCz: nowCz()
+            };
+
+            const modal = document.getElementById('spravaDbTachoModal');
+            if (modal && options.showModal !== false) {
+                modal.classList.remove('hidden');
+            }
+            window.updateSpravaTachometerUi(state);
+
+            const step = async (pct, desc, delayMs = 160) => {
+                stepsLog.forEach(s => { if (s.status === 'running') s.status = 'done'; });
+                stepsLog.push({ pct: Math.round(pct), text: desc, status: 'running' });
+                state.percent = pct;
+                state.stepDesc = desc;
+                state.timestampCz = nowCz();
+                window.updateSpravaTachometerUi(state);
+                if (delayMs > 0) await pause(delayMs);
+            };
+
+            try {
+                const resSummary = await runnerFn(step);
+                stepsLog.forEach(s => { if (s.status === 'running') s.status = 'done'; });
+                const finalSummaryText = resSummary
+                    ? `Info: Akce „${actionTitle}“ byla s výsledkem [ ${resSummary} ] úspěšně dokončena.`
+                    : `Info: Akce „${actionTitle}“ byla s výsledkem [ OK – 100% ] úspěšně dokončena.`;
+                stepsLog.push({ pct: 100, text: finalSummaryText, status: 'done' });
+                state.active = false;
+                state.finished = true;
+                state.isError = false;
+                state.percent = 100;
+                state.stepDesc = `Hotovo: ${resSummary || 'Všechny kroky proběhly bez chyby.'}`;
+                state.resultText = finalSummaryText;
+                state.timestampCz = new Date().toLocaleString('cs-CZ');
+                window.updateSpravaTachometerUi(state);
+                if (typeof showToast === 'function') {
+                    showToast(`✅ ${finalSummaryText}`);
+                }
+                if (currentTab === 'databaze') {
+                    renderCurrentView();
+                }
+                return { ok: true, summary: finalSummaryText };
+            } catch (err) {
+                const msg = (err && err.message) ? err.message : String(err || 'Neznámá chyba');
+                stepsLog.forEach(s => { if (s.status === 'running') s.status = 'error'; });
+                const errSummaryText = `Info: Akce „${actionTitle}“ skončila s výsledkem [ CHYBA: ${msg} ].`;
+                stepsLog.push({ pct: state.percent || 100, text: errSummaryText, status: 'error' });
+                state.active = false;
+                state.finished = true;
+                state.isError = true;
+                state.stepDesc = `Chyba při provádění: ${msg}`;
+                state.resultText = errSummaryText;
+                state.timestampCz = new Date().toLocaleString('cs-CZ');
+                window.updateSpravaTachometerUi(state);
+                if (typeof showToast === 'function') {
+                    showToast(`❌ ${errSummaryText}`);
+                }
+                if (currentTab === 'databaze') {
+                    renderCurrentView();
+                }
+                return { ok: false, error: msg };
+            }
+        };
+
+        // 1. ZÁLOHOVÁNÍ A OBNOVA DATABÁZE (S TACHOMETREM)
+        window.performFullDatabaseBackup = async () => {
+            return await window.runSpravaDbActionWithTachometer(
+                'Záloha celé databáze (GitHub ZALOHA_DAT + PC)',
+                async (step) => {
+                    const repo = (document.getElementById('dbGhRepoInput')?.value || document.getElementById('ghRepoInput')?.value || localStorage.getItem('ko_gh_repo') || DEFAULT_GH_REPO).trim().replace(/^https:\/\/github\.com\//, '').replace(/\/$/, '');
+                    const branch = (document.getElementById('dbGhBranchInput')?.value || document.getElementById('ghBranchInput')?.value || localStorage.getItem('ko_gh_branch') || 'main').trim();
+                    const folderVal = (document.getElementById('dbGhBackupFolderInput')?.value || localStorage.getItem('ko_gh_backup_folder') || 'ZALOHA_DAT').trim() || 'ZALOHA_DAT';
+                    const token = (document.getElementById('dbGhTokenInput')?.value || document.getElementById('ghTokenInput')?.value || localStorage.getItem('ko_gh_token') || DEFAULT_GH_TOKEN).trim();
+
+                    localStorage.setItem('ko_gh_repo', repo);
+                    localStorage.setItem('ko_gh_branch', branch);
+                    localStorage.setItem('ko_gh_backup_folder', folderVal);
+                    if (token) localStorage.setItem('ko_gh_token', token);
+
+                    await step(15, 'Ukládám lokální záchranný snímek Master PC do IndexedDB (KontejneryMasterDB)...', 180);
+                    await window.saveMasterSafetySnapshot();
+
+                    await step(32, `Kontroluji a bezpečně slučuji případné nové změny z mobilů (${repo})...`, 180);
+                    try {
+                        const existingText = await fetchGitHubFileContents(repo, branch, 'containers_sync.json', token);
+                        if (existingText && existingText.trim().startsWith('{')) {
+                            applyIncomingSyncSnapshot(JSON.parse(existingText));
+                            syncContactsFromDocsToAdresar();
+                        }
+                    } catch (e) {}
+
+                    await step(50, 'Sestavuji kompletní obraz všech agend Hlavní PC databáze...', 180);
+                    const snapObj = window.buildFullMasterDatabaseObject();
+                    const jsonStr = JSON.stringify(snapObj, null, 2);
+                    const sizeKb = Math.max(1, Math.round(jsonStr.length / 1024));
+                    const totalRec = snapObj.backupMetadata.totalRecords;
+
+                    await step(68, `Stahuji záložní soubor .JSON (${sizeKb} KB, ${totalRec} záznamů) přímo do PC...`, 200);
+                    const downloadedFileName = window.downloadFullDatabaseToPcOnly(snapObj);
+                    const now = new Date();
+                    const czTime = now.toLocaleString('cs-CZ');
+                    localStorage.setItem('ko_last_master_backup_time', `${czTime} (${sizeKb} KB)`);
+                    localStorage.setItem('ko_last_full_backup_time', `${czTime} (${sizeKb} KB)`);
+                    localStorage.setItem('ko_last_master_backup_file', downloadedFileName || 'Zaloha_Databaze.json');
+
+                    if (!token) {
+                        window.updateMasterRecordCountBadges();
+                        return `Staženo do PC: ${downloadedFileName} (${totalRec} záznamů, ${sizeKb} KB) • GitHub token není vyplněn`;
+                    }
+
+                    await step(82, `Nahrávám zálohu do složky ${folderVal}/ na GitHubu (${repo}, větev ${branch})...`, 200);
+                    const b64 = b64EncodeUnicode(jsonStr);
+                    const authHeader = (token.startsWith('ghp_') || token.startsWith('github_pat_')) ? `Bearer ${token}` : `token ${token}`;
+                    const pad = (n) => String(n).padStart(2, '0');
+                    const stamp = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}_${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`;
+                    const masterPath = `${folderVal}/kompletni_databaze_master.json`;
+                    const timestampedPath = `${folderVal}/Zaloha_Databaze_${stamp}.json`;
+                    const manifestPath = `${folderVal}/seznam_zaloh.json`;
+                    const commitMsg = `${folderVal}: Kompletní záloha Hlavní PC databáze (${czTime} • ${totalRec} záznamů)`;
+
+                    const putMasterRes = await putFileToGitHubRepo(repo, branch, masterPath, b64, commitMsg, authHeader);
+                    await putFileToGitHubRepo(repo, branch, timestampedPath, b64, commitMsg, authHeader);
+
+                    await step(92, 'Aktualizuji seznam_zaloh.json a kořenový containers_sync.json na GitHubu...', 150);
+                    try {
+                        const manifestObj = {
+                            folder: folderVal,
+                            masterSource: "HLAVNÍ PC APLIKACE (MASTER DATABÁZE)",
+                            lastBackupAtCz: czTime,
+                            lastBackupAtIso: now.toISOString(),
+                            version: CURRENT_SW_VERSION,
+                            totalRecords: totalRec,
+                            recordCounts: snapObj.backupMetadata.recordCounts,
+                            latestMasterFile: masterPath,
+                            latestTimestampedFile: timestampedPath,
+                            localPcDownloadedFile: downloadedFileName
+                        };
+                        const manifestB64 = b64EncodeUnicode(JSON.stringify(manifestObj, null, 2));
+                        await putFileToGitHubRepo(repo, branch, manifestPath, manifestB64, `${folderVal}: Aktualizace přehledu záloh (${czTime})`, authHeader);
+                    } catch (e) {}
+
+                    await putFileToGitHubRepo(repo, branch, 'containers_sync.json', b64, commitMsg, authHeader);
+                    window.updateMasterRecordCountBadges();
+
+                    if (putMasterRes && putMasterRes.ok) {
+                        return `Zálohováno ${totalRec} záznamů (${sizeKb} KB) do GitHubu (${masterPath}) + stažen soubor ${downloadedFileName} do PC`;
+                    } else {
+                        return `Staženo do PC (${downloadedFileName}, ${totalRec} záznamů, ${sizeKb} KB) • GitHub HTTP ${putMasterRes ? putMasterRes.status : 'offline'}`;
+                    }
+                }
+            );
+        };
+        window.createFullDatabaseBackupManual = window.performFullDatabaseBackup;
+        window.uploadBackupToGitHub = window.performFullDatabaseBackup;
+
+        window.exportDatabaseBackupJson = async () => {
+            return await window.runSpravaDbActionWithTachometer(
+                'Stažení kompletní zálohy databáze do PC (.JSON)',
+                async (step) => {
+                    await step(25, 'Ukládám bezpečnostní bod do IndexedDB (KontejneryMasterDB)...', 150);
+                    await window.saveMasterSafetySnapshot();
+                    await step(60, 'Sestavuji kompletní JSON obraz všech agend a nastavení...', 160);
+                    const snapObj = window.buildFullMasterDatabaseObject();
+                    const jsonStr = JSON.stringify(snapObj, null, 2);
+                    const sizeKb = Math.max(1, Math.round(jsonStr.length / 1024));
+                    await step(88, `Generuji a stahuji soubor (${sizeKb} KB) do složky Stažené soubory v PC...`, 160);
+                    const fileName = window.downloadFullDatabaseToPcOnly(snapObj);
+                    const czTime = new Date().toLocaleString('cs-CZ');
+                    localStorage.setItem('ko_last_master_backup_time', `${czTime} (${sizeKb} KB • PC)`);
+                    localStorage.setItem('ko_last_master_backup_file', fileName || 'Zaloha_Databaze.json');
+                    window.updateMasterRecordCountBadges();
+                    return `Soubor ${fileName} (${snapObj.backupMetadata.totalRecords} záznamů, ${sizeKb} KB) byl uložen do PC`;
+                }
+            );
+        };
+
+        window.loadBackupFromGitHubWithTacho = async () => {
+            return await window.runSpravaDbActionWithTachometer(
+                'Načtení a bezpečné sloučení zálohy z GitHubu (ZALOHA_DAT)',
+                async (step) => {
+                    const repo = (document.getElementById('dbGhRepoInput')?.value || document.getElementById('ghRepoInput')?.value || localStorage.getItem('ko_gh_repo') || DEFAULT_GH_REPO).trim().replace(/^https:\/\/github\.com\//, '').replace(/\/$/, '');
+                    const branch = (document.getElementById('dbGhBranchInput')?.value || document.getElementById('ghBranchInput')?.value || localStorage.getItem('ko_gh_branch') || 'main').trim();
+                    const folderVal = (localStorage.getItem('ko_gh_backup_folder') || 'ZALOHA_DAT').trim() || 'ZALOHA_DAT';
+                    const token = (document.getElementById('dbGhTokenInput')?.value || document.getElementById('ghTokenInput')?.value || localStorage.getItem('ko_gh_token') || DEFAULT_GH_TOKEN).trim();
+
+                    await step(20, 'Ukládám lokální záchranný bod před sloučením dat...', 150);
+                    await window.saveMasterSafetySnapshot();
+
+                    await step(50, `Stahuji záložní databázi ze složky ${folderVal}/ na GitHubu (${repo})...`, 200);
+                    const candidates = [`${folderVal}/kompletni_databaze_master.json`, 'ZALOHA_DAT/kompletni_databaze_master.json', 'containers_sync.json'];
+                    let loadedData = null;
+                    let loadedFile = '';
+                    for (const fn of candidates) {
+                        const txt = await fetchGitHubFileContents(repo, branch, fn, token);
+                        if (txt && txt.trim().startsWith('{')) {
+                            loadedData = JSON.parse(txt);
+                            loadedFile = fn;
+                            break;
+                        }
+                    }
+                    if (!loadedData) {
+                        throw new Error(`V repozitáři ${repo} nebyl nalezen záložní soubor.`);
+                    }
+
+                    await step(80, `Bezpečně slučuji záznamy ze souboru ${loadedFile} s Hlavní PC databází...`, 200);
+                    applyIncomingSyncSnapshot(loadedData);
+                    syncContactsFromDocsToAdresar();
+                    pushSyncToMobileBridgeAndServer();
+                    updateDropdowns();
+                    window.updateMasterRecordCountBadges();
+                    const { totalRecords } = window.getMasterDatabaseStats();
+                    return `Sloučeno ze zdroje ${loadedFile} • Celkem v PC databázi: ${totalRecords} záznamů`;
+                }
+            );
+        };
+
+        // 2. REINDEXACE A KONTROLA INTEGRITY DATABÁZE (S TACHOMETREM)
+        window.reindexAllAgendas = async () => {
+            return await window.runSpravaDbActionWithTachometer(
+                'Kompletní reindexace a kontrola integrity databáze',
+                async (step) => {
+                    await step(15, '1/5 Ukládám bezpečnostní záchranný bod Master PC databáze...', 180);
+                    await window.saveMasterSafetySnapshot();
+
+                    await step(35, '2/5 Kontroluji a sjednocuji duplicity v agendách (Kontejnery, Přeprava, Objednávky, CN Nabídky, Zakázky, Faktury)...', 220);
+                    const dedupById = (arr) => {
+                        if (!Array.isArray(arr)) return [];
+                        const map = new Map();
+                        arr.forEach(item => {
+                            if (!item) return;
+                            const id = String(item.id || item.cislo || item.evidencniCislo || Math.random());
+                            const prev = map.get(id);
+                            if (!prev || Number(item.updatedAt || item.timestamp || 0) >= Number(prev.updatedAt || prev.timestamp || 0)) {
+                                map.set(id, item);
+                            }
+                        });
+                        return Array.from(map.values());
+                    };
+                    allContainers = dedupById(allContainers);
+                    allTransports = dedupById(allTransports);
+                    allExternalOrders = dedupById(allExternalOrders);
+                    allNabidky = dedupById(allNabidky);
+                    allZakazky = dedupById(allZakazky);
+                    allFaktury = dedupById(allFaktury);
+                    allZalohoveFaktury = dedupById(allZalohoveFaktury);
+                    allZajemci = dedupById(allZajemci);
+
+                    await step(60, '3/5 Páruji kontakty a firmy z Objednávek, CN Nabídek, Zakázek a Faktur do Adresáře...', 220);
+                    const beforeCust = (allCustomers || []).length;
+                    if (typeof syncContactsFromDocsToAdresar === 'function') {
+                        syncContactsFromDocsToAdresar();
+                    }
+                    const afterCust = (allCustomers || []).length;
+                    const addedCust = Math.max(0, afterCust - beforeCust);
+
+                    await step(82, '4/5 Ukládám přeindexované tabulky do localStorage a trvalé IndexedDB (KontejneryMasterDB)...', 200);
+                    localStorage.setItem('ko_containers', JSON.stringify(allContainers));
+                    localStorage.setItem('ko_transports', JSON.stringify(allTransports));
+                    localStorage.setItem('ko_objednavky', JSON.stringify(allExternalOrders));
+                    localStorage.setItem('ko_nabidky', JSON.stringify(allNabidky));
+                    localStorage.setItem('ko_zakazky', JSON.stringify(allZakazky));
+                    localStorage.setItem('ko_faktury', JSON.stringify(allFaktury));
+                    localStorage.setItem('ko_zalohove_faktury', JSON.stringify(allZalohoveFaktury));
+                    localStorage.setItem('ko_customers', JSON.stringify(allCustomers));
+                    localStorage.setItem('ko_zajemci', JSON.stringify(allZajemci));
+                    await window.saveMasterSafetySnapshot();
+
+                    await step(95, '5/5 Přepočítávám počty záznamů, filtry a miniatury...', 150);
+                    updateDropdowns();
+                    window.updateMasterRecordCountBadges();
+                    const stats = window.getMasterDatabaseStats();
+                    return `Zkontrolováno a přeindexováno ${stats.totalRecords} záznamů (Kontejnery: ${stats.counts.containers}, Přeprava: ${stats.counts.transports}, Adresář: ${stats.counts.customers}, doplněno ${addedCust} nových kontaktů)`;
+                }
+            );
+        };
+
+        // 3. SYNCHRONIZACE DAT & RUČNÍ AKTUALIZACE (S TACHOMETREM)
+        window.syncWithMobileAndCloudWithTacho = async () => {
+            return await window.runSpravaDbActionWithTachometer(
+                'Synchronizace dat (PC ↔ Mobil ↔ GitHub Cloud)',
+                async (step) => {
+                    const repo = (localStorage.getItem('ko_gh_repo') || DEFAULT_GH_REPO).trim().replace(/^https:\/\/github\.com\//, '').replace(/\/$/, '');
+                    const branch = (localStorage.getItem('ko_gh_branch') || 'main').trim();
+                    const token = (localStorage.getItem('ko_gh_token') || DEFAULT_GH_TOKEN).trim();
+
+                    await step(20, '1/4 Zajišťuji lokální záchranný snímek Hlavní PC databáze...', 150);
+                    await window.saveMasterSafetySnapshot();
+
+                    await step(45, `2/4 Stahuji nové jízdy Přepravy, fotky a Události z GitHub Cloudu (${repo})...`, 220);
+                    let cloudMerged = false;
+                    try {
+                        const cloudTxt = await fetchGitHubFileContents(repo, branch, 'containers_sync.json', token);
+                        if (cloudTxt && cloudTxt.trim().startsWith('{')) {
+                            applyIncomingSyncSnapshot(JSON.parse(cloudTxt));
+                            cloudMerged = true;
+                        }
+                    } catch (e) {}
+
+                    await step(72, '3/4 Synchronizuji s mobilním můstkem a lokálním rozhraním...', 180);
+                    await window.syncWithMobileAndCloud(false);
+
+                    await step(90, '4/4 Aktualizuji Adresář, čítače agend a trvalé úložiště IndexedDB...', 160);
+                    await window.saveMasterSafetySnapshot();
+                    window.updateMasterRecordCountBadges();
+                    const { totalRecords, counts } = window.getMasterDatabaseStats();
+                    return `Synchronizováno ${totalRecords} záznamů (Přepravy: ${counts.transports}, Kontejnery: ${counts.containers}, Události: ${counts.events}${cloudMerged ? ', Cloud GitHub připojen' : ''})`;
+                }
+            );
+        };
+
+        window.pushMasterDataToGitHubManual = async () => {
+            return await window.runSpravaDbActionWithTachometer(
+                'Odeslání jízd Přepravy a dat z PC na GitHub (containers_sync.json)',
+                async (step) => {
+                    const repo = (localStorage.getItem('ko_gh_repo') || DEFAULT_GH_REPO).trim().replace(/^https:\/\/github\.com\//, '').replace(/\/$/, '');
+                    const branch = (localStorage.getItem('ko_gh_branch') || 'main').trim();
+                    const token = (localStorage.getItem('ko_gh_token') || DEFAULT_GH_TOKEN).trim();
+                    if (!token) {
+                        throw new Error('Nejprve zadejte GitHub Token v sekci Nastavení na GitHUB.');
+                    }
+
+                    await step(25, '1/3 Sestavuji synchronizační snímek jízd Přepravy, Kontejnerů a agend...', 180);
+                    const snapObj = window.buildFullMasterDatabaseObject();
+                    const jsonStr = JSON.stringify(snapObj, null, 2);
+                    const sizeKb = Math.max(1, Math.round(jsonStr.length / 1024));
+                    const b64 = b64EncodeUnicode(jsonStr);
+                    const authHeader = (token.startsWith('ghp_') || token.startsWith('github_pat_')) ? `Bearer ${token}` : `token ${token}`;
+                    const czTime = new Date().toLocaleString('cs-CZ');
+
+                    await step(65, `2/3 Nahrávám containers_sync.json (${sizeKb} KB) do repozitáře ${repo} (${branch})...`, 220);
+                    const res = await putFileToGitHubRepo(
+                        repo,
+                        branch,
+                        'containers_sync.json',
+                        b64,
+                        `SYNC: Aktualizace jízd Přepravy a dat z Hlavního PC (${czTime})`,
+                        authHeader
+                    );
+                    if (!res || !res.ok) {
+                        throw new Error(`GitHub vrátil HTTP ${res ? res.status : 'chybu spojení'}`);
+                    }
+
+                    await step(90, '3/3 Potvrzuji uložení a aktualizuji stav synchronizace...', 150);
+                    return `Odesláno na GitHub (${repo}) • Přepravy: ${(allTransports || []).length}, Kontejnery: ${(allContainers || []).length}, Velikost: ${sizeKb} KB`;
+                }
+            );
+        };
+
+        window.performUnifiedGitHubUpdateWithTacho = async () => {
+            return await window.runSpravaDbActionWithTachometer(
+                'Kontrola a aktualizace programu + synchronizace s GitHubem',
+                async (step) => {
+                    await step(25, '1/3 Kontroluji dostupnost nové verze programu na GitHubu...', 180);
+                    await window.performUnifiedGitHubUpdate(false);
+                    await step(75, '2/3 Ověřuji integritu lokální databáze a verzí...', 180);
+                    const { totalRecords } = window.getMasterDatabaseStats();
+                    await step(95, '3/3 Dokončuji kontrolu aktualizací...', 140);
+                    return `Program v ${CURRENT_SW_VERSION} je aktuální • Databáze obsahuje ${totalRecords} záznamů`;
+                }
+            );
+        };
+
+        window.warmUpMobileThumbnailsCacheWithTacho = async () => {
+            return await window.runSpravaDbActionWithTachometer(
+                'Předgenerování lokální cache miniatur (240×240 px)',
+                async (step) => {
+                    await step(30, 'Procházím fotografie Kontejnerů a jízd Přepravy...', 180);
+                    if (typeof window.warmUpMobileThumbnailsCache === 'function') {
+                        await window.warmUpMobileThumbnailsCache(false);
+                    }
+                    await step(85, 'Optimalizuji paměťovou mapu miniatur pro okamžité vykreslení...', 180);
+                    const count = (window._mobileThumbMemoryMap && window._mobileThumbMemoryMap.size) || 0;
+                    return `V lokální cache je připraveno ${count} lehkých miniatur (240×240 px)`;
+                }
+            );
+        };
+
+        window.pruneExpiredMobileTransportPhotosWithTacho = async () => {
+            return await window.runSpravaDbActionWithTachometer(
+                'Vyčištění expirovaných mobilních fotek Přepravy (> 30 dní po HOTOVO)',
+                async (step) => {
+                    await step(35, 'Kontroluji dokončené přepravy (HOTOVO) starší než 30 dní...', 180);
+                    if (typeof window.pruneExpiredMobileTransportPhotos === 'function') {
+                        window.pruneExpiredMobileTransportPhotos(false);
+                    }
+                    await step(85, 'Ukládám stav vyčištěné mobilní cache...', 150);
+                    const pruned = localStorage.getItem('ko_mobile_thumb_pruned_count') || 0;
+                    return `Vyčištěno celkem ${pruned} expirovaných mobilních náhledů (v Hlavním PC zůstávají fotky trvale)`;
+                }
+            );
+        };
+
+        // 4. PC ERP — STORMWARE POHODA & XML KOMUNIKACE (S TACHOMETREM)
+        window.openPcIntegrationModal = async () => {
+            return await window.runSpravaDbActionWithTachometer(
+                'PC ERP — Otevření terminálu Stormware POHODA (mServer / XML)',
+                async (step) => {
+                    await step(35, 'Načítám konfiguraci Stormware POHODA (IČO 28654565, XML 2.0, Windows-1250)...', 160);
+                    const samplePayload = {
+                        cisloDokladu: (allFaktury && allFaktury[0]?.cislo) || '26FA0001',
+                        odberatel: (allCustomers && allCustomers[0]?.name) || 'KONTEJNERY OSTRAVA s.r.o.',
+                        ico: (allCustomers && allCustomers[0]?.ic) || '28654565',
+                        polozky: `Faktury: ${(allFaktury || []).length}, Zálohové: ${(allZalohoveFaktury || []).length}, CN Nabídky: ${(allNabidky || []).length}, Adresář: ${(allCustomers || []).length}`
+                    };
+                    await step(80, 'Otevírám komunikační panel Stormware POHODA mServer & XML...', 160);
+                    if (typeof window.openPohodaModalWith === 'function') {
+                        window.openPohodaModalWith('Hromadná komunikace PC ERP (Stormware POHODA)', samplePayload);
+                    } else if (typeof window.openPohodaSettingsModal === 'function') {
+                        window.openPohodaSettingsModal();
+                    }
+                    return `Terminál Stormware POHODA otevřen (připraveno ${(allFaktury || []).length} faktur, ${(allNabidky || []).length} CN nabídek a ${(allCustomers || []).length} firem v Adresáři)`;
+                },
+                { showModal: false }
+            );
+        };
+
+        window.exportAllPohodaXml = async () => {
+            return await window.runSpravaDbActionWithTachometer(
+                'PC ERP — Hromadný export XML balíčku pro Stormware POHODA',
+                async (step) => {
+                    await step(25, '1/3 Kontroluji doklady k exportu (Faktury, Zálohové faktury a CN Nabídky)...', 180);
+                    const faCount = (allFaktury || []).length;
+                    const zfaCount = (allZalohoveFaktury || []).length;
+                    const nabCount = (allNabidky || []).length;
+
+                    await step(65, `2/3 Generuji XML dataPack v2.0 (Faktury: ${faCount}, Zálohové: ${zfaCount}, CN Nabídky: ${nabCount})...`, 220);
+                    if (faCount > 0 && typeof window.exportAllDepoFakturyToPohoda === 'function') {
+                        window.exportAllDepoFakturyToPohoda();
+                    } else if (nabCount > 0 && typeof window.exportAllDepoNabidkyToPohoda === 'function') {
+                        window.exportAllDepoNabidkyToPohoda();
+                    } else if (typeof window.downloadPohodaXml === 'function') {
+                        window.downloadPohodaXml();
+                    }
+
+                    await step(92, '3/3 Dokončuji export XML souboru pro import do programu POHODA...', 160);
+                    return `Vyexportován XML balíček pro Stormware POHODA (Faktury: ${faCount}, Zálohové: ${zfaCount}, CN Nabídky: ${nabCount})`;
+                }
+            );
+        };
+
+        window.syncPohodaAdresarErp = async () => {
+            return await window.runSpravaDbActionWithTachometer(
+                'PC ERP — Synchronizace a spárování Adresáře POHODA',
+                async (step) => {
+                    await step(30, 'Načítám a kontroluji záznamy firem z POHODA Adresáře (initial_adresar.json + doklady)...', 180);
+                    if (typeof syncContactsFromDocsToAdresar === 'function') {
+                        syncContactsFromDocsToAdresar();
+                    }
+                    await step(80, 'Ukládám sjednocený Adresář zákazníků do hlavní PC databáze...', 180);
+                    localStorage.setItem('ko_customers', JSON.stringify(allCustomers));
+                    await window.saveMasterSafetySnapshot();
+                    return `Adresář PC ERP POHODA je synchronizován (celkem ${(allCustomers || []).length} firem a kontaktů)`;
+                }
+            );
+        };
+
+        // 5. NASTAVENÍ NA GITHUB (CESTA & TOKEN OVĚŘENÍ) (S TACHOMETREM)
+        window.saveDatabazeGitHubSettings = async () => {
+            return await window.runSpravaDbActionWithTachometer(
+                'Uložení konfigurace v sekci Nastavení na GitHUB',
+                async (step) => {
+                    const repoEl = document.getElementById('dbGhRepoInput');
+                    const branchEl = document.getElementById('dbGhBranchInput');
+                    const backupFolderEl = document.getElementById('dbGhBackupFolderInput');
+                    const tokenEl = document.getElementById('dbGhTokenInput');
+                    const repoVal = (repoEl ? repoEl.value : (localStorage.getItem('ko_gh_repo') || '')).trim().replace(/^https:\/\/github\.com\//, '').replace(/\/$/, '') || DEFAULT_GH_REPO;
+                    const branchVal = (branchEl ? branchEl.value : (localStorage.getItem('ko_gh_branch') || '')).trim() || 'main';
+                    const folderVal = (backupFolderEl ? backupFolderEl.value : (localStorage.getItem('ko_gh_backup_folder') || '')).trim() || 'ZALOHA_DAT';
+                    const tokenVal = (tokenEl ? tokenEl.value : (localStorage.getItem('ko_gh_token') || '')).trim() || DEFAULT_GH_TOKEN;
+
+                    await step(40, `Zapisuji repozitář ${repoVal} (větev ${branchVal}, složka ${folderVal})...`, 160);
+                    localStorage.setItem('ko_gh_repo', repoVal);
+                    localStorage.setItem('ko_gh_branch', branchVal);
+                    localStorage.setItem('ko_gh_backup_folder', folderVal);
+                    localStorage.setItem('ko_gh_token', tokenVal);
+
+                    const modalRepo = document.getElementById('ghRepoInput'); if (modalRepo) modalRepo.value = repoVal;
+                    const modalBranch = document.getElementById('ghBranchInput'); if (modalBranch) modalBranch.value = branchVal;
+                    const modalToken = document.getElementById('ghTokenInput'); if (modalToken) modalToken.value = tokenVal;
+
+                    await step(85, 'Ukládám nastavení do trvalého snímku Master PC...', 150);
+                    await window.saveMasterSafetySnapshot();
+                    return `Uloženo: repozitář ${repoVal} • větev ${branchVal} • složka ${folderVal}`;
+                }
+            );
         };
 
         window.testDatabazeGitHubConnection = async () => {
-            const stEl = document.getElementById('dbGhTestStatus');
-            const repo = (document.getElementById('dbGhRepoInput')?.value || localStorage.getItem('ko_gh_repo') || DEFAULT_GH_REPO).trim().replace(/^https:\/\/github\.com\//, '').replace(/\/$/, '');
-            const branch = (document.getElementById('dbGhBranchInput')?.value || localStorage.getItem('ko_gh_branch') || 'main').trim();
-            const token = (document.getElementById('dbGhTokenInput')?.value || localStorage.getItem('ko_gh_token') || DEFAULT_GH_TOKEN).trim();
-            if (stEl) {
-                stEl.className = 'mt-3 p-3 rounded-lg bg-sky-50 border border-sky-300 text-xs font-bold text-sky-900';
-                stEl.innerText = `Ověřuji přístup k repozitáři ${repo} (větev ${branch})...`;
-            }
-            try {
-                const headers = { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'Kontejnery-PC-Terminal' };
-                if (token) headers['Authorization'] = (token.startsWith('ghp_') || token.startsWith('github_pat_')) ? `Bearer ${token}` : `token ${token}`;
-                const res = await fetch(`https://api.github.com/repos/${repo}/commits?per_page=1&sha=${branch}`, { headers });
-                if (!res.ok) throw new Error(`HTTP ${res.status} – zkontrolujte cestu repozitáře nebo Token ověření.`);
-                const arr = await res.json();
-                const lastMsg = arr?.[0]?.commit?.message || 'OK';
-                if (stEl) {
-                    stEl.className = 'mt-3 p-3 rounded-lg bg-emerald-50 border border-emerald-400 text-xs font-extrabold text-emerald-900';
-                    stEl.innerText = `✅ Spojení s GitHubem (${repo}) je plně funkční! Poslední commit: "${lastMsg}"`;
+            return await window.runSpravaDbActionWithTachometer(
+                'Ověření spojení a přístupového Tokenu na GitHUB',
+                async (step) => {
+                    const stEl = document.getElementById('dbGhTestStatus');
+                    const repo = (document.getElementById('dbGhRepoInput')?.value || localStorage.getItem('ko_gh_repo') || DEFAULT_GH_REPO).trim().replace(/^https:\/\/github\.com\//, '').replace(/\/$/, '');
+                    const branch = (document.getElementById('dbGhBranchInput')?.value || localStorage.getItem('ko_gh_branch') || 'main').trim();
+                    const token = (document.getElementById('dbGhTokenInput')?.value || localStorage.getItem('ko_gh_token') || DEFAULT_GH_TOKEN).trim();
+
+                    await step(30, `Připojuji se k GitHub API (repozitář ${repo}, větev ${branch})...`, 180);
+                    const headers = { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'Kontejnery-PC-Terminal' };
+                    if (token) headers['Authorization'] = (token.startsWith('ghp_') || token.startsWith('github_pat_')) ? `Bearer ${token}` : `token ${token}`;
+                    const res = await fetch(`https://api.github.com/repos/${repo}/commits?per_page=1&sha=${branch}`, { headers });
+                    if (!res.ok) {
+                        if (stEl) {
+                            stEl.className = 'mt-3 p-3 rounded-lg bg-red-50 border border-red-400 text-xs font-extrabold text-red-800';
+                            stEl.innerText = `❌ Chyba ověření GitHubu: HTTP ${res.status} – zkontrolujte cestu repozitáře nebo Token ověření.`;
+                        }
+                        throw new Error(`HTTP ${res.status} – zkontrolujte cestu repozitáře nebo Token ověření`);
+                    }
+
+                    await step(75, 'Ověřuji poslední commit a oprávnění k zápisu do ZALOHA_DAT...', 180);
+                    const arr = await res.json();
+                    const lastMsg = (arr?.[0]?.commit?.message || 'OK').split('\n')[0];
+                    if (stEl) {
+                        stEl.className = 'mt-3 p-3 rounded-lg bg-emerald-50 border border-emerald-400 text-xs font-extrabold text-emerald-900';
+                        stEl.innerText = `✅ Spojení s GitHubem (${repo}) je plně funkční! Poslední commit: "${lastMsg}"`;
+                    }
+                    return `Spojení s GitHubem (${repo}, větev ${branch}) je plně funkční • Poslední commit: "${lastMsg}"`;
                 }
-                showToast('✅ GitHub spojení a Token ověřeny!');
-            } catch (err) {
-                if (stEl) {
-                    stEl.className = 'mt-3 p-3 rounded-lg bg-red-50 border border-red-400 text-xs font-extrabold text-red-800';
-                    stEl.innerText = `❌ Chyba ověření GitHubu: ${err.message || err}`;
+            );
+        };
+
+        window.uploadAppHtmlToGitHubWithTacho = async () => {
+            return await window.runSpravaDbActionWithTachometer(
+                'Nahrání aktualizace programu (v ' + CURRENT_SW_VERSION + ') na GitHUB',
+                async (step) => {
+                    await step(25, 'Připravuji instalační soubory PC, iPhone a Android verze...', 180);
+                    await window.uploadAppHtmlToGitHub(true);
+                    await step(90, 'Dokončuji publikaci verze na GitHub...', 150);
+                    return `Publikace programu v ${CURRENT_SW_VERSION} na GitHub proběhla`;
                 }
+            );
+        };
+
+        // 6. INSTALACE IPHONE & 7. INSTALACE ANDROID (S TACHOMETREM)
+        window.openIphoneInstallModalWithTacho = async () => {
+            return await window.runSpravaDbActionWithTachometer(
+                'Instalace Iphone — Zobrazení QR kódu a instalačního průvodce',
+                async (step) => {
+                    await step(45, 'Generuji QR kód a přímou adresu pro Safari (iPhone Přeprava)...', 140);
+                    if (typeof window.openIphoneInstallModal === 'function') {
+                        window.openIphoneInstallModal();
+                    }
+                    return 'Zobrazen QR kód a návod pro instalaci na iPhone (Safari → Sdílet → Přidat na plochu)';
+                },
+                { showModal: false }
+            );
+        };
+
+        window.copyIphoneInstallUrl = async () => {
+            const iphoneUrl = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?iphone=1';
+            return await window.runSpravaDbActionWithTachometer(
+                'Instalace Iphone — Zkopírování instalačního odkazu',
+                async (step) => {
+                    await step(50, 'Kopíruji přímý instalační odkaz pro iPhone do schránky...', 140);
+                    try { await navigator.clipboard.writeText(iphoneUrl); } catch (e) {}
+                    return `Odkaz pro iPhone zkopírován do schránky (${iphoneUrl})`;
+                }
+            );
+        };
+
+        window.shareIphoneInstallWhatsApp = async () => {
+            const iphoneUrl = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?iphone=1';
+            return await window.runSpravaDbActionWithTachometer(
+                'Instalace Iphone — Odeslání instalačního odkazu přes WhatsApp',
+                async (step) => {
+                    await step(50, 'Připravuji WhatsApp zprávu s instalačním odkazem pro iPhone...', 140);
+                    const msg = `📱 *KONTEJNERY OSTRAVA – INSTALACE APLIKACE PRO IPHONE*\n\n1️⃣ Otevřete tento odkaz v *Safari* na iPhonu:\n${iphoneUrl}\n\n2️⃣ Dole klepněte na *Sdílet* a zvolte *Přidat na plochu*.`;
+                    window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+                    return 'Otevřeno sdílení instalačního odkazu pro iPhone na WhatsApp';
+                },
+                { showModal: false }
+            );
+        };
+
+        window.openAndroidInstallModalWithTacho = async () => {
+            return await window.runSpravaDbActionWithTachometer(
+                'Instalace Android — Zobrazení QR kódu a průvodce pro Chrome',
+                async (step) => {
+                    await step(45, 'Generuji QR kód pro rychlou instalaci přes Google Chrome na Androidu...', 140);
+                    if (typeof window.openAndroidInstallModal === 'function') {
+                        window.openAndroidInstallModal();
+                    }
+                    return 'Zobrazen QR kód a návod pro instalaci Android (Google Chrome bez APK)';
+                },
+                { showModal: false }
+            );
+        };
+
+        window.copyAndroidInstallUrlWithTacho = async () => {
+            const androidChromeUrl = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?android=1&install=1';
+            return await window.runSpravaDbActionWithTachometer(
+                'Instalace Android — Zkopírování odkazu pro Google Chrome',
+                async (step) => {
+                    await step(50, 'Kopíruji instalační odkaz pro Google Chrome na Androidu do schránky...', 140);
+                    if (typeof window.copyAndroidInstallUrl === 'function') {
+                        window.copyAndroidInstallUrl();
+                    } else {
+                        try { await navigator.clipboard.writeText(androidChromeUrl); } catch (e) {}
+                    }
+                    return `Odkaz pro Android Chrome zkopírován do schránky (${androidChromeUrl})`;
+                }
+            );
+        };
+
+        window.shareAndroidInstallWhatsAppWithTacho = async () => {
+            return await window.runSpravaDbActionWithTachometer(
+                'Instalace Android — Odeslání odkazu přes WhatsApp',
+                async (step) => {
+                    await step(50, 'Otevírám WhatsApp s přímým odkazem pro instalaci Android aplikace...', 140);
+                    if (typeof window.shareAndroidInstallWhatsApp === 'function') {
+                        window.shareAndroidInstallWhatsApp();
+                    }
+                    return 'Otevřeno sdílení instalačního odkazu pro Android na WhatsApp';
+                },
+                { showModal: false }
+            );
+        };
+
+        window.downloadAndroidApkDirectWithTacho = async () => {
+            return await window.runSpravaDbActionWithTachometer(
+                'Instalace Android — Stažení instalačního balíčku .APK',
+                async (step) => {
+                    await step(40, `Připravuji přímé stažení instalačního souboru Kontejnery_Ostrava_Android_latest.apk (v ${CURRENT_SW_VERSION})...`, 160);
+                    if (typeof window.downloadAndroidApkDirect === 'function') {
+                        window.downloadAndroidApkDirect();
+                    }
+                    await step(90, 'Stahování instalačního souboru .APK bylo zahájeno...', 150);
+                    return `Zahájeno stahování souboru Kontejnery_Ostrava_Android_latest.apk (v ${CURRENT_SW_VERSION})`;
+                }
+            );
+        };
+
+        window.scrollToSpravaSection = (secId, subKey) => {
+            if (subKey && window.agendaSubTabByTab) {
+                window.agendaSubTabByTab['databaze'] = subKey;
+                renderCurrentView();
             }
+            setTimeout(() => {
+                const el = document.getElementById(secId);
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 60);
+        };
+
+        window.renderSpravaInlineTachoHtml = () => {
+            const st = window.__lastSpravaDbTachoState || {};
+            const clamped = Math.max(0, Math.min(100, Math.round(Number(st.percent) || 0)));
+            const arcTotal = 251.2;
+            const dashOffset = arcTotal - (arcTotal * clamped) / 100;
+            const angleDeg = -90 + (clamped * 1.8);
+            const stepsHtml = (Array.isArray(st.steps) && st.steps.length > 0)
+                ? st.steps.map(s => {
+                    const icon = s.status === 'done' ? '✅' : (s.status === 'error' ? '❌' : '⏳');
+                    const cls = s.status === 'done' ? 'text-emerald-900 font-bold' : (s.status === 'error' ? 'text-red-700 font-extrabold' : 'text-sky-900 font-extrabold');
+                    return `<div class="${cls} flex items-center justify-between gap-2 py-0.5 border-b border-slate-200/60 last:border-0">
+                        <span>${icon} ${s.text}</span>
+                        <span class="text-[10px] font-mono text-slate-500">${s.pct}%</span>
+                    </div>`;
+                }).join('')
+                : `<div class="text-slate-500 font-semibold">Zatím nebyla v této relaci spuštěna žádná akce. Klikněte na libovolné tlačítko níže — tachometr okamžitě zobrazí průběh a výsledek dokončení.</div>`;
+
+            const badgeCls = st.active
+                ? 'bg-amber-500 text-slate-950 animate-pulse'
+                : (st.isError ? 'bg-red-600 text-white' : (st.finished ? 'bg-emerald-600 text-white' : 'bg-slate-700 text-emerald-300'));
+            const badgeTxt = st.active
+                ? `⏳ PROBÍHÁ (${clamped}%)`
+                : (st.isError ? '❌ CHYBA AKCE' : (st.finished ? `✅ DOKONČENO (100%) • ${st.timestampCz || ''}` : 'PŘIPRAVENO'));
+
+            return `
+            <div id="spravaInlineTachoCard" class="bg-white rounded-2xl border-2 border-slate-800 shadow-lg overflow-hidden">
+                <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 text-white px-5 py-3.5 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-9 h-9 rounded-xl bg-emerald-600/30 border border-emerald-400/50 flex items-center justify-center">
+                            <span class="material-icons text-emerald-300 text-xl">speed</span>
+                        </span>
+                        <div>
+                            <div class="text-[10px] font-black uppercase tracking-widest text-emerald-300">ŽIVÝ TACHOMETR SPRÁVY DATABÁZE • KONTROLA AKCÍ</div>
+                            <h3 id="spravaInlineActionTitle" class="text-sm font-black text-white">${st.actionTitle || 'Připraveno ke spuštění akce'}</h3>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="spravaInlineStatusBadge" class="${badgeCls} px-3 py-1 rounded-full text-xs font-black">${badgeTxt}</span>
+                        <button onclick="window.openSpravaDbTachoModal()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-1 rounded-lg text-[11px] font-extrabold flex items-center gap-1 cursor-pointer" title="Otevřít velký tachometr">
+                            <span class="material-icons text-xs">open_in_full</span> Detail
+                        </button>
+                    </div>
+                </div>
+                <div class="p-4 grid grid-cols-1 md:grid-cols-12 gap-4 items-center bg-slate-50/70">
+                    <!-- Tachometr SVG -->
+                    <div class="md:col-span-4 flex flex-col items-center justify-center bg-white border-2 border-slate-200 rounded-2xl p-3 shadow-inner">
+                        <div class="relative w-48 h-28 flex items-end justify-center">
+                            <svg viewBox="0 0 200 115" class="w-full h-full overflow-visible">
+                                <defs>
+                                    <linearGradient id="spravaInlineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#0284c7"/>
+                                        <stop offset="50%" stop-color="#0d9488"/>
+                                        <stop offset="100%" stop-color="#16a34a"/>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#e2e8f0" stroke-width="16" stroke-linecap="round"/>
+                                <path id="spravaInlineTachoArc" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#spravaInlineGrad)" stroke-width="16" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="${dashOffset}" style="transition: stroke-dashoffset 0.35s ease;"/>
+                                <text x="14" y="114" font-size="9" font-weight="800" fill="#64748b">0%</text>
+                                <text x="92" y="12" font-size="9" font-weight="800" fill="#64748b">50%</text>
+                                <text x="168" y="114" font-size="9" font-weight="800" fill="#16a34a">100%</text>
+                                <g id="spravaInlineTachoNeedle" style="transform: rotate(${angleDeg}deg); transform-origin: 100px 100px; transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);">
+                                    <line x1="100" y1="100" x2="100" y2="30" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
+                                    <circle cx="100" cy="100" r="8" fill="#0f172a"/>
+                                    <circle cx="100" cy="100" r="3.5" fill="#10b981"/>
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="text-center -mt-1">
+                            <span id="spravaInlineTachoPct" class="text-2xl font-black ${st.isError ? 'text-red-600' : (clamped >= 100 ? 'text-emerald-700' : 'text-sky-700')} leading-none">${clamped}%</span>
+                            <div class="text-[10px] font-black uppercase tracking-wider text-slate-500 mt-0.5">Tachometr operace</div>
+                        </div>
+                    </div>
+
+                    <!-- Popis co se děje + Výsledek dokončení -->
+                    <div class="md:col-span-8 space-y-2.5">
+                        <div class="bg-white border border-sky-200 rounded-xl p-3">
+                            <div class="flex items-center justify-between gap-2 mb-1">
+                                <span class="text-[10px] font-black uppercase tracking-wider text-sky-800">Průběh a popis prováděné akce:</span>
+                                <span class="text-[10px] font-bold text-slate-500">${st.timestampCz || ''}</span>
+                            </div>
+                            <div id="spravaInlineStepDesc" class="text-xs font-extrabold text-slate-900">${st.stepDesc || 'Klikněte na libovolnou akci níže pro spuštění s tachometrem.'}</div>
+                            <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden mt-2">
+                                <div id="spravaInlineProgressBar" class="h-full bg-gradient-to-r from-sky-600 via-teal-500 to-emerald-500 transition-all duration-300" style="width:${clamped}%"></div>
+                            </div>
+                        </div>
+
+                        <div id="spravaInlineResultBanner" class="${st.finished && st.resultText ? '' : 'hidden'} ${st.isError ? 'bg-red-50 border-2 border-red-500' : 'bg-emerald-50 border-2 border-emerald-500'} rounded-xl p-3 flex items-start gap-2.5 shadow-sm">
+                            <span class="material-icons ${st.isError ? 'text-red-600' : 'text-emerald-600'} text-xl shrink-0">task_alt</span>
+                            <div class="text-xs">
+                                <div class="font-black text-slate-900 uppercase">Výsledek dokončení akce:</div>
+                                <div id="spravaInlineResultText" class="font-bold ${st.isError ? 'text-red-900' : 'text-emerald-900'} mt-0.5">${st.resultText || ''}</div>
+                            </div>
+                        </div>
+
+                        <div id="spravaInlineStepsList" class="bg-white border border-slate-200 rounded-xl p-2.5 max-h-24 overflow-y-auto text-[11px] space-y-0.5">
+                            ${stepsHtml}
+                        </div>
+                    </div>
+                </div>
+            </div>`;
         };
 
         window.renderDatabazeSectionView = (subKey, grid, list, bar) => {
             grid.classList.remove('hidden');
             list.classList.add('hidden');
-            grid.className = 'w-full max-w-6xl mx-auto space-y-4';
-            const lastBackupTime = localStorage.getItem('ko_last_master_backup_time') || 'Zatím nebyla provedena';
-            const lastBackupFile = localStorage.getItem('ko_last_master_backup_file') || '—';
+            grid.className = 'w-full max-w-6xl mx-auto space-y-5';
+            const lastBackupTime = localStorage.getItem('ko_last_master_backup_time') || localStorage.getItem('ko_last_full_backup_time') || 'Zatím nebyla provedena';
+            const lastBackupFile = localStorage.getItem('ko_last_master_backup_file') || 'kompletni_databaze_master.json';
             const repoVal = (localStorage.getItem('ko_gh_repo') || DEFAULT_GH_REPO).trim();
             const branchVal = (localStorage.getItem('ko_gh_branch') || 'main').trim();
             const folderVal = (localStorage.getItem('ko_gh_backup_folder') || 'ZALOHA_DAT').trim();
             const tokenVal = (localStorage.getItem('ko_gh_token') || DEFAULT_GH_TOKEN).trim();
             const pendingVer = window.__pendingRemoteSwVersion || 0;
+            const iphoneUrl = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?iphone=1';
+            const androidChromeUrl = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?android=1&install=1';
+            const androidApkUrl = 'https://raw.githubusercontent.com/Kont-premysl-sliva/Home_1/main/android/Kontejnery_Ostrava_Android_latest.apk';
 
-            if (subKey === 'ZALOHA') {
-                grid._add = `
-                <div class="bg-white rounded-2xl border-2 border-emerald-600 shadow-lg p-6 space-y-5">
-                    <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4">
-                        <div class="flex items-center gap-3">
-                            <span class="w-12 h-12 rounded-xl bg-emerald-700 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">backup</span></span>
-                            <div>
-                                <h2 class="text-lg font-black text-slate-900">ZÁLOHA CELÉ DATABÁZE (HLAVNÍ PC MASTER)</h2>
-                                <p class="text-xs text-slate-600 font-semibold">Uložení kompletní databáze do složky <b>${folderVal}/</b> na GitHubu (${repoVal}) + současné stažení záložního souboru <b>.json</b> do PC</p>
+            // Rozcestník sekcí uvnitř SPRÁVY DATABÁZE
+            const navHeaderHtml = `
+            <div class="bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-900 text-white rounded-2xl p-4 shadow-md border-2 border-emerald-600/80">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <span class="w-11 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-md">
+                            <span class="material-icons text-2xl">admin_panel_settings</span>
+                        </span>
+                        <div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h1 class="text-base md:text-lg font-black tracking-wide text-white">SPRÁVA DATABÁZE — HLAVNÍ PC (MASTER)</h1>
+                                <span class="bg-emerald-500/20 border border-emerald-400 text-emerald-200 text-[10px] font-black px-2.5 py-0.5 rounded-full">v ${CURRENT_SW_VERSION} • VŠECHNY SEKCE AKTIVNÍ</span>
                             </div>
+                            <p class="text-xs text-slate-300 font-semibold">Jednotlivé sekce: <b>Reindexace</b> • <b>Synchronizace</b> • <b>PC ERP</b> • <b>Nastavení na GitHUB</b> • <b>Instalace Iphone</b> • <b>Instalace Android</b> + Zálohování databáze</p>
                         </div>
-                        <span class="bg-emerald-100 text-emerald-900 border border-emerald-400 px-3 py-1.5 rounded-lg text-xs font-black">Poslední záloha: ${lastBackupTime}</span>
                     </div>
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        <button onclick="window.setAgendaSubTab('databaze','ZALOHA')" class="px-3 py-1.5 rounded-lg text-xs font-black cursor-pointer transition ${subKey === 'ZALOHA' ? 'bg-emerald-500 text-slate-950 shadow' : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-600'}">🛠️ Všechny sekce Správy DB</button>
+                        <button onclick="window.scrollToSpravaSection('sec-sprava-reindexace','REINDEXACE')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition ${subKey === 'REINDEXACE' ? 'bg-amber-500 text-slate-950 shadow font-black' : 'bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700'}">🔄 Reindexace</button>
+                        <button onclick="window.scrollToSpravaSection('sec-sprava-synchronizace','SYNCHRONIZACE')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition ${subKey === 'SYNCHRONIZACE' ? 'bg-sky-400 text-slate-950 shadow font-black' : 'bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700'}">☁️ Synchronizace</button>
+                        <button onclick="window.scrollToSpravaSection('sec-sprava-pcerp','PC_ERP')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition ${subKey === 'PC_ERP' ? 'bg-blue-400 text-slate-950 shadow font-black' : 'bg-slate-800 hover:bg-slate-700 text-blue-300 border border-slate-700'}">🖥️ PC ERP</button>
+                        <button onclick="window.scrollToSpravaSection('sec-sprava-github','GITHUB_NASTAVENI')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition ${subKey === 'GITHUB_NASTAVENI' ? 'bg-emerald-400 text-slate-950 shadow font-black' : 'bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700'}">🔑 Nastavení na GitHUB</button>
+                        <button onclick="window.scrollToSpravaSection('sec-sprava-iphone','QR_IPHONE')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition ${subKey === 'QR_IPHONE' ? 'bg-teal-400 text-slate-950 shadow font-black' : 'bg-slate-800 hover:bg-slate-700 text-teal-300 border border-slate-700'}">📱 Instalace Iphone</button>
+                        <button onclick="window.scrollToSpravaSection('sec-sprava-android','QR_ANDROID')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition ${subKey === 'QR_ANDROID' ? 'bg-lime-400 text-slate-950 shadow font-black' : 'bg-slate-800 hover:bg-slate-700 text-lime-300 border border-slate-700'}">🤖 Instalace Android</button>
+                    </div>
+                </div>
+            </div>`;
 
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-slate-500 font-bold">Kontejnery / Přeprava</div><div class="text-lg font-black text-slate-900">${(allContainers || []).length} / ${(allTransports || []).length}</div></div>
-                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-slate-500 font-bold">Objednávky / CN Nabídky</div><div class="text-lg font-black text-slate-900">${(allExternalOrders || []).length} / ${(allNabidky || []).length}</div></div>
-                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-slate-500 font-bold">Zakázky / Faktury</div><div class="text-lg font-black text-slate-900">${(allZakazky || []).length} / ${(allFaktury || []).length + (allZalohoveFaktury || []).length}</div></div>
-                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-slate-500 font-bold">Adresář / Události</div><div class="text-lg font-black text-slate-900">${(allCustomers || []).length} / ${(allEvents || []).length}</div></div>
+            // SEKCE A: ZÁLOHOVÁNÍ A OBNOVA DATABÁZE (HLAVNÍ PC MASTER)
+            const secZalohaHtml = `
+            <div id="sec-sprava-zaloha" class="bg-white rounded-2xl border-2 border-emerald-600 shadow-lg p-6 space-y-5">
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4">
+                    <div class="flex items-center gap-3">
+                        <span class="w-12 h-12 rounded-xl bg-emerald-700 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">backup</span></span>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-emerald-700 text-white text-[10px] font-black px-2 py-0.5 rounded">SEKCE ZÁLOHOVÁNÍ</span>
+                                <h2 class="text-lg font-black text-slate-900">SPRÁVA DATABÁZE — ZÁLOHOVÁNÍ A OBNOVA (GITHUB ZALOHA_DAT + PC)</h2>
+                            </div>
+                            <p class="text-xs text-slate-600 font-semibold">Uložení kompletní databáze do složky <b>${folderVal}/</b> na GitHubu (${repoVal}) + současné stažení záložního souboru <b>.json</b> do PC</p>
+                        </div>
                     </div>
+                    <span class="bg-emerald-100 text-emerald-900 border border-emerald-400 px-3 py-1.5 rounded-lg text-xs font-black">Poslední záloha: ${lastBackupTime}</span>
+                </div>
 
-                    <div class="flex flex-wrap items-center gap-3 pt-2">
-                        <button onclick="window.performFullDatabaseBackup()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-3 rounded-xl font-black text-sm flex items-center gap-2 shadow-md">
-                            <span class="material-icons">cloud_upload</span> VYTVOŘIT KOMPLETNÍ ZÁLOHU DATABÁZE (GITHUB + PC)
-                        </button>
-                        <button onclick="document.getElementById('restoreBackupFileInput')?.click()" class="bg-sky-700 hover:bg-sky-800 text-white px-4 py-3 rounded-xl font-extrabold text-xs flex items-center gap-2 shadow">
-                            <span class="material-icons text-base">restore</span> OBNOVIT / SLOUČIT ZE SOUBORU (.JSON)
-                        </button>
-                        <button onclick="window.exportDatabaseBackupJson()" class="bg-slate-700 hover:bg-slate-800 text-white px-4 py-3 rounded-xl font-extrabold text-xs flex items-center gap-2 shadow">
-                            <span class="material-icons text-base">download</span> STÁHNOUT POUZE DO PC (.JSON)
-                        </button>
-                    </div>
-                    <div class="text-xs text-slate-600 bg-emerald-50 border border-emerald-200 rounded-xl p-3 font-medium">
-                        <b>Bezpečnostní pojistka Master PC:</b> PC aplikace uchovává data současně v <b>IndexedDB (KontejneryMasterDB)</b> i v <b>localStorage</b>. Změny z mobilních telefonů se vždy pouze bezpečně slučují a nikdy nemohou přepsat nebo vymazat hlavní databázi na PC. Poslední soubor: <b>${lastBackupFile}</b>
-                    </div>
-                </div>`;
-            } else if (subKey === 'REINDEXACE') {
-                grid._add = `
-                <div class="bg-white rounded-2xl border-2 border-amber-500 shadow-lg p-6 space-y-5">
-                    <div class="flex items-center gap-3 border-b border-slate-200 pb-4">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-slate-500 font-bold">Kontejnery / Přeprava</div><div class="text-lg font-black text-slate-900">${(allContainers || []).length} / ${(allTransports || []).length}</div></div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-slate-500 font-bold">Objednávky / CN Nabídky</div><div class="text-lg font-black text-slate-900">${(allExternalOrders || []).length} / ${(allNabidky || []).length}</div></div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-slate-500 font-bold">Zakázky / Faktury</div><div class="text-lg font-black text-slate-900">${(allZakazky || []).length} / ${(allFaktury || []).length + (allZalohoveFaktury || []).length}</div></div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-slate-500 font-bold">Adresář / Události</div><div class="text-lg font-black text-slate-900">${(allCustomers || []).length} / ${(allEvents || []).length}</div></div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3 pt-1">
+                    <button onclick="window.performFullDatabaseBackup()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-3 rounded-xl font-black text-sm flex items-center gap-2 shadow-md cursor-pointer">
+                        <span class="material-icons">cloud_upload</span> VYTVOŘIT KOMPLETNÍ ZÁLOHU DATABÁZE (GITHUB + PC)
+                    </button>
+                    <button onclick="window.loadBackupFromGitHubWithTacho()" class="bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-3 rounded-xl font-extrabold text-xs flex items-center gap-2 shadow cursor-pointer">
+                        <span class="material-icons text-base">cloud_download</span> NAČÍST A SLOUČIT ZÁLOHU Z GITHUBU (ZALOHA_DAT)
+                    </button>
+                    <button onclick="document.getElementById('restoreBackupFileInput')?.click()" class="bg-sky-700 hover:bg-sky-800 text-white px-4 py-3 rounded-xl font-extrabold text-xs flex items-center gap-2 shadow cursor-pointer">
+                        <span class="material-icons text-base">restore</span> OBNOVIT / SLOUČIT ZE SOUBORU (.JSON)
+                    </button>
+                    <button onclick="window.exportDatabaseBackupJson()" class="bg-slate-700 hover:bg-slate-800 text-white px-4 py-3 rounded-xl font-extrabold text-xs flex items-center gap-2 shadow cursor-pointer">
+                        <span class="material-icons text-base">download</span> STÁHNOUT POUZE DO PC (.JSON)
+                    </button>
+                </div>
+                <div class="text-xs text-slate-600 bg-emerald-50 border border-emerald-200 rounded-xl p-3 font-medium">
+                    <b>Bezpečnostní pojistka Master PC:</b> PC aplikace uchovává data současně v <b>IndexedDB (KontejneryMasterDB)</b> i v <b>localStorage</b>. Změny z mobilních telefonů se vždy pouze bezpečně slučují a nikdy nemohou přepsat nebo vymazat hlavní databázi na PC. Poslední soubor: <b>${lastBackupFile}</b>
+                </div>
+            </div>`;
+
+            // SEKCE 1: REINDEXACE
+            const secReindexaceHtml = `
+            <div id="sec-sprava-reindexace" class="bg-white rounded-2xl border-2 border-amber-500 shadow-lg p-6 space-y-5">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
+                    <div class="flex items-center gap-3">
                         <span class="w-12 h-12 rounded-xl bg-amber-600 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">autorenew</span></span>
                         <div>
-                            <h2 class="text-lg font-black text-slate-900">REINDEXACE A KONTROLA INTEGRITY DATABÁZE</h2>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-amber-600 text-white text-[10px] font-black px-2 py-0.5 rounded">SEKCE 1 • REINDEXACE</span>
+                                <h2 class="text-lg font-black text-slate-900">REINDEXACE</h2>
+                            </div>
                             <p class="text-xs text-slate-600 font-semibold">Automatické spárování kontaktů z dokladů do Adresáře, přepočet indexů kontejnerů, přeprav a sjednocení duplicitních záznamů</p>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                        <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 font-semibold text-amber-950">1. Sjednocení a pročištění všech agend (Objednávky, CN Nabídky, Zakázky, Faktury, Kontejnery, Přeprava)</div>
-                        <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 font-semibold text-amber-950">2. Automatické doplnění chybějících firem a kontaktů z dokladů do Adresáře</div>
-                        <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 font-semibold text-amber-950">3. Zápis čistého snímku do trvalé databáze IndexedDB (KontejneryMasterDB)</div>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-3 pt-2">
-                        <button onclick="window.reindexAllAgendas()" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-3 rounded-xl font-black text-sm flex items-center gap-2 shadow-md">
-                            <span class="material-icons">published_with_changes</span> SPUSTIT KOMPLETNÍ REINDEXACI DATABÁZE
-                        </button>
-                    </div>
-                </div>`;
-            } else if (subKey === 'SYNCHRONIZACE') {
-                grid._add = `
-                <div class="bg-white rounded-2xl border-2 border-sky-600 shadow-lg p-6 space-y-5">
-                    <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4">
-                        <div class="flex items-center gap-3">
-                            <span class="w-12 h-12 rounded-xl bg-sky-700 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">sync</span></span>
-                            <div>
-                                <h2 class="text-lg font-black text-slate-900">SYNCHRONIZACE DAT & RUČNÍ AKTUALIZACE PROGRAMU</h2>
-                                <p class="text-xs text-slate-600 font-semibold">Bezpečné sloučení změn z mobilních aplikací do Hlavního PC a ruční správa aktualizací (v ${CURRENT_SW_VERSION})</p>
+                    <span class="bg-amber-100 text-amber-950 border border-amber-400 px-3 py-1 rounded-lg text-xs font-black">Kontrola integrity Master DB</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 font-semibold text-amber-950">1. Sjednocení a pročištění všech agend (Objednávky, CN Nabídky, Zakázky, Faktury, Kontejnery, Přeprava)</div>
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 font-semibold text-amber-950">2. Automatické doplnění chybějících firem a kontaktů z dokladů do Adresáře</div>
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 font-semibold text-amber-950">3. Zápis čistého snímku do trvalé databáze IndexedDB (KontejneryMasterDB)</div>
+                </div>
+                <div class="flex flex-wrap items-center gap-3 pt-1">
+                    <button onclick="window.reindexAllAgendas()" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-3 rounded-xl font-black text-sm flex items-center gap-2 shadow-md cursor-pointer">
+                        <span class="material-icons">published_with_changes</span> SPUSTIT KOMPLETNÍ REINDEXACI DATABÁZE
+                    </button>
+                </div>
+            </div>`;
+
+            // SEKCE 2: SYNCHRONIZACE
+            const secSynchronizaceHtml = `
+            <div id="sec-sprava-synchronizace" class="bg-white rounded-2xl border-2 border-sky-600 shadow-lg p-6 space-y-5">
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4">
+                    <div class="flex items-center gap-3">
+                        <span class="w-12 h-12 rounded-xl bg-sky-700 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">sync</span></span>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-sky-700 text-white text-[10px] font-black px-2 py-0.5 rounded">SEKCE 2 • SYNCHRONIZACE</span>
+                                <h2 class="text-lg font-black text-slate-900">SYNCHRONIZACE</h2>
                             </div>
-                        </div>
-                        ${pendingVer > CURRENT_SW_VERSION
-                            ? `<button onclick="window.performUnifiedGitHubUpdate(true)" class="bg-amber-500 hover:bg-amber-600 text-slate-950 px-4 py-2 rounded-xl text-xs font-black animate-pulse shadow">🔔 K DISPOZICI NOVÁ AKTUALIZACE v${pendingVer} – KLIKNĚTE PRO SPUŠTĚNÍ</button>`
-                            : `<span class="bg-emerald-100 text-emerald-900 border border-emerald-400 px-3 py-1.5 rounded-lg text-xs font-black">✅ Program je aktuální (v ${CURRENT_SW_VERSION})</span>`}
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="bg-sky-50 border border-sky-200 rounded-xl p-4 space-y-3">
-                            <h3 class="text-sm font-black text-sky-950 flex items-center gap-1.5"><span class="material-icons text-base">devices</span> Synchronizace dat (PC ↔ Mobil ↔ Cloud)</h3>
-                            <p class="text-xs text-slate-600">Sloučí nové jízdy Přepravy, fotografie, Zájemce a dávky Událostí (po 50) z mobilních telefonů do hlavní PC databáze.</p>
-                            <div class="flex flex-wrap gap-2">
-                                <button onclick="window.syncWithMobileAndCloud(true)" class="bg-sky-700 hover:bg-sky-800 text-white px-4 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow"><span class="material-icons text-sm">sync</span> SYNCHRONIZOVAT DATA NYNÍ</button>
-                                <button onclick="window.pushMasterDataToGitHubManual()" class="bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2.5 rounded-xl font-extrabold text-xs flex items-center gap-1.5 shadow"><span class="material-icons text-sm">cloud_upload</span> ODESLAT JÍZDY NA GITHUB</button>
-                            </div>
-                        </div>
-                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
-                            <h3 class="text-sm font-black text-slate-900 flex items-center gap-1.5"><span class="material-icons text-base">system_update_alt</span> Ruční aktualizace programu</h3>
-                            <p class="text-xs text-slate-600">Aktualizace se <b>nikdy nespouští automaticky</b>. Zde můžete ručně zkontrolovat a odsouhlasit stažení nové verze nebo otevřít detailní panel aktualizací.</p>
-                            <div class="flex flex-wrap gap-2">
-                                <button onclick="window.performUnifiedGitHubUpdate(true)" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow"><span class="material-icons text-sm">download</span> ZKONTROLOVAT A SPUSTIT AKTUALIZACI</button>
-                                <button onclick="window.openSwUpdateModal()" class="bg-slate-700 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl font-extrabold text-xs flex items-center gap-1.5 shadow"><span class="material-icons text-sm">settings_backup_restore</span> POKROČILÁ SPRÁVA VERZÍ</button>
-                            </div>
+                            <p class="text-xs text-slate-600 font-semibold">Bezpečné sloučení změn z mobilních aplikací do Hlavního PC, odeslání jízd na GitHub a ruční správa aktualizací (v ${CURRENT_SW_VERSION})</p>
                         </div>
                     </div>
-                    <div class="bg-emerald-50 border-2 border-emerald-400 rounded-xl p-4 space-y-3">
-                        <div class="flex flex-wrap items-center justify-between gap-2">
-                            <h3 class="text-sm font-black text-emerald-950 flex items-center gap-1.5"><span class="material-icons text-base text-emerald-700">photo_size_select_large</span> Lokální cache miniatur (Přeprava & Kontejnery • expirace 30 dní po HOTOVO)</h3>
-                            <span class="bg-white border border-emerald-300 text-emerald-900 px-2.5 py-1 rounded-lg text-xs font-extrabold">Miniatury v paměti: ${(window._mobileThumbMemoryMap && window._mobileThumbMemoryMap.size) || 0} • Uvolněno &gt;30 dní po HOTOVO: ${localStorage.getItem('ko_mobile_thumb_pruned_count') || 0}</span>
-                        </div>
-                        <p class="text-xs text-slate-700 font-medium">V seznamech a na kartách sekcí <b>Přeprava</b> a <b>Kontejnery</b> se vykreslují lehké miniatury (240×240 px) a plná fotografie se načítá až po rozkliknutí detailu. U přeprav ve stavu <b>HOTOVO</b> se lokální fotky v mobilních aplikacích automaticky vymažou po <b>30 dnech</b> od dokončení (v Hlavním PC zůstávají uložené trvale).</p>
+                    ${pendingVer > CURRENT_SW_VERSION
+                        ? `<button onclick="window.performUnifiedGitHubUpdateWithTacho()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 px-4 py-2 rounded-xl text-xs font-black animate-pulse shadow cursor-pointer">🔔 K DISPOZICI NOVÁ AKTUALIZACE v${pendingVer} – KLIKNĚTE PRO SPUŠTĚNÍ</button>`
+                        : `<span class="bg-emerald-100 text-emerald-900 border border-emerald-400 px-3 py-1.5 rounded-lg text-xs font-black">✅ Program je aktuální (v ${CURRENT_SW_VERSION})</span>`}
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-sky-50 border border-sky-200 rounded-xl p-4 space-y-3">
+                        <h3 class="text-sm font-black text-sky-950 flex items-center gap-1.5"><span class="material-icons text-base">devices</span> Synchronizace dat (PC ↔ Mobil ↔ Cloud)</h3>
+                        <p class="text-xs text-slate-600">Sloučí nové jízdy Přepravy, fotografie, Zájemce a dávky Událostí (po 50) z mobilních telefonů do hlavní PC databáze.</p>
                         <div class="flex flex-wrap gap-2">
-                            <button onclick="window.warmUpMobileThumbnailsCache(true)" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl font-black text-xs flex items-center gap-1.5 shadow"><span class="material-icons text-sm">bolt</span> PŘEDGENEROVAT MINIATURY NYNÍ</button>
-                            <button onclick="window.pruneExpiredMobileTransportPhotos(true)" class="bg-teal-700 hover:bg-teal-800 text-white px-4 py-2 rounded-xl font-extrabold text-xs flex items-center gap-1.5 shadow"><span class="material-icons text-sm">cleaning_services</span> VYČISTIT FOTKY HOTOVO &gt; 30 DNÍ</button>
+                            <button onclick="window.syncWithMobileAndCloudWithTacho()" class="bg-sky-700 hover:bg-sky-800 text-white px-4 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer"><span class="material-icons text-sm">sync</span> SYNCHRONIZOVAT DATA NYNÍ</button>
+                            <button onclick="window.pushMasterDataToGitHubManual()" class="bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2.5 rounded-xl font-extrabold text-xs flex items-center gap-1.5 shadow cursor-pointer"><span class="material-icons text-sm">cloud_upload</span> ODESLAT JÍZDY NA GITHUB</button>
                         </div>
                     </div>
-                </div>`;
-            } else if (subKey === 'PC_ERP') {
-                grid._add = `
-                <div class="bg-white rounded-2xl border-2 border-blue-600 shadow-lg p-6 space-y-5">
-                    <div class="flex items-center gap-3 border-b border-slate-200 pb-4">
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+                        <h3 class="text-sm font-black text-slate-900 flex items-center gap-1.5"><span class="material-icons text-base">system_update_alt</span> Ruční aktualizace programu</h3>
+                        <p class="text-xs text-slate-600">Aktualizace se <b>nikdy nespouští automaticky</b>. Zde můžete ručně zkontrolovat a odsouhlasit stažení nové verze nebo otevřít detailní panel aktualizací.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="window.performUnifiedGitHubUpdateWithTacho()" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer"><span class="material-icons text-sm">download</span> ZKONTROLOVAT A SPUSTIT AKTUALIZACI</button>
+                            <button onclick="window.openSwUpdateModal()" class="bg-slate-700 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl font-extrabold text-xs flex items-center gap-1.5 shadow cursor-pointer"><span class="material-icons text-sm">settings_backup_restore</span> POKROČILÁ SPRÁVA VERZÍ</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-emerald-50 border-2 border-emerald-400 rounded-xl p-4 space-y-3">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <h3 class="text-sm font-black text-emerald-950 flex items-center gap-1.5"><span class="material-icons text-base text-emerald-700">photo_size_select_large</span> Lokální cache miniatur (Přeprava & Kontejnery • expirace 30 dní po HOTOVO)</h3>
+                        <span class="bg-white border border-emerald-300 text-emerald-900 px-2.5 py-1 rounded-lg text-xs font-extrabold">Miniatury v paměti: ${(window._mobileThumbMemoryMap && window._mobileThumbMemoryMap.size) || 0} • Uvolněno &gt;30 dní po HOTOVO: ${localStorage.getItem('ko_mobile_thumb_pruned_count') || 0}</span>
+                    </div>
+                    <p class="text-xs text-slate-700 font-medium">V seznamech a na kartách sekcí <b>Přeprava</b> a <b>Kontejnery</b> se vykreslují lehké miniatury (240×240 px) a plná fotografie se načítá až po rozkliknutí detailu. U přeprav ve stavu <b>HOTOVO</b> se lokální fotky v mobilních aplikacích automaticky vymažou po <b>30 dnech</b> od dokončení (v Hlavním PC zůstávají uložené trvale).</p>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="window.warmUpMobileThumbnailsCacheWithTacho()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer"><span class="material-icons text-sm">bolt</span> PŘEDGENEROVAT MINIATURY NYNÍ</button>
+                        <button onclick="window.pruneExpiredMobileTransportPhotosWithTacho()" class="bg-teal-700 hover:bg-teal-800 text-white px-4 py-2 rounded-xl font-extrabold text-xs flex items-center gap-1.5 shadow cursor-pointer"><span class="material-icons text-sm">cleaning_services</span> VYČISTIT FOTKY HOTOVO &gt; 30 DNÍ</button>
+                    </div>
+                </div>
+            </div>`;
+
+            // SEKCE 3: PC ERP
+            const secPcErpHtml = `
+            <div id="sec-sprava-pcerp" class="bg-white rounded-2xl border-2 border-blue-600 shadow-lg p-6 space-y-5">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
+                    <div class="flex items-center gap-3">
                         <span class="w-12 h-12 rounded-xl bg-blue-700 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">desktop_windows</span></span>
                         <div>
-                            <h2 class="text-lg font-black text-slate-900">PC ERP — STORMWARE POHODA & XML KOMUNIKACE</h2>
-                            <p class="text-xs text-slate-600 font-semibold">Přímé propojení s účetním systémem Stormware POHODA (mServer / XML import a export dokladů a adresáře)</p>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-blue-700 text-white text-[10px] font-black px-2 py-0.5 rounded">SEKCE 3 • PC ERP</span>
+                                <h2 class="text-lg font-black text-slate-900">PC ERP (STORMWARE POHODA & XML KOMUNIKACE)</h2>
+                            </div>
+                            <p class="text-xs text-slate-600 font-semibold">Přímé propojení s účetním systémem Stormware POHODA (mServer / XML import a export dokladů, nabídek, faktur a adresáře)</p>
                         </div>
                     </div>
-                    <div class="flex flex-wrap items-center gap-3">
-                        <button onclick="openPcIntegrationModal()" class="bg-blue-700 hover:bg-blue-800 text-white px-5 py-3 rounded-xl font-black text-sm flex items-center gap-2 shadow-md">
-                            <span class="material-icons">integration_instructions</span> OTEVŘÍT NASTAVENÍ A TERMINÁL PC ERP (POHODA)
-                        </button>
-                        <button onclick="exportAllPohodaXml()" class="bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-3 rounded-xl font-extrabold text-xs flex items-center gap-2 shadow">
-                            <span class="material-icons text-base">description</span> EXPORTOVAT XML PRO POHODU
-                        </button>
-                    </div>
-                </div>`;
-            } else if (subKey === 'GITHUB_NASTAVENI') {
-                grid._add = `
-                <div class="bg-white rounded-2xl border-2 border-slate-700 shadow-lg p-6 space-y-5">
-                    <div class="flex items-center gap-3 border-b border-slate-200 pb-4">
+                    <span class="bg-blue-100 text-blue-950 border border-blue-400 px-3 py-1 rounded-lg text-xs font-black">IČO: 28654565 • XML v2.0</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-3"><div class="text-slate-600 font-bold">Faktury & Zálohové faktury k exportu</div><div class="text-lg font-black text-blue-950">${(allFaktury || []).length} / ${(allZalohoveFaktury || []).length}</div></div>
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-3"><div class="text-slate-600 font-bold">Cenové nabídky (CN) & Zakázky</div><div class="text-lg font-black text-blue-950">${(allNabidky || []).length} / ${(allZakazky || []).length}</div></div>
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-3"><div class="text-slate-600 font-bold">Adresář firem (POHODA)</div><div class="text-lg font-black text-blue-950">${(allCustomers || []).length} firem</div></div>
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <button onclick="window.openPcIntegrationModal()" class="bg-blue-700 hover:bg-blue-800 text-white px-5 py-3 rounded-xl font-black text-sm flex items-center gap-2 shadow-md cursor-pointer">
+                        <span class="material-icons">integration_instructions</span> OTEVŘÍT NASTAVENÍ A TERMINÁL PC ERP (POHODA)
+                    </button>
+                    <button onclick="window.exportAllPohodaXml()" class="bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-3 rounded-xl font-extrabold text-xs flex items-center gap-2 shadow cursor-pointer">
+                        <span class="material-icons text-base">description</span> EXPORTOVAT XML PRO POHODU
+                    </button>
+                    <button onclick="window.syncPohodaAdresarErp()" class="bg-sky-700 hover:bg-sky-800 text-white px-4 py-3 rounded-xl font-extrabold text-xs flex items-center gap-2 shadow cursor-pointer">
+                        <span class="material-icons text-base">contacts</span> SYNCHRONIZOVAT ADRESÁŘ POHODA
+                    </button>
+                </div>
+            </div>`;
+
+            // SEKCE 4: NASTAVENÍ NA GITHUB
+            const secGitHubHtml = `
+            <div id="sec-sprava-github" class="bg-white rounded-2xl border-2 border-slate-700 shadow-lg p-6 space-y-5">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
+                    <div class="flex items-center gap-3">
                         <span class="w-12 h-12 rounded-xl bg-slate-800 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">key</span></span>
                         <div>
-                            <h2 class="text-lg font-black text-slate-900">NASTAVENÍ NA GITHUB (CESTA & TOKEN OVĚŘENÍ)</h2>
-                            <p class="text-xs text-slate-600 font-semibold">Konfigurace repozitáře GitHub pro zálohování databáze do složky <b>ZALOHA_DAT</b>, synchronizaci Přepravy a aktualizace</p>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-slate-800 text-white text-[10px] font-black px-2 py-0.5 rounded">SEKCE 4 • GITHUB</span>
+                                <h2 class="text-lg font-black text-slate-900">NASTAVENÍ NA GITHUB (CESTA & TOKEN OVĚŘENÍ)</h2>
+                            </div>
+                            <p class="text-xs text-slate-600 font-semibold">Konfigurace repozitáře GitHub pro zálohování databáze do složky <b>${folderVal}</b>, synchronizaci Přepravy a aktualizace</p>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-xs font-extrabold text-slate-700 mb-1">Cesta k repozitáři GitHub (vlastník/repozitář)</label>
-                            <input id="dbGhRepoInput" type="text" value="${repoVal.replace(/"/g, '&quot;')}" placeholder="Kont-premysl-sliva/Home_1" class="w-full border-2 border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:border-sky-600 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-extrabold text-slate-700 mb-1">Větev (Branch)</label>
-                            <input id="dbGhBranchInput" type="text" value="${branchVal.replace(/"/g, '&quot;')}" placeholder="main" class="w-full border-2 border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:border-sky-600 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-extrabold text-slate-700 mb-1">Cesta složky pro zálohu databáze</label>
-                            <input id="dbGhBackupFolderInput" type="text" value="${folderVal.replace(/"/g, '&quot;')}" placeholder="ZALOHA_DAT" class="w-full border-2 border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:border-sky-600 focus:outline-none">
-                        </div>
+                    <span class="bg-slate-100 text-slate-900 border border-slate-300 px-3 py-1 rounded-lg text-xs font-black font-mono">${repoVal} (${branchVal})</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-extrabold text-slate-700 mb-1">Cesta k repozitáři GitHub (vlastník/repozitář)</label>
+                        <input id="dbGhRepoInput" type="text" value="${repoVal.replace(/"/g, '&quot;')}" placeholder="Kont-premysl-sliva/Home_1" class="w-full border-2 border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:border-sky-600 focus:outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-extrabold text-slate-700 mb-1">Token ověření (GitHub Personal Access Token – ghp_... / github_pat_...)</label>
-                        <input id="dbGhTokenInput" type="password" value="${tokenVal.replace(/"/g, '&quot;')}" placeholder="ghp_..." class="w-full border-2 border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-mono font-bold text-slate-900 focus:border-sky-600 focus:outline-none">
+                        <label class="block text-xs font-extrabold text-slate-700 mb-1">Větev (Branch)</label>
+                        <input id="dbGhBranchInput" type="text" value="${branchVal.replace(/"/g, '&quot;')}" placeholder="main" class="w-full border-2 border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:border-sky-600 focus:outline-none">
                     </div>
-                    <div class="flex flex-wrap items-center gap-3 pt-1">
-                        <button onclick="window.saveDatabazeGitHubSettings()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow">
-                            <span class="material-icons text-sm">save</span> ULOŽIT NASTAVENÍ GITHUBU
-                        </button>
-                        <button onclick="window.testDatabazeGitHubConnection()" class="bg-sky-700 hover:bg-sky-800 text-white px-4 py-2.5 rounded-xl font-extrabold text-xs flex items-center gap-1.5 shadow">
-                            <span class="material-icons text-sm">verified</span> OVĚŘIT SPOJENÍ A TOKEN
-                        </button>
+                    <div>
+                        <label class="block text-xs font-extrabold text-slate-700 mb-1">Cesta složky pro zálohu databáze</label>
+                        <input id="dbGhBackupFolderInput" type="text" value="${folderVal.replace(/"/g, '&quot;')}" placeholder="ZALOHA_DAT" class="w-full border-2 border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:border-sky-600 focus:outline-none">
                     </div>
-                    <div id="dbGhTestStatus" class="hidden"></div>
-                </div>`;
-            } else if (subKey === 'QR_IPHONE') {
-                const iphoneUrl = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?iphone=1';
-                grid._add = `
-                <div class="bg-white rounded-2xl border-2 border-teal-600 shadow-lg p-6 space-y-5">
-                    <div class="flex items-center justify-between flex-wrap gap-3 border-b border-slate-200 pb-4">
-                        <div class="flex items-center gap-3">
-                            <span class="w-12 h-12 rounded-xl bg-teal-700 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">qr_code_2</span></span>
-                            <div>
-                                <h2 class="text-lg font-black text-slate-900">QR KÓD PRO INSTALACI IPHONE (PŘEPRAVA PRO ŘIDIČE)</h2>
-                                <p class="text-xs text-slate-600 font-semibold">Naskenujte fotoaparátem iPhonu pro přímé otevření a uložení mobilní aplikace na plochu</p>
+                </div>
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 mb-1">Token ověření (GitHub Personal Access Token – ghp_... / github_pat_...)</label>
+                    <input id="dbGhTokenInput" type="password" value="${tokenVal.replace(/"/g, '&quot;')}" placeholder="ghp_..." class="w-full border-2 border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-mono font-bold text-slate-900 focus:border-sky-600 focus:outline-none">
+                </div>
+                <div class="flex flex-wrap items-center gap-3 pt-1">
+                    <button onclick="window.saveDatabazeGitHubSettings()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer">
+                        <span class="material-icons text-sm">save</span> ULOŽIT NASTAVENÍ GITHUBU
+                    </button>
+                    <button onclick="window.testDatabazeGitHubConnection()" class="bg-sky-700 hover:bg-sky-800 text-white px-4 py-2.5 rounded-xl font-extrabold text-xs flex items-center gap-1.5 shadow cursor-pointer">
+                        <span class="material-icons text-sm">verified</span> OVĚŘIT SPOJENÍ A TOKEN
+                    </button>
+                    <button onclick="window.uploadAppHtmlToGitHubWithTacho()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl font-extrabold text-xs flex items-center gap-1.5 shadow cursor-pointer">
+                        <span class="material-icons text-sm">publish</span> NAHRÁT AKTUALIZACI SW NA GITHUB (v ${CURRENT_SW_VERSION})
+                    </button>
+                </div>
+                <div id="dbGhTestStatus" class="hidden"></div>
+            </div>`;
+
+            // SEKCE 5: INSTALACE IPHONE
+            const secIphoneHtml = `
+            <div id="sec-sprava-iphone" class="bg-white rounded-2xl border-2 border-teal-600 shadow-lg p-6 space-y-5">
+                <div class="flex items-center justify-between flex-wrap gap-3 border-b border-slate-200 pb-4">
+                    <div class="flex items-center gap-3">
+                        <span class="w-12 h-12 rounded-xl bg-teal-700 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">phone_iphone</span></span>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-teal-700 text-white text-[10px] font-black px-2 py-0.5 rounded">SEKCE 5 • IPHONE</span>
+                                <h2 class="text-lg font-black text-slate-900">INSTALACE IPHONE (PŘEPRAVA PRO ŘIDIČE & DISPEČINK)</h2>
                             </div>
+                            <p class="text-xs text-slate-600 font-semibold">Naskenujte fotoaparátem iPhonu pro přímé otevření v Safari a uložení mobilní aplikace na plochu</p>
                         </div>
-                        <button onclick="openIphoneInstallModal()" class="bg-teal-700 hover:bg-teal-800 text-white px-4 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow">
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="window.openIphoneInstallModalWithTacho()" class="bg-teal-700 hover:bg-teal-800 text-white px-4 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer">
                             <span class="material-icons text-sm">open_in_new</span> OTEVŘÍT CELOOBRAZOVKOVÝ QR KÓD & NÁVOD
                         </button>
+                        <button onclick="window.shareIphoneInstallWhatsApp()" class="bg-[#16A34A] hover:bg-green-700 text-white px-3.5 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer">
+                            <span class="material-icons text-sm">share</span> POSLAT ODKAZ NA WHATSAPP
+                        </button>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                        <div class="flex flex-col items-center justify-center bg-slate-50 border-2 border-teal-500 rounded-2xl p-4">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=${encodeURIComponent(iphoneUrl)}" alt="QR iPhone" class="w-48 h-48 rounded-lg shadow-sm bg-white p-2">
-                            <span class="mt-2 text-[11px] font-black text-teal-900">Naskenujte přes Fotoaparát v iPhonu</span>
-                        </div>
-                        <div class="md:col-span-2 space-y-3 text-xs text-slate-700">
-                            <div class="bg-teal-50 border border-teal-200 rounded-xl p-3.5">
-                                <div class="font-black text-teal-950 text-sm mb-1">Přímá adresa aplikace pro iPhone:</div>
-                                <code class="block bg-white border border-teal-300 rounded px-2.5 py-1.5 font-mono text-xs text-teal-900 select-all">${iphoneUrl}</code>
-                            </div>
-                            <ol class="list-decimal list-inside space-y-1.5 font-semibold">
-                                <li>Otevřete na iPhonu aplikaci <b>Fotoaparát</b> a namiřte ji na QR kód vlevo.</li>
-                                <li>Klepněte na zobrazený odkaz pro otevření v prohlížeči <b>Safari</b>.</li>
-                                <li>Dole v Safari klepněte na ikonu <b>Sdílet</b> a zvolte <b>Přidat na plochu</b>.</li>
-                            </ol>
-                        </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                    <div class="flex flex-col items-center justify-center bg-slate-50 border-2 border-teal-500 rounded-2xl p-4">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=${encodeURIComponent(iphoneUrl)}" alt="QR iPhone" class="w-48 h-48 rounded-lg shadow-sm bg-white p-2">
+                        <span class="mt-2 text-[11px] font-black text-teal-900">Naskenujte přes Fotoaparát v iPhonu</span>
                     </div>
-                </div>`;
-            } else if (subKey === 'QR_ANDROID') {
-                const androidChromeUrl = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?android=1&install=1';
-                const androidApkUrl = 'https://raw.githubusercontent.com/Kont-premysl-sliva/Home_1/main/android/Kontejnery_Ostrava_Android_latest.apk';
-                grid._add = `
-                <div class="space-y-6">
-                    <!-- KARTA 1: DOPORUČENÁ RYCHLÁ INSTALACE PŘES PROHLÍŽEČ CHROME (STEJNĚ JAKO NA IPHONU) -->
-                    <div class="bg-white rounded-2xl border-2 border-emerald-600 shadow-lg p-6 space-y-5">
-                        <div class="flex items-center justify-between flex-wrap gap-3 border-b border-slate-200 pb-4">
-                            <div class="flex items-center gap-3">
-                                <span class="w-12 h-12 rounded-xl bg-emerald-700 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">android</span></span>
-                                <div>
-                                    <div class="flex items-center gap-2 flex-wrap">
-                                        <h2 class="text-lg font-black text-slate-900">1. RYCHLÁ INSTALACE ANDROID PŘES PROHLÍŽEČ CHROME (BEZ SOUBORU .APK)</h2>
-                                        <span class="bg-emerald-100 text-emerald-900 border border-emerald-400 text-[10px] font-black px-2 py-0.5 rounded-full">DOPORUČENO • STEJNĚ SNADNÉ JAKO IPHONE</span>
-                                    </div>
-                                    <p class="text-xs text-slate-600 font-semibold">Naskenujte fotoaparátem Android telefonu — otevře se v Google Chrome a 1 kliknutím přidáte ikonu na plochu (bez zapínání vývojářského režimu a bez varování)</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <button onclick="window.openAndroidInstallModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer">
-                                    <span class="material-icons text-sm">qr_code_scanner</span> OTEVŘÍT VELKÝ QR KÓD & NÁVOD CHROME
-                                </button>
-                                <button onclick="window.shareAndroidInstallWhatsApp()" class="bg-[#16A34A] hover:bg-green-700 text-white px-3.5 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer">
-                                    <span class="material-icons text-sm">share</span> POSLAT ODKAZ NA WHATSAPP
+                    <div class="md:col-span-2 space-y-3 text-xs text-slate-700">
+                        <div class="bg-teal-50 border border-teal-200 rounded-xl p-3.5">
+                            <div class="flex items-center justify-between gap-2 mb-1">
+                                <span class="font-black text-teal-950 text-sm">Přímá adresa aplikace pro iPhone:</span>
+                                <button type="button" onclick="window.copyIphoneInstallUrl()" class="bg-teal-700 hover:bg-teal-800 text-white px-2.5 py-1 rounded text-[11px] font-extrabold flex items-center gap-1 cursor-pointer">
+                                    <span class="material-icons text-xs">content_copy</span> Kopírovat odkaz
                                 </button>
                             </div>
+                            <code class="block bg-white border border-teal-300 rounded px-2.5 py-1.5 font-mono text-xs text-teal-900 select-all break-all">${iphoneUrl}</code>
                         </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                            <div class="flex flex-col items-center justify-center bg-emerald-50/70 border-2 border-emerald-500 rounded-2xl p-4">
-                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=${encodeURIComponent(androidChromeUrl)}" alt="QR Android Chrome" class="w-48 h-48 rounded-lg shadow-sm bg-white p-2">
-                                <span class="mt-2 text-[11px] font-black text-emerald-950 text-center">Naskenujte přes Fotoaparát / Google Lens v Androidu</span>
-                                <span class="mt-0.5 text-[10px] font-bold text-emerald-700">Otevře se rovnou v prohlížeči Chrome</span>
-                            </div>
-                            <div class="md:col-span-2 space-y-3 text-xs text-slate-700">
-                                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5">
-                                    <div class="flex items-center justify-between gap-2 mb-1">
-                                        <span class="font-black text-emerald-950 text-sm">Přímá adresa pro prohlížeč Google Chrome na Androidu:</span>
-                                        <button type="button" onclick="window.copyAndroidInstallUrl()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-2.5 py-1 rounded text-[11px] font-extrabold flex items-center gap-1 cursor-pointer">
-                                            <span class="material-icons text-xs">content_copy</span> Kopírovat odkaz
-                                        </button>
-                                    </div>
-                                    <code id="androidChromeUrlCode" class="block bg-white border border-emerald-300 rounded px-2.5 py-1.5 font-mono text-xs text-emerald-900 select-all break-all">${androidChromeUrl}</code>
-                                </div>
-
-                                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2">
-                                    <div class="font-black text-slate-900 text-xs uppercase tracking-wider">Postup instalace přes Chrome (trvá 10 vteřin):</div>
-                                    <ol class="list-decimal list-inside space-y-1.5 font-semibold text-slate-800">
-                                        <li>Otevřete na Android telefonu <b>Fotoaparát</b> a namiřte jej na zelený QR kód vlevo.</li>
-                                        <li>Po otevření stránky v prohlížeči <b>Google Chrome</b> klepněte nahoře na zelené tlačítko <b>„📲 Přidat aplikaci na plochu telefonu (Chrome)“</b> (nebo v menu Chrome <b>⋮</b> zvolte <b>Přidat na plochu / Nainstalovat aplikaci</b>).</li>
-                                        <li>Potvrďte <b>Přidat / Nainstalovat</b> — na ploše telefonu se vytvoří ikona <b>Kontejnery Ostrava</b> v režimu celé obrazovky. <b>Žádné prostředí pro vývojáře ani povolování neznámých zdrojů není potřeba!</b></li>
-                                    </ol>
-                                </div>
-                            </div>
-                        </div>
+                        <ol class="list-decimal list-inside space-y-1.5 font-semibold">
+                            <li>Otevřete na iPhonu aplikaci <b>Fotoaparát</b> a namiřte ji na QR kód vlevo.</li>
+                            <li>Klepněte na zobrazený odkaz pro otevření v prohlížeči <b>Safari</b>.</li>
+                            <li>Dole v Safari klepněte na ikonu <b>Sdílet</b> a zvolte <b>Přidat na plochu</b>.</li>
+                        </ol>
                     </div>
+                </div>
+            </div>`;
 
-                    <!-- KARTA 2: VOLITELNÁ INSTALACE SOUBORU .APK + SROVNÁNÍ CHROME VS. APK -->
-                    <div class="bg-white rounded-2xl border-2 border-slate-300 shadow p-6 space-y-5">
-                        <div class="flex items-center justify-between flex-wrap gap-3 border-b border-slate-200 pb-4">
-                            <div class="flex items-center gap-3">
-                                <span class="w-11 h-11 rounded-xl bg-slate-800 text-amber-400 flex items-center justify-center shadow"><span class="material-icons text-xl">system_security_update</span></span>
-                                <div>
-                                    <h3 class="text-base font-black text-slate-900">2. VOLITELNÁ INSTALACE CELÉHO SOUBORU .APK & SROVNÁNÍ VARIANT</h3>
-                                    <p class="text-xs text-slate-600 font-semibold">Kdy stačí rychlá instalace přes prohlížeč Chrome a jaké jsou výhody plného souboru .APK</p>
+            // SEKCE 6: INSTALACE ANDROID
+            const secAndroidHtml = `
+            <div id="sec-sprava-android" class="space-y-6">
+                <!-- KARTA 1: DOPORUČENÁ RYCHLÁ INSTALACE PŘES PROHLÍŽEČ CHROME -->
+                <div class="bg-white rounded-2xl border-2 border-emerald-600 shadow-lg p-6 space-y-5">
+                    <div class="flex items-center justify-between flex-wrap gap-3 border-b border-slate-200 pb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="w-12 h-12 rounded-xl bg-emerald-700 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">android</span></span>
+                            <div>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="bg-emerald-700 text-white text-[10px] font-black px-2 py-0.5 rounded">SEKCE 6 • ANDROID</span>
+                                    <h2 class="text-lg font-black text-slate-900">INSTALACE ANDROID — 1. RYCHLÁ INSTALACE PŘES CHROME (BEZ SOUBORU .APK)</h2>
+                                    <span class="bg-emerald-100 text-emerald-900 border border-emerald-400 text-[10px] font-black px-2 py-0.5 rounded-full">DOPORUČENO • STEJNĚ SNADNÉ JAKO IPHONE</span>
                                 </div>
+                                <p class="text-xs text-slate-600 font-semibold">Naskenujte fotoaparátem Android telefonu — otevře se v Google Chrome a 1 kliknutím přidáte ikonu na plochu (bez zapínání vývojářského režimu a bez varování)</p>
                             </div>
-                            <button onclick="window.downloadAndroidApkDirect()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer">
-                                <span class="material-icons text-sm text-amber-400">download</span> STÁHNOUT INSTALAČNÍ SOUBOR .APK (v ${CURRENT_SW_VERSION_NAME})
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <button onclick="window.openAndroidInstallModalWithTacho()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer">
+                                <span class="material-icons text-sm">qr_code_scanner</span> OTEVŘÍT VELKÝ QR KÓD & NÁVOD CHROME
+                            </button>
+                            <button onclick="window.shareAndroidInstallWhatsAppWithTacho()" class="bg-[#16A34A] hover:bg-green-700 text-white px-3.5 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer">
+                                <span class="material-icons text-sm">share</span> POSLAT ODKAZ NA WHATSAPP
                             </button>
                         </div>
+                    </div>
 
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-                            <div class="flex flex-col items-center justify-center bg-slate-50 border border-slate-300 rounded-2xl p-4">
-                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data=${encodeURIComponent(androidApkUrl)}" alt="QR Android APK" class="w-40 h-40 rounded-lg shadow-sm bg-white p-2">
-                                <span class="mt-2 text-[11px] font-black text-slate-800 text-center">QR kód pro přímé stažení souboru .APK</span>
-                                <span class="text-[10px] text-slate-500 text-center mt-0.5">Ani pro .APK se nezapíná vývojářský režim (jen souhlas s instalací z prohlížeče)</span>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                        <div class="flex flex-col items-center justify-center bg-emerald-50/70 border-2 border-emerald-500 rounded-2xl p-4">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=${encodeURIComponent(androidChromeUrl)}" alt="QR Android Chrome" class="w-48 h-48 rounded-lg shadow-sm bg-white p-2">
+                            <span class="mt-2 text-[11px] font-black text-emerald-950 text-center">Naskenujte přes Fotoaparát / Google Lens v Androidu</span>
+                            <span class="mt-0.5 text-[10px] font-bold text-emerald-700">Otevře se rovnou v prohlížeči Chrome</span>
+                        </div>
+                        <div class="md:col-span-2 space-y-3 text-xs text-slate-700">
+                            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5">
+                                <div class="flex items-center justify-between gap-2 mb-1">
+                                    <span class="font-black text-emerald-950 text-sm">Přímá adresa pro prohlížeč Google Chrome na Androidu:</span>
+                                    <button type="button" onclick="window.copyAndroidInstallUrlWithTacho()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-2.5 py-1 rounded text-[11px] font-extrabold flex items-center gap-1 cursor-pointer">
+                                        <span class="material-icons text-xs">content_copy</span> Kopírovat odkaz
+                                    </button>
+                                </div>
+                                <code id="androidChromeUrlCode" class="block bg-white border border-emerald-300 rounded px-2.5 py-1.5 font-mono text-xs text-emerald-900 select-all break-all">${androidChromeUrl}</code>
                             </div>
 
-                            <div class="lg:col-span-2 overflow-x-auto">
-                                <table class="w-full text-xs border-collapse border border-slate-300 rounded-xl overflow-hidden">
-                                    <thead>
-                                        <tr class="bg-slate-800 text-white text-left">
-                                            <th class="p-2.5 font-black">Vlastnost / Funkce</th>
-                                            <th class="p-2.5 font-black text-emerald-300">Přes prohlížeč Chrome (PWA)</th>
-                                            <th class="p-2.5 font-black text-amber-300">Celý soubor .APK</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-200 font-semibold text-slate-700">
-                                        <tr class="bg-emerald-50/40">
-                                            <td class="p-2.5 font-black text-slate-900">Nutnost zapínat „Prostředí pro vývojáře“</td>
-                                            <td class="p-2.5 text-emerald-800 font-black">✅ NE — nikdy se nic nepovoluje</td>
-                                            <td class="p-2.5 text-slate-800 font-bold">✅ NE — jen 1× povolit instalaci z Chrome</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="p-2.5 font-black text-slate-900">Rychlost instalace na další telefony</td>
-                                            <td class="p-2.5 text-emerald-800 font-black">⚡ Za 5 vteřin přes QR kód (jako iPhone)</td>
-                                            <td class="p-2.5">Stažení balíčku (~15 MB) a spuštění instalátoru</td>
-                                        </tr>
-                                        <tr class="bg-emerald-50/40">
-                                            <td class="p-2.5 font-black text-slate-900">Napojení na Hlavní PC & cache miniatur (30 dní po HOTOVO)</td>
-                                            <td class="p-2.5 text-emerald-800 font-black">✅ ANO — 100% plná podpora</td>
-                                            <td class="p-2.5 text-emerald-800 font-black">✅ ANO — 100% plná podpora</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="p-2.5 font-black text-slate-900">Ruční schvalování aktualizací jedním kliknutím</td>
-                                            <td class="p-2.5 text-emerald-800 font-black">✅ Okamžitě v prohlížeči bez přeinstalace</td>
-                                            <td class="p-2.5">Přes stažení nové verze z GitHubu / cloudu</td>
-                                        </tr>
-                                        <tr class="bg-amber-50/50">
-                                            <td class="p-2.5 font-black text-slate-900">Hlavní výhody instalace celého souboru .APK</td>
-                                            <td class="p-2.5 text-slate-600">Běží v zabezpečeném prostředí Google Chrome</td>
-                                            <td class="p-2.5 text-amber-950 font-bold">🔒 Nativní systémový otisk prstu Androidu, přímé ukládání souborů do paměti telefonu bez limitů prohlížeče a systémový Android tisk</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2">
+                                <div class="font-black text-slate-900 text-xs uppercase tracking-wider">Postup instalace přes Chrome (trvá 10 vteřin):</div>
+                                <ol class="list-decimal list-inside space-y-1.5 font-semibold text-slate-800">
+                                    <li>Otevřete na Android telefonu <b>Fotoaparát</b> a namiřte jej na zelený QR kód vlevo.</li>
+                                    <li>Po otevření stránky v prohlížeči <b>Google Chrome</b> klepněte nahoře na zelené tlačítko <b>„📲 Přidat aplikaci na plochu telefonu (Chrome)“</b> (nebo v menu Chrome <b>⋮</b> zvolte <b>Přidat na plochu / Nainstalovat aplikaci</b>).</li>
+                                    <li>Potvrďte <b>Přidat / Nainstalovat</b> — na ploše telefonu se vytvoří ikona <b>Kontejnery Ostrava</b> v režimu celé obrazovky.</li>
+                                </ol>
                             </div>
                         </div>
                     </div>
-                </div>`;
+                </div>
+
+                <!-- KARTA 2: VOLITELNÁ INSTALACE SOUBORU .APK -->
+                <div class="bg-white rounded-2xl border-2 border-slate-300 shadow p-6 space-y-5">
+                    <div class="flex items-center justify-between flex-wrap gap-3 border-b border-slate-200 pb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="w-11 h-11 rounded-xl bg-slate-800 text-amber-400 flex items-center justify-center shadow"><span class="material-icons text-xl">system_security_update</span></span>
+                            <div>
+                                <h3 class="text-base font-black text-slate-900">2. VOLITELNÁ INSTALACE CELÉHO SOUBORU .APK & SROVNÁNÍ VARIANT</h3>
+                                <p class="text-xs text-slate-600 font-semibold">Kdy stačí rychlá instalace přes prohlížeč Chrome a jaké jsou výhody plného souboru .APK</p>
+                            </div>
+                        </div>
+                        <button onclick="window.downloadAndroidApkDirectWithTacho()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer">
+                            <span class="material-icons text-sm text-amber-400">download</span> STÁHNOUT INSTALAČNÍ SOUBOR .APK (v ${CURRENT_SW_VERSION})
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                        <div class="flex flex-col items-center justify-center bg-slate-50 border border-slate-300 rounded-2xl p-4">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data=${encodeURIComponent(androidApkUrl)}" alt="QR Android APK" class="w-40 h-40 rounded-lg shadow-sm bg-white p-2">
+                            <span class="mt-2 text-[11px] font-black text-slate-800 text-center">QR kód pro přímé stažení souboru .APK</span>
+                            <span class="text-[10px] text-slate-500 text-center mt-0.5">Ani pro .APK se nezapíná vývojářský režim (jen souhlas s instalací z prohlížeče)</span>
+                        </div>
+
+                        <div class="lg:col-span-2 overflow-x-auto">
+                            <table class="w-full text-xs border-collapse border border-slate-300 rounded-xl overflow-hidden">
+                                <thead>
+                                    <tr class="bg-slate-800 text-white text-left">
+                                        <th class="p-2.5 font-black">Vlastnost / Funkce</th>
+                                        <th class="p-2.5 font-black text-emerald-300">Přes prohlížeč Chrome (PWA)</th>
+                                        <th class="p-2.5 font-black text-amber-300">Celý soubor .APK</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200 font-semibold text-slate-700">
+                                    <tr class="bg-emerald-50/40">
+                                        <td class="p-2.5 font-black text-slate-900">Nutnost zapínat „Prostředí pro vývojáře“</td>
+                                        <td class="p-2.5 text-emerald-800 font-black">✅ NE — nikdy se nic nepovoluje</td>
+                                        <td class="p-2.5 text-slate-800 font-bold">✅ NE — jen 1× povolit instalaci z Chrome</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2.5 font-black text-slate-900">Rychlost instalace na další telefony</td>
+                                        <td class="p-2.5 text-emerald-800 font-black">⚡ Za 5 vteřin přes QR kód (jako iPhone)</td>
+                                        <td class="p-2.5">Stažení balíčku (~15 MB) a spuštění instalátoru</td>
+                                    </tr>
+                                    <tr class="bg-emerald-50/40">
+                                        <td class="p-2.5 font-black text-slate-900">Napojení na Hlavní PC & cache miniatur (30 dní po HOTOVO)</td>
+                                        <td class="p-2.5 text-emerald-800 font-black">✅ ANO — 100% plná podpora</td>
+                                        <td class="p-2.5 text-emerald-800 font-black">✅ ANO — 100% plná podpora</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2.5 font-black text-slate-900">Ruční schvalování aktualizací jedním kliknutím</td>
+                                        <td class="p-2.5 text-emerald-800 font-black">✅ Okamžitě v prohlížeči bez přeinstalace</td>
+                                        <td class="p-2.5">Přes stažení nové verze z GitHubu / cloudu</td>
+                                    </tr>
+                                    <tr class="bg-amber-50/50">
+                                        <td class="p-2.5 font-black text-slate-900">Hlavní výhody instalace celého souboru .APK</td>
+                                        <td class="p-2.5 text-slate-600">Běží v zabezpečeném prostředí Google Chrome</td>
+                                        <td class="p-2.5 text-amber-950 font-bold">🔒 Nativní systémový otisk prstu Androidu, přímé ukládání souborů do paměti telefonu bez limitů prohlížeče a systémový Android tisk</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+
+            // Vykreslení: Tachometr je VŽDY nahoře, následovaný rozcestníkem a jednotlivými sekcemi
+            const inlineTachoHtml = window.renderSpravaInlineTachoHtml();
+
+            if (subKey === 'REINDEXACE') {
+                grid._add = navHeaderHtml + inlineTachoHtml + secReindexaceHtml;
+            } else if (subKey === 'SYNCHRONIZACE') {
+                grid._add = navHeaderHtml + inlineTachoHtml + secSynchronizaceHtml;
+            } else if (subKey === 'PC_ERP') {
+                grid._add = navHeaderHtml + inlineTachoHtml + secPcErpHtml;
+            } else if (subKey === 'GITHUB_NASTAVENI') {
+                grid._add = navHeaderHtml + inlineTachoHtml + secGitHubHtml;
+            } else if (subKey === 'QR_IPHONE') {
+                grid._add = navHeaderHtml + inlineTachoHtml + secIphoneHtml;
+            } else if (subKey === 'QR_ANDROID') {
+                grid._add = navHeaderHtml + inlineTachoHtml + secAndroidHtml;
+            } else {
+                // Výchozí pohled SPRÁVA DATABÁZE ('ZALOHA') obsahuje všechny požadované sekce přehledně pod sebou
+                grid._add = navHeaderHtml + inlineTachoHtml + secZalohaHtml + secReindexaceHtml + secSynchronizaceHtml + secPcErpHtml + secGitHubHtml + secIphoneHtml + secAndroidHtml;
             }
         };
 
@@ -17938,7 +18994,7 @@ function buildShareTextSummary(type, id) {
     </script>
 
     <!-- ============================================================================ -->
-    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v443)      -->
+    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v445)      -->
     <!-- Zkrácená verze Přepravy: ostatní agendy jsou na iPhonu kompletně skryté.     -->
     <!-- ============================================================================ -->
     <style id="iphoneAppStyles">
