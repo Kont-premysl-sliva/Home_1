@@ -12,6 +12,7 @@ try {
     
     
     
+    
     <script id="appEnvironmentInitScript">
         (function() {
             try {
@@ -140,7 +141,7 @@ try {
             <!-- Verze aplikace a datum -->
             <div class="inline-flex items-center gap-1.5 bg-sky-950/80 border border-sky-400/40 text-sky-200 px-3 py-1 rounded-full text-xs font-black shadow-inner mb-4">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="loginVersionDisplay">v 441 • 3.11.2026</span>
+                <span id="loginVersionDisplay">v 443 • 3.11.2026</span>
             </div>
 
             <!-- Přepínač PC vs Řidič -->
@@ -527,7 +528,7 @@ try {
             <h1 class="text-base font-extrabold flex items-center gap-2 tracking-tight">
                 <span>POHODA</span>
                 <button type="button" onclick="window.handleHeaderUpdateClick()" class="cursor-pointer bg-[#0284C7] hover:bg-sky-600 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-lg shadow-sm border border-white/40 flex items-center gap-1.5" title="Verze aplikace • Kliknutím zkontrolujete nebo ručně potvrdíte novou aktualizaci">
-                    <span id="headerVersionBadge">v 441 • 3.11.2026</span>
+                    <span id="headerVersionBadge">v 443 • 3.11.2026</span>
                     <span id="ghUpdateBadge" class="hidden bg-[#EA580C] text-white text-[10px] px-1.5 py-0.5 rounded font-black animate-pulse flex items-center gap-0.5"><span class="material-icons text-[12px]">system_update_alt</span><span>NOVÁ</span></span>
                 </button>
             </h1>
@@ -2627,7 +2628,7 @@ try {
 
     <script>
     (function() {
-        const CURRENT_SW_VERSION = 441;
+        const CURRENT_SW_VERSION = 443;
         const CURRENT_SW_VERSION_NAME = CURRENT_SW_VERSION;
         const CURRENT_SW_RELEASE_DATE = "3.11.2026";
         const CURRENT_SW_RELEASE_DATE_SPACED = "3. 11. 2026";
@@ -6281,16 +6282,19 @@ try {
                     return Array.from(map.values());
                 };
 
-                allContainers = dedupAndClean('containers', allContainers).map((c, idx) => ({
-                    ...c,
-                    systemNumber: (c.systemNumber && String(c.systemNumber).trim()) ? String(c.systemNumber).trim() : `SK-${String(idx + 1).padStart(4, '0')}`,
-                    designation: window.normalizeContainerDesignationJs
-                        ? window.normalizeContainerDesignationJs(String(c.designation || '').trim(), String(idx + 1).padStart(2, '0'))
-                        : String(c.designation || `XXX ${String(idx + 1).padStart(2, '0')}`).trim(),
-                    description: window.formatShortContainerDescJs ? window.formatShortContainerDescJs(c.color, c.type, c.description) : (c.description || ''),
-                    depo: (c.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1',
-                    status: (c.status && String(c.status).trim()) ? String(c.status).trim() : 'VOLNÝ'
-                }));
+                allContainers = dedupAndClean('containers', allContainers).map((c, idx) => {
+                    const parsedSys = parseInt(String(c.systemNumber ?? '').replace(/\D+/g, ''), 10);
+                    return {
+                        ...c,
+                        systemNumber: (!isNaN(parsedSys) && parsedSys > 0) ? parsedSys : (idx + 1),
+                        designation: window.normalizeContainerDesignationJs
+                            ? window.normalizeContainerDesignationJs(String(c.designation || '').trim(), String(idx + 1).padStart(2, '0'))
+                            : String(c.designation || `XXX ${String(idx + 1).padStart(2, '0')}`).trim(),
+                        description: window.formatShortContainerDescJs ? window.formatShortContainerDescJs(c.color, c.type, c.description) : (c.description || ''),
+                        depo: (c.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1',
+                        status: (c.status && String(c.status).trim()) ? String(c.status).trim() : 'VOLNÝ'
+                    };
+                });
                 saveLocal('containers', allContainers);
 
                 allCustomers = dedupAndClean('customers', allCustomers).map((c, idx) => {
@@ -16441,7 +16445,7 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
             showToast(`Přepravce "${trimmed}" přidán do seznamu a vybrán`);
         };
         function getNextContainerSystemNumber(depo) {
-            const list = allContainers.map(x => Number(x.systemNumber || 0)).filter(n => !isNaN(n) && n > 0);
+            const list = allContainers.map(x => parseInt(String(x.systemNumber ?? '').replace(/\D+/g, ''), 10)).filter(n => !isNaN(n) && n > 0);
             const max = list.length ? Math.max(...list) : 668100;
             return max + 1;
         }
@@ -16453,7 +16457,8 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
             if (resolvedMain && !currentModalExtraPhotos.includes(resolvedMain)) {
                 currentModalExtraPhotos.unshift(resolvedMain);
             }
-            const sysNum = k?.systemNumber ? k.systemNumber : getNextContainerSystemNumber(k?.depo || activeDepoOr1());
+            const parsedExistingSys = parseInt(String(k?.systemNumber ?? '').replace(/\D+/g, ''), 10);
+            const sysNum = (!isNaN(parsedExistingSys) && parsedExistingSys > 0) ? parsedExistingSys : getNextContainerSystemNumber(k?.depo || activeDepoOr1());
             const sysInp = document.getElementById('k_systemNumber');
             if (sysInp) sysInp.value = sysNum;
             const sysBadge = document.getElementById('k_systemNumber_badge');
@@ -16479,8 +16484,9 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
         window.saveContainerDetails = () => {
             if (!currentContainerId) currentContainerId = doc(collection(db, "containers")).id;
             const existingK = currentContainerId ? allContainers.find(x => x.id === currentContainerId) : null;
-            const rawSys = parseInt(document.getElementById('k_systemNumber')?.value, 10);
-            const finalSysNum = (!isNaN(rawSys) && rawSys > 0) ? rawSys : (existingK?.systemNumber || getNextContainerSystemNumber(document.getElementById('k_depo')?.value));
+            const rawSys = parseInt(String(document.getElementById('k_systemNumber')?.value ?? '').replace(/\D+/g, ''), 10);
+            const existingSys = parseInt(String(existingK?.systemNumber ?? '').replace(/\D+/g, ''), 10);
+            const finalSysNum = (!isNaN(rawSys) && rawSys > 0) ? rawSys : ((!isNaN(existingSys) && existingSys > 0) ? existingSys : getNextContainerSystemNumber(document.getElementById('k_depo')?.value));
             const imgUri = sanitizeSinglePhotoUri(document.getElementById('k_imageUri').value);
             const mergedPhotos = [...new Set([
                 ...(imgUri ? [imgUri] : []),
@@ -17932,7 +17938,7 @@ function buildShareTextSummary(type, id) {
     </script>
 
     <!-- ============================================================================ -->
-    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v441)      -->
+    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v443)      -->
     <!-- Zkrácená verze Přepravy: ostatní agendy jsou na iPhonu kompletně skryté.     -->
     <!-- ============================================================================ -->
     <style id="iphoneAppStyles">
