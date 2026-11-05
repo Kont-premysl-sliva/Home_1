@@ -2,15 +2,15 @@
   "platform": "ANDROID_VERZE",
   "folder": "android/",
   "applicationId": "com.aistudio.containerscanner.cxkqab",
-  "currentVersion": 468,
-  "versionCode": 468,
-  "versionName": "468.0",
+  "currentVersion": 469,
+  "versionCode": 469,
+  "versionName": "469.0",
   "releaseDate": "5.11.2026",
   "maxKeptVersions": 3,
-  "keptVersions": ["v468","v467","v466"],
+  "keptVersions": ["v469","v468","v467"],
   "files": [
+    "android/Kontejnery_Ostrava_Android_v469.json",
     "android/Kontejnery_Ostrava_Android_v468.json",
-    "android/Kontejnery_Ostrava_Android_v467.json",
-    "android/Kontejnery_Ostrava_Android_v466.json"
+    "android/Kontejnery_Ostrava_Android_v467.json"
   ]
 }
