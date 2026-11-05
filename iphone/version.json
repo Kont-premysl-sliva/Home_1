@@ -1,21 +1,21 @@
 {
   "platform": "IPHONE_VERZE",
   "folder": "iphone/",
-  "currentVersion": 471,
-  "versionBadge": "v 471",
+  "currentVersion": 472,
+  "versionBadge": "v 472",
   "releaseDate": "5.11.2026",
   "maxKeptVersions": 3,
-  "keptVersions": ["v471","v470","v469"],
+  "keptVersions": ["v472","v471","v470"],
   "files": [
     "iphone/iphone.html",
+    "iphone/Kontejnery_iPhone_v472.html",
     "iphone/Kontejnery_iPhone_v471.html",
     "iphone/Kontejnery_iPhone_v470.html",
-    "iphone/Kontejnery_iPhone_v469.html",
+    "iphone/Kontejnery_Preprava_iPhone_v472.ipa",
     "iphone/Kontejnery_Preprava_iPhone_v471.ipa",
     "iphone/Kontejnery_Preprava_iPhone_v470.ipa",
-    "iphone/Kontejnery_Preprava_iPhone_v469.ipa",
+    "iphone/Kontejnery_iPhone_v472.mobileconfig",
     "iphone/Kontejnery_iPhone_v471.mobileconfig",
-    "iphone/Kontejnery_iPhone_v470.mobileconfig",
-    "iphone/Kontejnery_iPhone_v469.mobileconfig"
+    "iphone/Kontejnery_iPhone_v470.mobileconfig"
   ]
 }
