@@ -1,15 +1,15 @@
 {
   "platform": "WEB_PC_APLIKACE",
   "folder": "pc/",
-  "currentVersion": 469,
-  "versionBadge": "v 469",
+  "currentVersion": 470,
+  "versionBadge": "v 470",
   "releaseDate": "5.11.2026",
   "maxKeptVersions": 3,
-  "keptVersions": ["v469","v468","v467"],
+  "keptVersions": ["v470","v469","v468"],
   "files": [
     "pc/index.html",
+    "pc/S_POHODA_Kontejnery_PC_v470.html",
     "pc/S_POHODA_Kontejnery_PC_v469.html",
-    "pc/S_POHODA_Kontejnery_PC_v468.html",
-    "pc/S_POHODA_Kontejnery_PC_v467.html"
+    "pc/S_POHODA_Kontejnery_PC_v468.html"
   ]
 }
