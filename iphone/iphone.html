@@ -498,10 +498,24 @@ try {
         }
         .bg-\[\#052E16\] { background-color: #052E16 !important; }
         .border-\[\#022C22\] { border-color: #022C22 !important; }
-        /* Akcelerace vykreslování pro Google Chrome (mobil i PC): vypnutí náročného backdrop-blur a aktivace content-visibility */
+        /* Akcelerace vykreslování pro Google Chrome (mobil i PC): vypnutí náročného backdrop-blur, kompenzace kontrastu, z-index a scroll-anchoring */
         .backdrop-blur-sm, .backdrop-blur-md, .backdrop-blur, [class*="backdrop-blur"] {
             backdrop-filter: none !important;
             -webkit-backdrop-filter: none !important;
+        }
+        .modal:not(.hidden) {
+            background-color: rgba(15, 23, 42, 0.86) !important;
+        }
+        #listHead th, .pohoda-grid-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 15;
+        }
+        #mainWorkspace, #dynamicGrid, #dynamicList, #pohodaSplitViewContainer {
+            overflow-anchor: auto;
+        }
+        [data-ko-infinite-sentinel="1"] {
+            overflow-anchor: none;
         }
         #listBody > tr, .pohoda-grid-table tbody > tr {
             content-visibility: auto;
@@ -527,7 +541,7 @@ try {
             <!-- Verze aplikace a datum -->
             <div class="inline-flex items-center gap-1.5 bg-sky-950/80 border border-sky-400/40 text-sky-200 px-3 py-1 rounded-full text-xs font-black shadow-inner mb-4">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="loginVersionDisplay">v 479 • 6.11.2026</span>
+                <span id="loginVersionDisplay">v 480 • 7.11.2026</span>
             </div>
 
             <!-- Přepínač PC vs Řidič -->
@@ -915,7 +929,7 @@ try {
                 <span>KONTEJNERY OSTRAVA - POHODA</span>
                 <span class="hidden" id="pohodaWindowTitleAgenda"></span>
                 <button type="button" onclick="window.handleHeaderUpdateClick()" class="cursor-pointer bg-[#0A2E6E] hover:bg-blue-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm border border-sky-300/50 flex items-center gap-1" title="Verze aplikace • Kliknutím zkontrolujete nebo ručně potvrdíte novou aktualizaci">
-                    <span id="headerVersionBadge">v 479 • 6.11.2026</span>
+                    <span id="headerVersionBadge">v 480 • 7.11.2026</span>
                     <span id="ghUpdateBadge" class="hidden bg-[#CC0000] text-yellow-200 text-[10px] px-1.5 py-0.5 rounded font-black animate-pulse flex items-center gap-0.5"><span class="material-icons text-[11px]">system_update_alt</span><span>NOVÁ</span></span>
                 </button>
             </h1>
@@ -3422,10 +3436,10 @@ try {
 
     <script>
     (function() {
-        const CURRENT_SW_VERSION = 479;
+        const CURRENT_SW_VERSION = 480;
         const CURRENT_SW_VERSION_NAME = CURRENT_SW_VERSION;
-        const CURRENT_SW_RELEASE_DATE = "6.11.2026";
-        const CURRENT_SW_RELEASE_DATE_SPACED = "6. 11. 2026";
+        const CURRENT_SW_RELEASE_DATE = "7.11.2026";
+        const CURRENT_SW_RELEASE_DATE_SPACED = "7. 11. 2026";
         window.CURRENT_SW_VERSION = CURRENT_SW_VERSION;
         window.CURRENT_SW_VERSION_NAME = CURRENT_SW_VERSION_NAME;
         window.CURRENT_SW_RELEASE_DATE = CURRENT_SW_RELEASE_DATE;
@@ -8027,6 +8041,7 @@ try {
         };
 
         window._koBlobUrlCache = window._koBlobUrlCache || new Map();
+        window._KO_BLOB_CACHE_MAX = 500;
         window.toFastBlobUrl = function(dataUri) {
             if (!dataUri || typeof dataUri !== 'string') return '';
             if (dataUri.startsWith('blob:') || dataUri.startsWith('http://') || dataUri.startsWith('https://')) return dataUri;
@@ -8052,12 +8067,45 @@ try {
                 } else {
                     blob = new Blob([decodeURIComponent(payload)], { type: mime });
                 }
+                if (window._koBlobUrlCache.size >= window._KO_BLOB_CACHE_MAX) {
+                    const oldestKey = window._koBlobUrlCache.keys().next().value;
+                    if (oldestKey !== undefined) {
+                        const oldUrl = window._koBlobUrlCache.get(oldestKey);
+                        window._koBlobUrlCache.delete(oldestKey);
+                        try { if (oldUrl && oldUrl.startsWith('blob:')) URL.revokeObjectURL(oldUrl); } catch (e) {}
+                    }
+                }
                 const blobUrl = URL.createObjectURL(blob);
                 window._koBlobUrlCache.set(fastKey, blobUrl);
                 return blobUrl;
             } catch (e) {
                 return dataUri;
             }
+        };
+
+        window._koAbortControllers = window._koAbortControllers || new Map();
+        window._createAbortSignal = function(reqKey) {
+            try {
+                if (window._koAbortControllers.has(reqKey)) {
+                    const prev = window._koAbortControllers.get(reqKey);
+                    if (prev) prev.abort();
+                }
+                const ctrl = new AbortController();
+                window._koAbortControllers.set(reqKey, ctrl);
+                return ctrl.signal;
+            } catch (e) {
+                return undefined;
+            }
+        };
+        window._abortPendingRequestsByPrefix = function(prefix) {
+            try {
+                for (const [k, ctrl] of window._koAbortControllers.entries()) {
+                    if (String(k).startsWith(prefix)) {
+                        try { ctrl.abort(); } catch (e) {}
+                        window._koAbortControllers.delete(k);
+                    }
+                }
+            } catch (e) {}
         };
 
         const _thumbIdleQueue = [];
@@ -8581,7 +8629,7 @@ try {
             } catch (e) {}
             try {
                 if (window.location.protocol.startsWith('http') && navigator.onLine !== false) {
-                    fetch('/api/sync', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload })
+                    fetch('/api/sync', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload, signal: window._createAbortSignal('sync_push') })
                         .then(res => {
                             if (res && res.ok) {
                                 _lastPushDeltaTs = nowTs - 1000;
@@ -8604,7 +8652,7 @@ try {
                 }
                 if (window.location.protocol.startsWith('http') && navigator.onLine !== false) {
                     const sinceParam = (!forceFull && _lastPullDeltaTs > 0) ? `?since=${_lastPullDeltaTs}` : '';
-                    const resp = await fetch(`/api/sync${sinceParam}`).catch(() => null);
+                    const resp = await fetch(`/api/sync${sinceParam}`, { signal: window._createAbortSignal('sync_pull') }).catch(() => null);
                     if (resp && resp.ok) {
                         const data = await resp.json();
                         applyIncomingSyncSnapshot(data);
@@ -8891,7 +8939,8 @@ try {
                     const padded = digits.padStart(8, '0');
                     showToast(`Ověřuji bonitu IČ ${padded} v ARES / ISIR / FÚ...`);
                     const resp = await fetch(`https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/${padded}`, {
-                        headers: { 'Accept': 'application/json' }
+                        headers: { 'Accept': 'application/json' },
+                        signal: window._createAbortSignal('bonita_' + cid)
                     });
                     if (resp.ok) {
                         const json = await resp.json();
@@ -9184,7 +9233,8 @@ try {
                     const paddedIc = digitsOnly.padStart(8, '0');
                     showToast(`Hledám IČO ${paddedIc} v registru ARES...`);
                     const resp = await fetch(`https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/${paddedIc}`, {
-                        headers: { 'Accept': 'application/json' }
+                        headers: { 'Accept': 'application/json' },
+                        signal: window._createAbortSignal('ares_' + prefix)
                     });
                     if (!resp.ok) throw new Error('Subjekt s tímto IČ nebyl v ARES nalezen.');
                     const json = await resp.json();
@@ -9202,7 +9252,8 @@ try {
                 const resp = await fetch('https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/vyhledat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                    body: JSON.stringify({ obchodniJmeno: searchQuery, start: 0, pocet: 10 })
+                    body: JSON.stringify({ obchodniJmeno: searchQuery, start: 0, pocet: 10 }),
+                    signal: window._createAbortSignal('ares_' + prefix)
                 });
                 if (!resp.ok) throw new Error('Vyhledávání v ARES selhalo.');
                 const data = await resp.json();
@@ -9531,6 +9582,10 @@ try {
         };
 
         window.closeTabReorderContextMenu = () => {
+            if (window._ctxMenuCloseListener) {
+                document.removeEventListener('mousedown', window._ctxMenuCloseListener);
+                window._ctxMenuCloseListener = null;
+            }
             const old = document.getElementById('pohodaTabContextMenu');
             if (old) old.remove();
         };
@@ -9578,13 +9633,15 @@ try {
             menu.querySelector('#ctxMoveReset').onclick = () => runMove('reset');
 
             setTimeout(() => {
-                const closeListener = (ev) => {
+                if (window._ctxMenuCloseListener) {
+                    document.removeEventListener('mousedown', window._ctxMenuCloseListener);
+                }
+                window._ctxMenuCloseListener = (ev) => {
                     if (!menu.contains(ev.target)) {
                         window.closeTabReorderContextMenu();
-                        document.removeEventListener('mousedown', closeListener);
                     }
                 };
-                document.addEventListener('mousedown', closeListener);
+                document.addEventListener('mousedown', window._ctxMenuCloseListener);
             }, 20);
         };
 
@@ -10189,6 +10246,8 @@ try {
 
         window.setAgendaSubTab = (tabKey, subTab) => {
             window.agendaSubTabByTab[tabKey] = subTab;
+            window._koBatchLimit = 40;
+            window._adresarRenderLimit = 40;
             if (tabKey === 'kontejnery') {
                 if (subTab === 'DEPO 1') { currentDepo = 'Depo 1'; updateHeaderDepoButtons(); }
                 else if (subTab === 'DEPO 2') { currentDepo = 'Depo 2'; updateHeaderDepoButtons(); }
@@ -11212,6 +11271,8 @@ try {
         };
         window.toggleAgendaSort = (tableKey, colKey) => {
             if (window.__agendaResizingJustEnded) return;
+            window._koBatchLimit = 40;
+            window._adresarRenderLimit = 40;
             const cur = window.getAgendaSort(tableKey);
             if (cur.col === colKey) {
                 cur.dir = cur.dir === 'asc' ? 'desc' : 'asc';
@@ -11249,29 +11310,41 @@ try {
             if (resizerEl) resizerEl.classList.add('resizing');
             const minW = (colKey === 'foto' || colKey === 'nahled') ? 46 : (colKey === 'akce' ? 90 : 58);
             const defMap = window.AGENDA_DEFAULT_COL_WIDTHS[tableKey] || {};
-            const onMove = (moveEv) => {
-                const delta = moveEv.clientX - startX;
+            const colEls = Array.from(document.querySelectorAll(`col[data-agenda-col="${colKey}"]`));
+            const thEls = Array.from(document.querySelectorAll(`th[data-agenda-th="${colKey}"]`));
+            const tbl = document.getElementById('mainDataTable');
+            const agendaTbls = Array.from(document.querySelectorAll(`table[data-agenda-table="${tableKey}"]`));
+            let rafId = 0;
+            let pendingX = startX;
+            const applyResizeFrame = () => {
+                rafId = 0;
+                const delta = pendingX - startX;
                 const newW = Math.max(minW, Math.min(950, startWidth + delta));
                 if (!window.agendaColWidths[tableKey]) window.agendaColWidths[tableKey] = Object.assign({}, defMap);
                 window.agendaColWidths[tableKey][colKey] = newW;
-                document.querySelectorAll(`col[data-agenda-col="${colKey}"]`).forEach(colEl => {
-                    colEl.style.width = newW + 'px';
-                    colEl.style.minWidth = newW + 'px';
-                    colEl.style.maxWidth = newW + 'px';
-                });
-                document.querySelectorAll(`th[data-agenda-th="${colKey}"]`).forEach(thEl => {
-                    thEl.style.width = newW + 'px';
-                    thEl.style.minWidth = newW + 'px';
-                    thEl.style.maxWidth = newW + 'px';
-                });
-                const totalW = Object.keys(defMap).reduce((acc, k) => acc + window.getAgendaColWidth(tableKey, k), 0);
-                const tbl = document.getElementById('mainDataTable');
-                if (tbl) tbl.style.width = totalW + 'px';
-                document.querySelectorAll(`table[data-agenda-table="${tableKey}"]`).forEach(t => {
-                    t.style.width = totalW + 'px';
-                });
+                const px = newW + 'px';
+                for (let i = 0; i < colEls.length; i++) {
+                    colEls[i].style.width = px;
+                    colEls[i].style.minWidth = px;
+                    colEls[i].style.maxWidth = px;
+                }
+                for (let i = 0; i < thEls.length; i++) {
+                    thEls[i].style.width = px;
+                    thEls[i].style.minWidth = px;
+                    thEls[i].style.maxWidth = px;
+                }
+                const totalW = Object.keys(defMap).reduce((acc, k) => acc + window.getAgendaColWidth(tableKey, k), 0) + 'px';
+                if (tbl) tbl.style.width = totalW;
+                for (let i = 0; i < agendaTbls.length; i++) {
+                    agendaTbls[i].style.width = totalW;
+                }
+            };
+            const onMove = (moveEv) => {
+                pendingX = moveEv.clientX;
+                if (!rafId) rafId = requestAnimationFrame(applyResizeFrame);
             };
             const onUp = () => {
+                if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
                 document.removeEventListener('mousemove', onMove);
                 document.removeEventListener('mouseup', onUp);
                 if (resizerEl) resizerEl.classList.remove('resizing');
@@ -11356,8 +11429,19 @@ try {
             }, 280);
         };
         window.loadMoreVisibleBatch = () => {
+            const ws = document.getElementById('mainWorkspace');
+            const prevScrollTop = ws ? ws.scrollTop : 0;
             window._koBatchLimit = (window._koBatchLimit || 40) + 40;
-            if (typeof window.renderCurrentView === 'function') window.renderCurrentView();
+            window._adresarRenderLimit = window._koBatchLimit;
+            window._koIsAppendingBatch = true;
+            try {
+                if (typeof window.renderCurrentView === 'function') window.renderCurrentView();
+            } finally {
+                window._koIsAppendingBatch = false;
+                if (ws && prevScrollTop > 0 && Math.abs(ws.scrollTop - prevScrollTop) > 40) {
+                    ws.scrollTop = prevScrollTop;
+                }
+            }
         };
         window._koInfiniteScrollObserver = typeof IntersectionObserver !== 'undefined'
             ? new IntersectionObserver((entries) => {
@@ -11393,16 +11477,45 @@ try {
                     const activePrepSub = String((window.agendaSubTabByTab && window.agendaSubTabByTab['preprava']) || 'NOVÉ').toUpperCase();
                     const isPrepravaNoveUnpaged = (currentTab === 'preprava') && ['NOVÉ', 'NOVÁ', 'PLÁNOVÁNO'].includes(activePrepSub);
                     const limit = window._koBatchLimit || 40;
-                    if (!isPrepravaNoveUnpaged && chunks.length > limit) {
-                        const visibleHtml = chunks.slice(0, limit).join('');
-                        const remaining = chunks.length - limit;
-                        const isTable = realEl.tagName === 'TBODY';
-                        const moreBtnHtml = isTable
-                            ? `<tr data-ko-infinite-sentinel="1"><td colspan="20" class="py-3 text-center bg-[#0F172A]/5"><button type="button" onclick="window.loadMoreVisibleBatch()" class="px-5 py-2 rounded-lg bg-[#1565C0] hover:bg-[#0284C7] text-white font-black text-xs shadow border border-[#38BDF8]/60 cursor-pointer">Další (${remaining})</button></td></tr>`
-                            : `<div data-ko-infinite-sentinel="1" class="col-span-full py-3 flex justify-center"><button type="button" onclick="window.loadMoreVisibleBatch()" class="px-6 py-2.5 rounded-lg bg-[#1565C0] hover:bg-[#0284C7] text-white font-black text-xs shadow-md border border-[#38BDF8]/60 cursor-pointer">Další (${remaining})</button></div>`;
-                        realEl.innerHTML = visibleHtml + moreBtnHtml;
-                        requestAnimationFrame(() => window.attachInfiniteScrollSentinels());
+                    const isTable = realEl.tagName === 'TBODY';
+                    const viewSig = `${currentTab}_${(window.agendaSubTabByTab && window.agendaSubTabByTab[currentTab]) || ''}_${isTable ? 'T' : 'G'}`;
+                    const buildSentinel = (rem) => isTable
+                        ? `<tr data-ko-infinite-sentinel="1"><td colspan="20" class="py-3 text-center bg-[#0F172A]/5"><button type="button" onclick="window.loadMoreVisibleBatch()" class="px-5 py-2 rounded-lg bg-[#1565C0] hover:bg-[#0284C7] text-white font-black text-xs shadow border border-[#38BDF8]/60 cursor-pointer">Další (${rem})</button></td></tr>`
+                        : `<div data-ko-infinite-sentinel="1" class="col-span-full py-3 flex justify-center"><button type="button" onclick="window.loadMoreVisibleBatch()" class="px-6 py-2.5 rounded-lg bg-[#1565C0] hover:bg-[#0284C7] text-white font-black text-xs shadow-md border border-[#38BDF8]/60 cursor-pointer">Další (${rem})</button></div>`;
+
+                    if (!isPrepravaNoveUnpaged && chunks.length > 0) {
+                        const prevCount = realEl._koRenderedCount || 0;
+                        const canIncrementallyAppend = Boolean(
+                            window._koIsAppendingBatch &&
+                            realEl._koViewSig === viewSig &&
+                            prevCount > 0 &&
+                            prevCount < chunks.length &&
+                            limit > prevCount
+                        );
+                        const sliceEnd = Math.min(limit, chunks.length);
+                        const remaining = Math.max(0, chunks.length - sliceEnd);
+                        const moreBtnHtml = remaining > 0 ? buildSentinel(remaining) : '';
+
+                        if (canIncrementallyAppend) {
+                            const oldSentinels = realEl.querySelectorAll('[data-ko-infinite-sentinel="1"]');
+                            oldSentinels.forEach(s => {
+                                if (window._koInfiniteScrollObserver) window._koInfiniteScrollObserver.unobserve(s);
+                                s.remove();
+                            });
+                            const deltaHtml = chunks.slice(prevCount, sliceEnd).join('');
+                            realEl.insertAdjacentHTML('beforeend', deltaHtml + moreBtnHtml);
+                        } else {
+                            const visibleHtml = chunks.slice(0, sliceEnd).join('');
+                            realEl.innerHTML = visibleHtml + moreBtnHtml;
+                        }
+                        realEl._koRenderedCount = sliceEnd;
+                        realEl._koViewSig = viewSig;
+                        if (remaining > 0) {
+                            requestAnimationFrame(() => window.attachInfiniteScrollSentinels());
+                        }
                     } else {
+                        realEl._koRenderedCount = chunks.length;
+                        realEl._koViewSig = viewSig;
                         realEl.innerHTML = chunks.join('');
                     }
                 },
@@ -11424,6 +11537,7 @@ try {
 
         window.setPokladnaTypFilter = (f) => {
             window.currentPokladnaTypFilter = f || 'VŠE';
+            window._koBatchLimit = 40;
             renderCurrentView();
         };
 
@@ -11909,6 +12023,23 @@ ${itemsXml}
                     ic: '', dic: '', firma: '', jmeno: '', ulice: '', telefon: '', email: '', poznamka: ''
                 };
                 const isVydajSel = s.typ === 'VYDAJ';
+                if (window._koIsAppendingBatch && document.getElementById('pohodaPokladnaGridBody')) {
+                    const tb = document.getElementById('pohodaPokladnaGridBody');
+                    const lim = window._koBatchLimit || 40;
+                    const prev = Math.max(0, lim - 40);
+                    tb.querySelectorAll('[data-ko-infinite-sentinel="1"]').forEach(el => el.remove());
+                    const moreRows = allFiltered.slice(prev, lim).map((p, i) => {
+                        const idx = prev + i;
+                        const isSelected = sel && sel.id === p.id;
+                        const isVydaj = p.typ === 'VYDAJ';
+                        const rowCls = isSelected ? 'pohoda-grid-row-selected' : isVydaj ? 'pohoda-grid-row-warning' : (idx % 2 === 0 ? 'pohoda-grid-row-even' : 'pohoda-grid-row-odd');
+                        return `<tr class="${rowCls}" onclick="pohodaSelectRecord('POKLADNA','${p.id}')" ondblclick="openPokladnaModal('${p.id}')"><td class="bg-[#E4EEF9] text-right font-bold text-[#1E293B]">${idx + 1} ${isSelected ? '▶' : ''}</td><td class="text-center font-bold">☒</td><td class="font-bold">${p.cislo || '-'}</td><td class="font-bold ${isVydaj ? 'text-[#CC0000]' : 'text-[#047857]'}">${isVydaj ? 'Výdaj' : 'Příjem'}</td><td>${formatCzDate(p.datum)}</td><td class="font-bold">${p.pokladna || 'HPK'}</td><td title="${(p.text || '').replace(/"/g, '&quot;')}">${p.text || '-'}</td><td class="${isSelected ? 'pohoda-grid-cell-focus' : 'font-bold'}">${p.firma || p.jmeno || '-'}</td><td class="text-right font-bold ${isVydaj ? 'text-[#CC0000]' : ''}">${isVydaj ? '-' : ''}${formatCzMoney(p.celkem)}</td><td>${p.ic || ''}</td><td>${p.parSymbol || ''}</td><td>${p.stredisko || '3_Prodej'}</td><td title="${(p.poznamka || '').replace(/"/g, '&quot;')}">${p.poznamka || ''}</td><td class="text-right" onclick="event.stopPropagation()"><button type="button" onclick="printPokladniDoklad('${p.id}')" class="pohoda-btn-3d !py-0 !px-1.5 text-[10px]" title="Tisk">🖨️</button><button type="button" onclick="openPokladnaModal('${p.id}')" class="pohoda-btn-3d !py-0 !px-1.5 text-[10px]">Upravit</button><button type="button" onclick="deletePokladnaRecord('${p.id}')" class="pohoda-btn-3d pohoda-btn-3d-danger !py-0 !px-1.5 text-[10px]">✕</button></td></tr>`;
+                    }).join('');
+                    const sent = allFiltered.length > lim ? `<tr data-ko-infinite-sentinel="1"><td colspan="14" class="py-2.5 text-center bg-[#E4EEF9]"><button type="button" onclick="window.loadMoreVisibleBatch()" class="px-5 py-1.5 rounded-lg bg-[#1565C0] hover:bg-[#0284C7] text-white font-black text-xs shadow cursor-pointer">Další (${allFiltered.length - lim})</button></td></tr>` : '';
+                    tb.insertAdjacentHTML('beforeend', moreRows + sent);
+                    requestAnimationFrame(() => window.attachInfiniteScrollSentinels());
+                    return;
+                }
 
                 splitEl.innerHTML = `
                     <!-- HORNÍ PANEL AKCÍ POKLADNY -->
@@ -12100,7 +12231,7 @@ ${itemsXml}
                                     <th style="width:125px;" class="text-right">Akce</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="pohodaPokladnaGridBody">
                                 ${allFiltered.slice(0, window._koBatchLimit || 40).map((p, idx) => {
                                     const isSelected = sel && sel.id === p.id;
                                     const isVydaj = p.typ === 'VYDAJ';
@@ -12168,6 +12299,27 @@ ${itemsXml}
             const isCredit = Boolean(f.isCreditNote || brk.totalRounded < 0 || (f.text || '').toLowerCase().includes('opravný'));
             const totalAllDocs = filtered.reduce((acc, item) => acc + calcFakturaDphBreakdown(item).totalRounded, 0);
             const unpaidDocs = filtered.filter(item => (item.stavUhrady || 'NEUHRAZENO') === 'NEUHRAZENO' || item.stavUhrady === 'ČÁSTEČNĚ');
+            if (window._koIsAppendingBatch && document.getElementById('pohodaFakturyGridBody')) {
+                const tb = document.getElementById('pohodaFakturyGridBody');
+                const lim = window._koBatchLimit || 40;
+                const prev = Math.max(0, lim - 40);
+                tb.querySelectorAll('[data-ko-infinite-sentinel="1"]').forEach(el => el.remove());
+                const moreRows = filtered.slice(prev, lim).map((item, i) => {
+                    const idx = prev + i;
+                    const rowBrk = calcFakturaDphBreakdown(item);
+                    const isSelected = sel && sel.id === item.id;
+                    const rowCredit = Boolean(item.isCreditNote || rowBrk.totalRounded < 0 || (item.text || '').toLowerCase().includes('opravný'));
+                    const kLikvVal = typeof item.kLikvidaci === 'number' ? item.kLikvidaci : ((item.stavUhrady === 'UHRAZENO' || item.stavUhrady === 'STORNO') ? 0 : rowBrk.totalRounded);
+                    const isOverdueOrWarn = kLikvVal < 0 || (kLikvVal > 0 && item.stavUhrady === 'NEUHRAZENO');
+                    const rowCls = isSelected ? 'pohoda-grid-row-selected' : rowCredit ? 'pohoda-grid-row-warning' : (idx % 2 === 0 ? 'pohoda-grid-row-even' : 'pohoda-grid-row-odd');
+                    const rowNum = 1808 + idx;
+                    return `<tr class="${rowCls}" onclick="pohodaSelectRecord('${subKey}','${item.id}')" ondblclick="openFakturaModal('${item.id}', ${isZal})"><td class="bg-[#E4EEF9] text-right font-bold text-[#000]">${rowNum} ${isSelected ? '▶' : ''}</td><td class="text-center font-bold">☒</td><td class="font-semibold">${item.cislo || '-'}</td><td>${formatCzDate(item.datumVystaveni)}</td><td>${formatCzDate(item.datumSplatnosti)}</td><td title="${(item.text || '').replace(/"/g, '&quot;')}">${item.text || '-'}</td><td>${item.datumLikvidace || (item.stavUhrady === 'UHRAZENO' ? formatCzDate(item.datumVystaveni).slice(0, 8) : '')}</td><td class="text-right ${kLikvVal < 0 ? 'text-[#CC0000] font-bold' : (isOverdueOrWarn ? 'font-bold text-[#000]' : '')}">${formatCzMoney(kLikvVal)}</td><td class="${isSelected ? 'pohoda-grid-cell-focus' : 'font-semibold'}">${item.firma || item.jmeno || '-'}</td><td class="text-right font-semibold ${rowCredit ? 'text-[#CC0000] font-bold' : ''}">${formatCzMoney(rowBrk.totalRounded)}</td><td>${item.ic || ''}</td><td>${item.telefon || ''}</td><td>${item.stredisko || (item.typPlneni === 'PRONAJEM' ? '1_Pronájem' : '3_Prodej')}</td><td>${item.depo || ''}</td><td>${item.zakazkaCislo || ''}</td><td title="${(item.poznamka || '').replace(/"/g, '&quot;')}">${item.poznamka || ''}</td><td class="text-right" onclick="event.stopPropagation()"><button type="button" onclick="createPokladnaFromFaktura('${item.id}', ${isZal})" class="pohoda-btn-3d !py-0 !px-1 text-[10px]" title="Hotovostní úhrada do Pokladny">💶 Pokl.</button><button type="button" onclick="printRecordCard('${isZal ? 'zalohova_faktura' : 'faktura'}','${item.id}')" class="pohoda-btn-3d !py-0 !px-1 text-[10px]" title="Tisk">🖨️</button><button type="button" onclick="openFakturaModal('${item.id}', ${isZal})" class="pohoda-btn-3d !py-0 !px-1 text-[10px]">Upravit</button><button type="button" onclick="quickDeleteFaktura('${item.id}', ${isZal})" class="pohoda-btn-3d pohoda-btn-3d-danger !py-0 !px-1 text-[10px]">✕</button></td></tr>`;
+                }).join('');
+                const sent = filtered.length > lim ? `<tr data-ko-infinite-sentinel="1"><td colspan="17" class="py-2.5 text-center bg-[#E4EEF9]"><button type="button" onclick="window.loadMoreVisibleBatch()" class="px-5 py-1.5 rounded-lg bg-[#1565C0] hover:bg-[#0284C7] text-white font-black text-xs shadow cursor-pointer">Další (${filtered.length - lim})</button></td></tr>` : '';
+                tb.insertAdjacentHTML('beforeend', moreRows + sent);
+                requestAnimationFrame(() => window.attachInfiniteScrollSentinels());
+                return;
+            }
 
             splitEl.innerHTML = `
                 <!-- HORNÍ PANEL FILTRŮ A AKCÍ FAKTURACE V DESIGNU POHODA -->
@@ -12426,7 +12578,7 @@ ${itemsXml}
                                 <th style="width:140px;" class="text-right">Akce</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="pohodaFakturyGridBody">
                             ${filtered.slice(0, window._koBatchLimit || 40).map((item, idx) => {
                                 const rowBrk = calcFakturaDphBreakdown(item);
                                 const isSelected = sel && sel.id === item.id;
@@ -12480,8 +12632,10 @@ ${itemsXml}
             const body = _createDomHtmlBuffer(realBody);
             try {
             const colGroup = document.getElementById('listColGroup'), mainTbl = document.getElementById('mainDataTable');
-            if (colGroup) colGroup.innerHTML = '';
-            if (mainTbl) { mainTbl.classList.remove('preprava-db-table'); mainTbl.style.width = ''; mainTbl.style.minWidth = ''; }
+            if (!window._koIsAppendingBatch) {
+                if (colGroup) colGroup.innerHTML = '';
+                if (mainTbl) { mainTbl.classList.remove('preprava-db-table'); mainTbl.style.width = ''; mainTbl.style.minWidth = ''; }
+            }
             grid.innerHTML = ''; head.innerHTML = ''; body.innerHTML = ''; bar.classList.add('hidden'); bar.innerHTML = '';
             const topSubMenuEl = document.getElementById('agendaStatusSubMenuBar');
             if (topSubMenuEl && !['objednavky', 'zakazky', 'ucetnictvi', 'adresar', 'preprava', 'whatsapp', 'kontejnery', 'pronajem', 'prodej', 'inventura', 'zajemci', 'poznamky', 'databaze'].includes(currentTab)) {
@@ -13120,17 +13274,14 @@ ${itemsXml}
                     return cmp * sDirAdr;
                 });
 
-                const adrLimit = q ? arr.length : (window._adresarRenderLimit || 160);
-                const visibleArr = arr.slice(0, adrLimit);
-                const hasMoreAdr = arr.length > visibleArr.length;
                 if (isGrid) {
-                    const cardsHtml = visibleArr.map(c => {
+                    arr.forEach(c => {
                         const isD2 = c.depo === 'Depo 2';
                         const cardCls = isD2 ? 'bg-[#FFF7ED] border-2 border-[#EA580C]' : 'bg-[#F0F9FF] border-2 border-[#0284C7]';
                         const hdrCls = isD2 ? 'bg-[#D84315] text-white' : 'bg-[#0277BD] text-white';
                         const titleCls = isD2 ? 'text-[#9A3412]' : 'text-[#075985]';
                         const evCount = getAdrEvCount(c);
-                        return `<div class="${cardCls} rounded-xl shadow-md overflow-hidden flex flex-col justify-between transition-all hover:shadow-lg">
+                        grid._add = `<div class="${cardCls} rounded-xl shadow-md overflow-hidden flex flex-col justify-between transition-all hover:shadow-lg">
                             <div>
                                 <div class="${hdrCls} px-3 py-2 flex justify-between items-center gap-1.5 text-xs font-extrabold">
                                     <span class="flex items-center gap-1.5 whitespace-nowrap truncate"><span class="inline-flex items-center justify-center w-5 h-5 rounded bg-white text-slate-900 font-black text-[11px] leading-none shadow-sm shrink-0">A</span> <span class="truncate">${c.cisloZakaznika || 'ZÁK'}</span></span>
@@ -13151,14 +13302,14 @@ ${itemsXml}
                                     return `<div class="px-3.5 pb-2 pt-0 flex gap-1.5 items-center" onclick="event.stopPropagation()">
                                         ${valPhs.map((p, pIdx) => `
                                             <div class="relative w-12 h-10 rounded border border-slate-300 overflow-hidden bg-slate-900 group/ph cursor-pointer shadow-sm hover:border-[#1B5E8B]" onclick="openCustomerPhotoEditorFromCard('${c.id}', ${pIdx})" title="Foto ${pIdx + 1} — Kliknutím upravit">
-                                                <img src="${p}" class="w-full h-full object-cover">
+                                                <img src="${window.toFastBlobUrl(p)}" loading="lazy" decoding="async" class="w-full h-full object-cover">
                                             </div>
                                         `).join('')}
                                         <span class="text-[10px] text-slate-500 font-bold ml-1">${valPhs.length}/3 FOTO</span>
                                     </div>`;
                                 })()}
                             </div>
-                            <div class="px-3.5 py-2 border-t border-black/10 bg-white/60 flex items-center justify-between gap-1" onclick="event.stopPropagation()">
+                            <div class="px-3.5 py-2 border-t border-black/10 bg-white/90 flex items-center justify-between gap-1" onclick="event.stopPropagation()">
                                 <button onclick="openAdresarModal('${c.id}')" class="bg-[#1B5E8B] hover:bg-[#0F3D5E] text-white text-[11px] font-extrabold px-2.5 py-1 rounded">Detail (${evCount})</button>
                                 <button onclick="checkCompanyBonitaOnline('${c.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white text-[11px] font-extrabold px-2 py-1 rounded">Bonita</button>
                                 <button onclick="quickConvertAdresarToNabidka('${c.id}')" class="bg-[#283593] hover:bg-indigo-900 text-white text-[11px] font-extrabold px-2 py-1 rounded">+ CN</button>
@@ -13166,8 +13317,7 @@ ${itemsXml}
                                 <button onclick="quickDeleteAdresar('${c.id}')" class="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-[11px] font-extrabold px-2 py-1 rounded">✕</button>
                             </div>
                         </div>`;
-                    }).join('');
-                    grid.innerHTML = cardsHtml + (hasMoreAdr ? `<div class="col-span-full flex justify-center gap-3 py-4"><button type="button" onclick="window._adresarRenderLimit = (window._adresarRenderLimit || 160) + 250; renderCurrentView();" class="bg-[#0277BD] hover:bg-sky-800 text-white px-5 py-2.5 rounded-xl font-extrabold text-xs shadow">Zobrazit dalších 250 firem (${visibleArr.length} z ${arr.length})</button><button type="button" onclick="window._adresarRenderLimit = 99999; renderCurrentView();" class="bg-slate-700 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow">Zobrazit všech ${arr.length} firem</button></div>` : "");
+                    });
                 } else {
                     window.setupAgendaDatabaseTable('adresar', [
                         { key: 'cislo', label: 'Číslo', sortable: true },
@@ -13179,16 +13329,15 @@ ${itemsXml}
                         { key: 'kontakt', label: 'Telefon / E-mail', sortable: true },
                         { key: 'akce', label: 'Akce', sortable: false, alignRight: true }
                     ]);
-                    const rowsHtml = visibleArr.map(c => {
+                    arr.forEach(c => {
                         const isD2 = c.depo === 'Depo 2';
                         const rowCls = isD2 ? 'bg-[#FFF7ED] hover:bg-orange-100/70' : 'bg-[#F0F9FF] hover:bg-sky-100/70';
                         const evCount = getAdrEvCount(c);
                         const firmaFull = [c.company || c.name || '-', (c.company && c.name && c.company !== c.name) ? c.name : ''].filter(Boolean).join(' • ');
                         const icDicTxt = `${c.ic || '-'}${c.dic ? ' / ' + c.dic : ''}`;
                         const kontTxt = [c.phone, c.email].filter(Boolean).join(' • ') || '-';
-                        return `<tr class="${rowCls} cursor-pointer" onclick="openAdresarModal('${c.id}')"><td><div class="preprava-cell-clip font-bold" title="${(c.cisloZakaznika || '-').replace(/"/g, '&quot;')}">${c.cisloZakaznika || '-'}</div></td><td onclick="event.stopPropagation()"><div class="preprava-cell-clip">${buildSingleLineDepoSelectHtml('adresar', c.id, c.depo)}</div></td><td><div class="preprava-cell-clip">${getBonitaBadgeHtml(c.bonita || 'AAA')}</div></td><td><div class="preprava-cell-clip" title="${firmaFull.replace(/"/g, '&quot;')}"><b>${c.company || c.name || '-'}</b>${c.company && c.name && c.company !== c.name ? ` <span class="text-xs text-gray-500">(${c.name})</span>` : ''}</div></td><td><div class="preprava-cell-clip" title="${icDicTxt.replace(/"/g, '&quot;')}">${icDicTxt}</div></td><td><div class="preprava-cell-clip"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-950 font-extrabold text-[11px]">${evCount} událostí</span></div></td><td><div class="preprava-cell-clip" title="${kontTxt.replace(/"/g, '&quot;')}">${kontTxt}</div></td><td onclick="event.stopPropagation()"><div class="preprava-cell-clip text-right"><button onclick="printRecordCard('adresar','${c.id}')" class="bg-slate-800 text-white px-1.5 py-0.5 rounded text-[11px] font-bold mr-1">🖨️</button><button onclick="shareRecordCardWhatsApp('adresar','${c.id}')" class="bg-[#16A34A] text-white px-1.5 py-0.5 rounded text-[11px] font-bold mr-1">WA</button><button onclick="shareRecordCardEmail('adresar','${c.id}')" class="bg-[#0284C7] text-white px-1.5 py-0.5 rounded text-[11px] font-bold mr-1">✉️</button><button onclick="openAdresarModal('${c.id}')" class="bg-[#1B5E8B] text-white px-2 py-0.5 rounded text-[11px] font-bold mr-1">Události (${evCount})</button><button onclick="checkCompanyBonitaOnline('${c.id}')" class="bg-emerald-700 text-white px-2 py-0.5 rounded text-[11px] font-bold mr-1">Bonita</button><button onclick="quickConvertAdresarToNabidka('${c.id}')" class="${isD2 ? 'bg-[#0369A1]' : 'bg-[#283593]'} text-white px-2 py-0.5 rounded text-[11px] font-bold mr-1">+ CN</button><button onclick="quickConvertAdresarToZakazka('${c.id}')" class="${isD2 ? 'bg-[#AD1457]' : 'bg-[#0284C7]'} text-white px-2 py-0.5 rounded text-[11px] font-bold mr-1">+ Zakázka</button><button onclick="quickDeleteAdresar('${c.id}')" class="bg-red-600 text-white px-1.5 py-0.5 rounded text-[11px] font-bold" title="Smazat">✕</button></div></td></tr>`;
-                    }).join('');
-                    body.innerHTML = rowsHtml + (hasMoreAdr ? `<tr><td colspan="8" class="text-center py-3 bg-sky-50"><button type="button" onclick="window._adresarRenderLimit = (window._adresarRenderLimit || 160) + 250; renderCurrentView();" class="bg-[#0277BD] hover:bg-sky-800 text-white px-4 py-1.5 rounded-lg font-extrabold text-xs mr-2">Zobrazit dalších 250 firem (${visibleArr.length} z ${arr.length})</button><button type="button" onclick="window._adresarRenderLimit = 99999; renderCurrentView();" class="bg-slate-700 hover:bg-slate-900 text-white px-4 py-1.5 rounded-lg font-bold text-xs">Zobrazit všech ${arr.length} firem</button></td></tr>` : "");
+                        body._add = `<tr class="${rowCls} cursor-pointer" onclick="openAdresarModal('${c.id}')"><td><div class="preprava-cell-clip font-bold" title="${(c.cisloZakaznika || '-').replace(/"/g, '&quot;')}">${c.cisloZakaznika || '-'}</div></td><td onclick="event.stopPropagation()"><div class="preprava-cell-clip">${buildSingleLineDepoSelectHtml('adresar', c.id, c.depo)}</div></td><td><div class="preprava-cell-clip">${getBonitaBadgeHtml(c.bonita || 'AAA')}</div></td><td><div class="preprava-cell-clip" title="${firmaFull.replace(/"/g, '&quot;')}"><b>${c.company || c.name || '-'}</b>${c.company && c.name && c.company !== c.name ? ` <span class="text-xs text-gray-500">(${c.name})</span>` : ''}</div></td><td><div class="preprava-cell-clip" title="${icDicTxt.replace(/"/g, '&quot;')}">${icDicTxt}</div></td><td><div class="preprava-cell-clip"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-950 font-extrabold text-[11px]">${evCount} událostí</span></div></td><td><div class="preprava-cell-clip" title="${kontTxt.replace(/"/g, '&quot;')}">${kontTxt}</div></td><td onclick="event.stopPropagation()"><div class="preprava-cell-clip text-right"><button onclick="printRecordCard('adresar','${c.id}')" class="bg-slate-800 text-white px-1.5 py-0.5 rounded text-[11px] font-bold mr-1">🖨️</button><button onclick="shareRecordCardWhatsApp('adresar','${c.id}')" class="bg-[#16A34A] text-white px-1.5 py-0.5 rounded text-[11px] font-bold mr-1">WA</button><button onclick="shareRecordCardEmail('adresar','${c.id}')" class="bg-[#0284C7] text-white px-1.5 py-0.5 rounded text-[11px] font-bold mr-1">✉️</button><button onclick="openAdresarModal('${c.id}')" class="bg-[#1B5E8B] text-white px-2 py-0.5 rounded text-[11px] font-bold mr-1">Události (${evCount})</button><button onclick="checkCompanyBonitaOnline('${c.id}')" class="bg-emerald-700 text-white px-2 py-0.5 rounded text-[11px] font-bold mr-1">Bonita</button><button onclick="quickConvertAdresarToNabidka('${c.id}')" class="${isD2 ? 'bg-[#0369A1]' : 'bg-[#283593]'} text-white px-2 py-0.5 rounded text-[11px] font-bold mr-1">+ CN</button><button onclick="quickConvertAdresarToZakazka('${c.id}')" class="${isD2 ? 'bg-[#AD1457]' : 'bg-[#0284C7]'} text-white px-2 py-0.5 rounded text-[11px] font-bold mr-1">+ Zakázka</button><button onclick="quickDeleteAdresar('${c.id}')" class="bg-red-600 text-white px-1.5 py-0.5 rounded text-[11px] font-bold" title="Smazat">✕</button></div></td></tr>`;
+                    });
                 }
             } else if (['kontejnery', 'pronajem', 'prodej', 'inventura'].includes(currentTab)) {
                 const activeSubTab = window.agendaSubTabByTab['kontejnery'] || (currentTab === 'pronajem' ? 'PRONÁJEM' : (currentTab === 'prodej' ? 'PRODEJ' : (currentTab === 'inventura' ? 'INVENTURA' : 'VŠE')));
@@ -15918,16 +16067,19 @@ ${itemsXml}
 
         window.setUdalostiAgendaFilter = function(filterVal) {
             currentUdalostiAgendaFilter = filterVal;
+            window._koBatchLimit = 40;
             renderCurrentView();
         };
 
         window.setUdalostiAppFilter = function(appVal) {
             currentUdalostiAppFilter = appVal;
+            window._koBatchLimit = 40;
             renderCurrentView();
         };
 
         window.setPoznamkyColorFilter = function(colorVal) {
             currentPoznamkyColorFilter = colorVal;
+            window._koBatchLimit = 40;
             renderCurrentView();
         };
 
@@ -16049,9 +16201,9 @@ ${itemsXml}
                 return '<span class="px-2 py-0.5 rounded text-[10px] font-black bg-indigo-700 text-white">💻 PC Web</span>';
             };
 
-            body.innerHTML = arr.map((ev, idx) => {
+            arr.forEach((ev, idx) => {
                 const rowCls = (idx % 2 === 0) ? 'bg-white hover:bg-indigo-50/50' : 'bg-slate-50 hover:bg-indigo-50/50';
-                return `
+                body._add = `
                     <tr class="${rowCls} transition-colors">
                         <td><div class="preprava-cell-clip font-mono font-bold text-slate-900">${ev.date || '-'}</div></td>
                         <td><div class="preprava-cell-clip font-mono font-semibold text-slate-600 text-xs">${ev.time || '-'}</div></td>
@@ -16062,7 +16214,7 @@ ${itemsXml}
                         <td onclick="event.stopPropagation()"><div class="preprava-cell-clip text-right"><button onclick="deleteSingleUdalost('${ev.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-2 py-0.5 rounded text-[10px] font-bold" title="Odstranit z logu">✕</button></div></td>
                     </tr>
                 `;
-            }).join('');
+            });
         }
 
         window.openUdalostManualModal = function() {
@@ -23631,7 +23783,7 @@ function buildShareTextSummary(type, id) {
     </script>
 
     <!-- ============================================================================ -->
-    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v479)      -->
+    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v480)      -->
     <!-- Zkrácená verze Přepravy: ostatní agendy jsou na iPhonu kompletně skryté.     -->
     <!-- ============================================================================ -->
     <style id="iphoneAppStyles">
@@ -23917,7 +24069,7 @@ function buildShareTextSummary(type, id) {
                     <span class="material-icons text-[#38BDF8] text-xl">speed</span>
                     <div>
                         <div class="font-black text-sm leading-tight text-white">Aktualizace</div>
-                        <div id="iosModalVersionBadge" class="text-[11px] text-[#94A3B8] font-bold">Přeprava • v 479</div>
+                        <div id="iosModalVersionBadge" class="text-[11px] text-[#94A3B8] font-bold">Přeprava • v 480</div>
                     </div>
                 </div>
                 <button type="button" onclick="closeIphoneInstallModal()" class="px-3 py-1.5 rounded-lg bg-[#334155] hover:bg-[#475569] text-white text-xs font-extrabold transition" title="Zavřít">
@@ -23959,7 +24111,7 @@ function buildShareTextSummary(type, id) {
 
                 <!-- Skrytý progress bar element pro zpětnou kompatibilitu -->
                 <div id="iosGhUpdateProgressBar" class="hidden"></div>
-                <div id="iosGhRemoteVerBadge" class="hidden">v 479</div>
+                <div id="iosGhRemoteVerBadge" class="hidden">v 480</div>
 
                 <!-- Stavový text pod tachometrem -->
                 <p id="iosGhUpdateStatusText" class="text-xs font-bold text-[#CBD5E1] min-h-[32px] flex items-center justify-center px-2">
@@ -24346,7 +24498,7 @@ function buildShareTextSummary(type, id) {
         };
 
         window.shareAndroidInstallWhatsApp = function() {
-            const ver = window.CURRENT_SW_VERSION_NAME || '479';
+            const ver = window.CURRENT_SW_VERSION_NAME || '480';
             const url = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?android=1&install=1';
             const txt = `Kontejnery Ostrava — Rychlá instalace mobilní aplikace pro Android přes prohlížeč Chrome bez APK (v ${ver}): ${url}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');
