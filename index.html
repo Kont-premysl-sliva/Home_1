@@ -519,7 +519,7 @@
             <!-- Verze aplikace a datum -->
             <div class="inline-flex items-center gap-1.5 bg-sky-950/80 border border-sky-400/40 text-sky-200 px-3 py-1 rounded-full text-xs font-black shadow-inner mb-4">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="loginVersionDisplay">v 478 • 6.11.2026</span>
+                <span id="loginVersionDisplay">v 479 • 6.11.2026</span>
             </div>
 
             <!-- Přepínač PC vs Řidič -->
@@ -907,7 +907,7 @@
                 <span>KONTEJNERY OSTRAVA - POHODA</span>
                 <span class="hidden" id="pohodaWindowTitleAgenda"></span>
                 <button type="button" onclick="window.handleHeaderUpdateClick()" class="cursor-pointer bg-[#0A2E6E] hover:bg-blue-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm border border-sky-300/50 flex items-center gap-1" title="Verze aplikace • Kliknutím zkontrolujete nebo ručně potvrdíte novou aktualizaci">
-                    <span id="headerVersionBadge">v 478 • 6.11.2026</span>
+                    <span id="headerVersionBadge">v 479 • 6.11.2026</span>
                     <span id="ghUpdateBadge" class="hidden bg-[#CC0000] text-yellow-200 text-[10px] px-1.5 py-0.5 rounded font-black animate-pulse flex items-center gap-0.5"><span class="material-icons text-[11px]">system_update_alt</span><span>NOVÁ</span></span>
                 </button>
             </h1>
@@ -3414,7 +3414,7 @@
 
     <script>
     (function() {
-        const CURRENT_SW_VERSION = 478;
+        const CURRENT_SW_VERSION = 479;
         const CURRENT_SW_VERSION_NAME = CURRENT_SW_VERSION;
         const CURRENT_SW_RELEASE_DATE = "6.11.2026";
         const CURRENT_SW_RELEASE_DATE_SPACED = "6. 11. 2026";
@@ -3951,8 +3951,13 @@
         const mergeData = (k, rem, loc) => {
             const del = getDel(k), map = new Map();
             const isPhotoCol = (k === 'containers' || k === 'transports');
+            const isMobileLightTransports = (k === 'transports' && typeof window.isDriverMobileLightMode === 'function' && window.isDriverMobileLightMode());
             (loc || loadLocal(k)).forEach(i => {
                 if (i?.id && !del.has(i.id)) {
+                    if (isMobileLightTransports && typeof window.isTransportExpiredPostHotovo7DaysOnMobile === 'function' && window.isTransportExpiredPostHotovo7DaysOnMobile(i)) {
+                        if (window._koDeepPhotoVault) window._koDeepPhotoVault.delete(`preprava_${i.id}`);
+                        return;
+                    }
                     const norm = k === 'containers' ? normalizeContainerPhotoFields(i) : i;
                     map.set(i.id, isPhotoCol ? window.offloadRecordDeepPhotos(k, norm) : norm);
                 }
@@ -3962,6 +3967,11 @@
                     const ex = map.get(i.id);
                     if (ex && isPhotoCol) window.hydrateRecordPhotosForDetail(k, ex);
                     const merged = safeMasterMergeRecord(ex, i);
+                    if (isMobileLightTransports && typeof window.isTransportExpiredPostHotovo7DaysOnMobile === 'function' && window.isTransportExpiredPostHotovo7DaysOnMobile(merged)) {
+                        map.delete(i.id);
+                        if (window._koDeepPhotoVault) window._koDeepPhotoVault.delete(`preprava_${i.id}`);
+                        return;
+                    }
                     const norm = k === 'containers' ? normalizeContainerPhotoFields(merged, ex) : merged;
                     map.set(i.id, isPhotoCol ? window.offloadRecordDeepPhotos(k, norm) : norm);
                 }
@@ -4512,7 +4522,7 @@
         let zakazkaStrediska = [...DEFAULT_ZAKAZKA_STREDISKA];
         let currentZakazkaStrediskoFilter = 'VŠE';
         let currentFakturaTypFilter = 'VŠE';
-        let currentDepo = window.IS_PC_APP ? 'VŠE' : 'Depo 1', currentTab = (!window.IS_PC_APP && (window.FORCE_IPHONE_APP_MODE || (/iPhone|iPod|iPad/i.test(navigator.userAgent || '') && !window.IS_PC_APP) || localStorage.getItem('ko_ios_app_mode') === '1')) ? 'preprava' : 'objednavky', currentViewMode = 'grid', currentPolozkyFilter = 'VŠE';
+        let currentDepo = window.IS_PC_APP ? 'VŠE' : 'Depo 1', currentTab = (!window.IS_PC_APP && (window.FORCE_IPHONE_APP_MODE || (/iPhone|iPod|iPad|Android/i.test(navigator.userAgent || '') && !window.IS_PC_APP) || localStorage.getItem('ko_ios_app_mode') === '1')) ? 'preprava' : 'objednavky', currentViewMode = 'grid', currentPolozkyFilter = 'VŠE';
         let currentZakazkaId = null, currentNabidkaId = null, currentFakturaId = null, currentFakturaIsZalohova = false, currentCustomerId = null, currentOrderId = null, currentContainerId = null, currentTransportId = null, currentPolozkaId = null, pendingPohodaNabidky = [], pendingPohodaMode = 'nabidky', pendingPohodaFaktury = [], pendingPohodaIsZalohova = false;
 
         // --- LAZY HYDRATACE LOKÁLNÍCH AGEND HLAVNÍ DATABÁZE NA VYŽÁDÁNÍ ---
@@ -7130,8 +7140,11 @@
                     (location.pathname || '').toLowerCase().includes('/iphone') ||
                     (location.pathname || '').toLowerCase().includes('iphone.html') ||
                     new URLSearchParams(window.location.search).get('iphone') === '1' ||
+                    new URLSearchParams(window.location.search).get('android') === '1' ||
+                    new URLSearchParams(window.location.search).get('mobile') === '1' ||
                     new URLSearchParams(window.location.search).get('mode') === 'iphone' ||
-                    (!window.IS_PC_APP && /iPhone|iPod|iPad/i.test(navigator.userAgent || ''))
+                    new URLSearchParams(window.location.search).get('mode') === 'android' ||
+                    (!window.IS_PC_APP && /iPhone|iPod|iPad|Android/i.test(navigator.userAgent || ''))
                 );
                 if (isIosStartup) {
                     window.FORCE_IPHONE_APP_MODE = true;
@@ -7879,14 +7892,25 @@
             if (changed) saveLocal('customers', allCustomers);
         }
 
-        // --- LOKÁLNÍ CACHE MINIATUR (PŘEPRAVA & KONTEJNERY) S AUTOMATICKOU EXPIRACÍ 30 DNÍ PO STAVU HOTOVO ---
-        const MOBILE_THUMB_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 dní v milisekundách od přesunutí do HOTOVO
+        // --- MOBILNÍ "LIGHT" REŽIM PRO ŘIDIČE (ANDROID & IPHONE): 7 DNÍ RETENCE HOTOVO / ZRUŠENO (PC ZŮSTÁVÁ V PLNÉ HISTORII) ---
+        const MOBILE_LIGHT_RETENTION_MS = 7 * 24 * 60 * 60 * 1000; // 7 dní v milisekundách pro mobilní aplikace řidičů (Android a iPhone)
+        const MOBILE_THUMB_TTL_MS = MOBILE_LIGHT_RETENTION_MS;
         const MOBILE_THUMB_DB_NAME = 'KontejneryMobileThumbDB';
         const MOBILE_THUMB_STORE = 'thumbs';
         window._mobileThumbMemoryMap = window._mobileThumbMemoryMap || new Map();
         window._mobileFullPhotoMemoryMap = window._mobileFullPhotoMemoryMap || new Map();
         const _pendingThumbGenerations = new Set();
         let _thumbDbPromise = null;
+
+        // Striktní detekce: Light režim platí výhradně pro mobilní aplikace řidičů (Android a iPhone). PC verze (IS_PC_APP === true) má vždy plnou historii.
+        window.isDriverMobileLightMode = function() {
+            if (window.IS_PC_APP === true) return false;
+            return Boolean(
+                window.FORCE_IPHONE_APP_MODE === true ||
+                document.body.classList.contains('ios-app-mode') ||
+                /iPhone|iPod|iPad|Android/i.test(navigator.userAgent || '')
+            );
+        };
 
         function _openMobileThumbIndexedDb() {
             if (_thumbDbPromise) return _thumbDbPromise;
@@ -7919,11 +7943,13 @@
                 req.onsuccess = () => {
                     const rows = req.result || [];
                     const now = Date.now();
+                    const isMobileDriver = window.isDriverMobileLightMode();
                     let expiredIds = [];
                     rows.forEach(r => {
                         if (!r || !r.id || !r.thumbDataUrl) return;
-                        const isHotovo = ['HOTOVO', 'HOTOVÉ', 'REALIZOVÁNO', 'REALIZOVANÉ', 'VYŘÍZENO'].includes(String(r.status || '').toUpperCase());
-                        if (r.recordType === 'preprava' && isHotovo && r.completedAt > 0 && (now - r.completedAt) > MOBILE_THUMB_TTL_MS) {
+                        const stUp = String(r.status || '').toUpperCase();
+                        const isClosed = ['HOTOVO', 'HOTOVÉ', 'REALIZOVÁNO', 'REALIZOVANÉ', 'VYŘÍZENO', 'DOKONČENO', 'ZRUŠENO', 'ZRUŠENÉ', 'STORNO'].includes(stUp);
+                        if (isMobileDriver && r.recordType === 'preprava' && isClosed && r.completedAt > 0 && (now - r.completedAt) > MOBILE_LIGHT_RETENTION_MS) {
                             expiredIds.push(r.id);
                         } else {
                             window._mobileThumbMemoryMap.set(r.id, r.thumbDataUrl);
@@ -7959,15 +7985,32 @@
             return Number(t.timestamp || 0);
         }
 
-        window.isTransportExpiredPostHotovo30Days = function(t) {
-            if (!t) return false;
+        function _isTransportPendingInOfflineQueue(id) {
+            if (!id) return false;
+            try {
+                const raw = localStorage.getItem('ko_offline_delta_queue');
+                if (!raw) return false;
+                const parsed = JSON.parse(raw);
+                return Boolean(parsed && parsed[`transports:${id}`]);
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // Vrací true výhradně na mobilu řidiče (Android / iPhone) pro přepravy HOTOVO nebo ZRUŠENO starší 7 dní, které jsou již synchronizovány s PC
+        window.isTransportExpiredPostHotovo7DaysOnMobile = function(t) {
+            if (!t || !window.isDriverMobileLightMode()) return false;
             const st = String(t.status || '').trim().toUpperCase();
-            const isHotovo = ['HOTOVO', 'HOTOVÉ', 'REALIZOVÁNO', 'REALIZOVANÉ', 'VYŘÍZENO', 'DOKONČENO'].includes(st);
-            if (!isHotovo) return false;
-            const completedAt = Number(t.completedAt || 0) || _parseTransportDateEpochForExpiry(t);
+            const isClosed = ['HOTOVO', 'HOTOVÉ', 'REALIZOVÁNO', 'REALIZOVANÉ', 'VYŘÍZENO', 'DOKONČENO', 'ZRUŠENO', 'ZRUŠENÉ', 'STORNO'].includes(st);
+            if (!isClosed) return false;
+            if (t.id && _isTransportPendingInOfflineQueue(t.id)) return false;
+            const completedAt = Number(t.completedAt || 0) || _parseTransportDateEpochForExpiry(t) || Number(t.lastModified || t.timestamp || 0);
             if (!completedAt || completedAt <= 0) return false;
-            return (Date.now() - completedAt) > MOBILE_THUMB_TTL_MS;
+            return (Date.now() - completedAt) > MOBILE_LIGHT_RETENTION_MS;
         };
+
+        // Zpětná kompatibilita názvu funkce: na PC vždy false (plná historie), na mobilu 7 dní
+        window.isTransportExpiredPostHotovo30Days = window.isTransportExpiredPostHotovo7DaysOnMobile;
 
         window.buildMobileThumbCacheKey = function(recordType, recordId, fullPhotoUri) {
             if (!fullPhotoUri) return '';
@@ -8142,46 +8185,38 @@
 
         window.pruneExpiredMobileTransportPhotos = async function(showFeedback = false) {
             try {
-                const isMobileRuntime = Boolean(!window.IS_MASTER_PC_DATABASE || window.FORCE_IPHONE_APP_MODE || document.body.classList.contains('ios-app-mode') || localStorage.getItem('ko_ios_app_mode') === '1');
-                let strippedTransportsCount = 0;
+                // PC verze zůstává vždy v plné historii — lokální uvolňování starších jízd (>7 dní) probíhá výhradně na mobilu řidiče (Android & iPhone)
+                if (!window.isDriverMobileLightMode()) {
+                    if (showFeedback) {
+                        showToast('ℹ️ PC verze uchovává plnou historii všech přeprav bez časového omezení.');
+                    }
+                    return 0;
+                }
+                let prunedTransportsCount = 0;
+                const prunedIds = new Set();
 
-                if (isMobileRuntime && Array.isArray(allTransports)) {
-                    let changed = false;
-                    allTransports = allTransports.map(t => {
-                        if (!t || !window.isTransportExpiredPostHotovo30Days(t)) return t;
-                        const hasAnyInlinePhoto = Boolean(t.photo || (Array.isArray(t.photos) && t.photos.length) || t.imageUri || t.containerImageUri || t.containerImageUri2 || t.containerImageUri3 || t.deliveryPhotos || t.extraImages);
-                        if (!hasAnyInlinePhoto && t.photoArchivedInPc30d) return t;
-                        strippedTransportsCount++;
-                        changed = true;
-                        let cleanedContainersJson = t.containersJson || '';
-                        if (cleanedContainersJson) {
-                            try {
-                                const parsed = JSON.parse(cleanedContainersJson);
-                                if (Array.isArray(parsed)) {
-                                    cleanedContainersJson = JSON.stringify(parsed.map(it => ({ ...it, photos: [] })));
-                                }
-                            } catch (e) {}
+                if (Array.isArray(allTransports) && allTransports.length > 0) {
+                    const beforeLen = allTransports.length;
+                    allTransports = allTransports.filter(t => {
+                        if (!t) return false;
+                        if (window.isTransportExpiredPostHotovo7DaysOnMobile(t)) {
+                            prunedTransportsCount++;
+                            if (t.id) {
+                                prunedIds.add(String(t.id));
+                                if (window._koDeepPhotoVault) window._koDeepPhotoVault.delete(`preprava_${t.id}`);
+                                if (window._mobileFullPhotoMemoryMap) window._mobileFullPhotoMemoryMap.delete(`preprava_${t.id}`);
+                            }
+                            return false;
                         }
-                        return {
-                            ...t,
-                            photo: '',
-                            photos: [],
-                            imageUri: '',
-                            containerImageUri: '',
-                            containerImageUri2: '',
-                            containerImageUri3: '',
-                            deliveryPhotos: '',
-                            extraImages: '',
-                            containersJson: cleanedContainersJson,
-                            photoArchivedInPc30d: true
-                        };
+                        return true;
                     });
-                    if (changed) {
+                    if (allTransports.length !== beforeLen) {
+                        // Uložíme odlehčený seznam pouze do lokální paměti mobilu (nikdy nezapisujeme do deleted_sync_ids, aby v PC zůstala plná historie)
                         saveLocal('transports', allTransports);
                     }
                 }
 
-                // Vyčistíme expirované miniatury (>30 dní po HOTOVO) z IndexedDB i RAM mapy
+                // Vyčistíme miniatury uvolněných jízd (>7 dní po HOTOVO / ZRUŠENO) z mobilní IndexedDB i RAM mapy
                 const idb = await _openMobileThumbIndexedDb();
                 if (idb) {
                     const tx = idb.transaction([MOBILE_THUMB_STORE], 'readwrite');
@@ -8192,8 +8227,9 @@
                         const now = Date.now();
                         rows.forEach(r => {
                             if (!r || !r.id) return;
-                            const isHotovo = ['HOTOVO', 'HOTOVÉ', 'REALIZOVÁNO', 'REALIZOVANÉ', 'VYŘÍZENO'].includes(String(r.status || '').toUpperCase());
-                            if (r.recordType === 'preprava' && isHotovo && r.completedAt > 0 && (now - r.completedAt) > MOBILE_THUMB_TTL_MS) {
+                            const stUp = String(r.status || '').toUpperCase();
+                            const isClosed = ['HOTOVO', 'HOTOVÉ', 'REALIZOVÁNO', 'REALIZOVANÉ', 'VYŘÍZENO', 'DOKONČENO', 'ZRUŠENO', 'ZRUŠENÉ', 'STORNO'].includes(stUp);
+                            if (r.recordType === 'preprava' && (prunedIds.has(String(r.recordId || '')) || (isClosed && r.completedAt > 0 && (now - r.completedAt) > MOBILE_LIGHT_RETENTION_MS))) {
                                 store.delete(r.id);
                                 window._mobileThumbMemoryMap.delete(r.id);
                             }
@@ -8202,16 +8238,17 @@
                 }
 
                 const prevPruned = Number(localStorage.getItem('ko_mobile_thumb_pruned_count') || 0);
-                if (strippedTransportsCount > 0) {
-                    localStorage.setItem('ko_mobile_thumb_pruned_count', String(prevPruned + strippedTransportsCount));
+                if (prunedTransportsCount > 0) {
+                    localStorage.setItem('ko_mobile_thumb_pruned_count', String(prevPruned + prunedTransportsCount));
+                    try { renderCurrentView(); } catch (e) {}
                 }
                 localStorage.setItem('ko_mobile_thumb_last_prune', new Date().toLocaleString('cs-CZ'));
 
                 if (showFeedback) {
-                    showToast(`✅ Cache miniatur vyčištěna (aktivní miniatury: ${window._mobileThumbMemoryMap.size}, uvolněno >30 dní po HOTOVO: ${strippedTransportsCount})`);
+                    showToast(`✅ Mobilní Light režim: uvolněno ${prunedTransportsCount} jízd starších 7 dní (v hlavní PC databázi zůstávají trvale)`);
                     renderCurrentView();
                 }
-                return strippedTransportsCount;
+                return prunedTransportsCount;
             } catch (e) {
                 return 0;
             }
@@ -8221,7 +8258,7 @@
             try {
                 let generated = 0;
                 for (const t of (allTransports || [])) {
-                    if (!t || window.isTransportExpiredPostHotovo30Days(t)) continue;
+                    if (!t || window.isTransportExpiredPostHotovo7DaysOnMobile(t)) continue;
                     const rawPhoto = t.containerImageUri || t.photo || (Array.isArray(t.photos) && t.photos[0]) || t.imageUri || '';
                     if (rawPhoto && String(rawPhoto).startsWith('data:image/')) {
                         const key = window.buildMobileThumbCacheKey('preprava', t.id, rawPhoto);
@@ -8257,7 +8294,7 @@
 
         function applyIncomingSyncSnapshot(snap, isLocalRestore = false) {
             if (!snap || typeof snap !== 'object') return;
-            const isMobileLightPull = Boolean(!isLocalRestore && (!window.IS_MASTER_PC_DATABASE || window.FORCE_IPHONE_APP_MODE || document.body.classList.contains('ios-app-mode') || localStorage.getItem('ko_ios_app_mode') === '1'));
+            const isMobileLightPull = Boolean(!isLocalRestore && window.isDriverMobileLightMode());
             if (Array.isArray(snap.deletedIds) && snap.deletedIds.length > 0) {
                 const targetCols = isMobileLightPull
                     ? ['transports']
@@ -8290,23 +8327,9 @@
                 }
             }
             if (Array.isArray(snap.transports)) {
-                // Na mobilu u přeprav ve stavu HOTOVO starších než 30 dní nestahujeme těžké fotky (v Hlavním PC zůstávají trvale)
+                // Na mobilu (Android / iPhone) u přeprav HOTOVO / ZRUŠENO starších 7 dní záznamy rovnou vynecháme z lokální paměti telefonu (v PC zůstává plná historie)
                 const incomingTransports = isMobileLightPull
-                    ? snap.transports.map(t => {
-                        if (!t || !window.isTransportExpiredPostHotovo30Days(t)) return t;
-                        return {
-                            ...t,
-                            photo: '',
-                            photos: [],
-                            imageUri: '',
-                            containerImageUri: '',
-                            containerImageUri2: '',
-                            containerImageUri3: '',
-                            deliveryPhotos: '',
-                            extraImages: '',
-                            photoArchivedInPc30d: true
-                        };
-                    })
+                    ? snap.transports.filter(t => t && !window.isTransportExpiredPostHotovo7DaysOnMobile(t))
                     : snap.transports;
                 allTransports = mergeData('transports', incomingTransports, allTransports);
                 if (isMobileLightPull) {
@@ -11359,8 +11382,10 @@
                 set _add(val) { if (val) chunks.push(String(val)); },
                 flush() {
                     if (!realEl) return;
+                    const activePrepSub = String((window.agendaSubTabByTab && window.agendaSubTabByTab['preprava']) || 'NOVÉ').toUpperCase();
+                    const isPrepravaNoveUnpaged = (currentTab === 'preprava') && ['NOVÉ', 'NOVÁ', 'PLÁNOVÁNO'].includes(activePrepSub);
                     const limit = window._koBatchLimit || 40;
-                    if (chunks.length > limit) {
+                    if (!isPrepravaNoveUnpaged && chunks.length > limit) {
                         const visibleHtml = chunks.slice(0, limit).join('');
                         const remaining = chunks.length - limit;
                         const isTable = realEl.tagName === 'TBODY';
@@ -23598,7 +23623,7 @@ function buildShareTextSummary(type, id) {
     </script>
 
     <!-- ============================================================================ -->
-    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v478)      -->
+    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v479)      -->
     <!-- Zkrácená verze Přepravy: ostatní agendy jsou na iPhonu kompletně skryté.     -->
     <!-- ============================================================================ -->
     <style id="iphoneAppStyles">
@@ -23884,7 +23909,7 @@ function buildShareTextSummary(type, id) {
                     <span class="material-icons text-[#38BDF8] text-xl">speed</span>
                     <div>
                         <div class="font-black text-sm leading-tight text-white">Aktualizace</div>
-                        <div id="iosModalVersionBadge" class="text-[11px] text-[#94A3B8] font-bold">Přeprava • v 478</div>
+                        <div id="iosModalVersionBadge" class="text-[11px] text-[#94A3B8] font-bold">Přeprava • v 479</div>
                     </div>
                 </div>
                 <button type="button" onclick="closeIphoneInstallModal()" class="px-3 py-1.5 rounded-lg bg-[#334155] hover:bg-[#475569] text-white text-xs font-extrabold transition" title="Zavřít">
@@ -23926,7 +23951,7 @@ function buildShareTextSummary(type, id) {
 
                 <!-- Skrytý progress bar element pro zpětnou kompatibilitu -->
                 <div id="iosGhUpdateProgressBar" class="hidden"></div>
-                <div id="iosGhRemoteVerBadge" class="hidden">v 478</div>
+                <div id="iosGhRemoteVerBadge" class="hidden">v 479</div>
 
                 <!-- Stavový text pod tachometrem -->
                 <p id="iosGhUpdateStatusText" class="text-xs font-bold text-[#CBD5E1] min-h-[32px] flex items-center justify-center px-2">
@@ -24313,7 +24338,7 @@ function buildShareTextSummary(type, id) {
         };
 
         window.shareAndroidInstallWhatsApp = function() {
-            const ver = window.CURRENT_SW_VERSION_NAME || '478';
+            const ver = window.CURRENT_SW_VERSION_NAME || '479';
             const url = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?android=1&install=1';
             const txt = `Kontejnery Ostrava — Rychlá instalace mobilní aplikace pro Android přes prohlížeč Chrome bez APK (v ${ver}): ${url}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');
