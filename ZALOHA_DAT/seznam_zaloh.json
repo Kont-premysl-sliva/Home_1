@@ -1,29 +1,29 @@
 {
   "folder": "ZALOHA_DAT",
   "masterSource": "HLAVNÍ PC APLIKACE (MASTER DATABÁZE)",
-  "lastBackupAtCz": "3. 11. 2026 23:30:32",
-  "lastBackupAtIso": "2026-11-03T22:30:32.682Z",
-  "version": 459,
-  "totalRecords": 1703,
+  "lastBackupAtCz": "6. 11. 2026 22:39:23",
+  "lastBackupAtIso": "2026-11-06T21:39:23.625Z",
+  "version": 475,
+  "totalRecords": 1584,
   "recordCounts": {
     "containers": 54,
-    "transports": 34,
-    "customers": 1396,
-    "objednavky": 7,
-    "nabidky": 4,
+    "transports": 35,
+    "customers": 1398,
+    "objednavky": 12,
+    "nabidky": 2,
     "zakazky": 1,
     "faktury": 7,
     "zalohoveFaktury": 1,
     "pokladna": 4,
-    "zajemci": 14,
+    "zajemci": 15,
     "inventories": 18,
     "catalogItems": 30,
-    "events": 111,
+    "events": 3,
     "notes": 2,
-    "whatsappMessages": 11,
-    "whatsappStaging": 9
+    "whatsappMessages": 2,
+    "whatsappStaging": 0
   },
   "latestMasterFile": "ZALOHA_DAT/kompletni_databaze_master.json",
-  "latestTimestampedFile": "ZALOHA_DAT/Zaloha_Databaze_2026-11-03_23-30-32.json",
-  "localPcDownloadedFile": "Zaloha_Databaze_Kontejnery_Ostrava_2026-11-03_23-30-32.json"
+  "latestTimestampedFile": "ZALOHA_DAT/Zaloha_Databaze_2026-11-06_22-39-23.json",
+  "localPcDownloadedFile": "Zaloha_Databaze_Kontejnery_Ostrava_2026-11-06_22-39-23.json"
 }
