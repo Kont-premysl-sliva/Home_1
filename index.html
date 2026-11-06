@@ -519,7 +519,7 @@
             <!-- Verze aplikace a datum -->
             <div class="inline-flex items-center gap-1.5 bg-sky-950/80 border border-sky-400/40 text-sky-200 px-3 py-1 rounded-full text-xs font-black shadow-inner mb-4">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="loginVersionDisplay">v 477 • 6.11.2026</span>
+                <span id="loginVersionDisplay">v 478 • 6.11.2026</span>
             </div>
 
             <!-- Přepínač PC vs Řidič -->
@@ -907,7 +907,7 @@
                 <span>KONTEJNERY OSTRAVA - POHODA</span>
                 <span class="hidden" id="pohodaWindowTitleAgenda"></span>
                 <button type="button" onclick="window.handleHeaderUpdateClick()" class="cursor-pointer bg-[#0A2E6E] hover:bg-blue-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm border border-sky-300/50 flex items-center gap-1" title="Verze aplikace • Kliknutím zkontrolujete nebo ručně potvrdíte novou aktualizaci">
-                    <span id="headerVersionBadge">v 477 • 6.11.2026</span>
+                    <span id="headerVersionBadge">v 478 • 6.11.2026</span>
                     <span id="ghUpdateBadge" class="hidden bg-[#CC0000] text-yellow-200 text-[10px] px-1.5 py-0.5 rounded font-black animate-pulse flex items-center gap-0.5"><span class="material-icons text-[11px]">system_update_alt</span><span>NOVÁ</span></span>
                 </button>
             </h1>
@@ -3414,7 +3414,7 @@
 
     <script>
     (function() {
-        const CURRENT_SW_VERSION = 477;
+        const CURRENT_SW_VERSION = 478;
         const CURRENT_SW_VERSION_NAME = CURRENT_SW_VERSION;
         const CURRENT_SW_RELEASE_DATE = "6.11.2026";
         const CURRENT_SW_RELEASE_DATE_SPACED = "6. 11. 2026";
@@ -3974,8 +3974,8 @@
             return confirm(`2. POTVRZENÍ (KONEČNÝ DOTAZ):\nZeptám se ještě jednou – opravdu si přejete trvale vymazat "${itemLabel}"?`);
         };
 
-        let allContainers = [], allZakazky = [], allCustomers = [], allExternalOrders = loadLocal('objednavky'), allNabidky = [], allTransports = [], allFaktury = [], allZalohoveFaktury = [], allPokladna = [], allZajemci = [], allInventories = [], allWaMessages = [], allWaStaging = [];
-        window._koHydratedLocalAgendas = new Set(['objednavky']);
+        let allContainers = [], allZakazky = [], allCustomers = [], allExternalOrders = [], allNabidky = [], allTransports = [], allFaktury = [], allZalohoveFaktury = [], allPokladna = [], allZajemci = [], allInventories = [], allWaMessages = [], allWaStaging = [];
+        window._koHydratedLocalAgendas = new Set();
 
         // BASELINE DATA PRO POKLADNU A VZOROVÉ DOKLADY POHODA KOMPLET
         window.__BASELINE_POKLADNA__ = [
@@ -4523,6 +4523,8 @@
                 h.add(k);
                 if (k === 'containers') {
                     allContainers = loadLocal('containers');
+                } else if (k === 'objednavky') {
+                    allExternalOrders = loadLocal('objednavky');
                 } else if (k === 'transports') {
                     allTransports = loadLocal('transports');
                     if (Array.isArray(window.__BASELINE_TRANSPORTS__) && window.__BASELINE_TRANSPORTS__.length) {
@@ -4575,6 +4577,9 @@
                     allCatalogItems = normalizeCatalogItemsList(loadLocal('catalog_items'));
                     const savedSec = loadLocal('catalog_sections');
                     if (Array.isArray(savedSec) && savedSec.length) catalogSections = savedSec;
+                }
+                if (typeof window._hydrateSingleAgendaFromMasterIdb === 'function') {
+                    window._hydrateSingleAgendaFromMasterIdb(k);
                 }
             };
             const mapTabToCols = {
@@ -7550,6 +7555,12 @@
 
         window.reindexEntireDatabase = (silent = false) => {
             try {
+                const isMobileMode = Boolean(window.FORCE_IPHONE_APP_MODE || document.body.classList.contains('ios-app-mode') || localStorage.getItem('ko_ios_app_mode') === '1');
+                if (!silent && !isMobileMode && typeof window.ensureAllLocalAgendasHydrated === 'function') {
+                    window.ensureAllLocalAgendasHydrated();
+                }
+                const h = window._koHydratedLocalAgendas || new Set();
+                const isHydrated = (k) => !silent || h.has(k);
                 const now = Date.now();
                 const dedupAndClean = (colName, arr) => {
                     const delSet = getDel(colName);
@@ -7570,38 +7581,42 @@
                     return Array.from(map.values());
                 };
 
-                allContainers = dedupAndClean('containers', allContainers).map((c, idx) => {
-                    const parsedSys = parseInt(String(c.systemNumber ?? '').replace(/\D+/g, ''), 10);
-                    return {
-                        ...c,
-                        systemNumber: (!isNaN(parsedSys) && parsedSys > 0) ? parsedSys : (idx + 1),
-                        designation: window.normalizeContainerDesignationJs
-                            ? window.normalizeContainerDesignationJs(String(c.designation || '').trim(), String(idx + 1).padStart(2, '0'))
-                            : String(c.designation || `XXX ${String(idx + 1).padStart(2, '0')}`).trim(),
-                        description: window.formatShortContainerDescJs ? window.formatShortContainerDescJs(c.color, c.type, c.description) : (c.description || ''),
-                        depo: (c.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1',
-                        status: (c.status && String(c.status).trim()) ? String(c.status).trim() : 'VOLNÝ'
-                    };
-                });
-                saveLocal('containers', allContainers);
+                if (!isMobileMode && isHydrated('containers')) {
+                    allContainers = dedupAndClean('containers', allContainers).map((c, idx) => {
+                        const parsedSys = parseInt(String(c.systemNumber ?? '').replace(/\D+/g, ''), 10);
+                        return {
+                            ...c,
+                            systemNumber: (!isNaN(parsedSys) && parsedSys > 0) ? parsedSys : (idx + 1),
+                            designation: window.normalizeContainerDesignationJs
+                                ? window.normalizeContainerDesignationJs(String(c.designation || '').trim(), String(idx + 1).padStart(2, '0'))
+                                : String(c.designation || `XXX ${String(idx + 1).padStart(2, '0')}`).trim(),
+                            description: window.formatShortContainerDescJs ? window.formatShortContainerDescJs(c.color, c.type, c.description) : (c.description || ''),
+                            depo: (c.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1',
+                            status: (c.status && String(c.status).trim()) ? String(c.status).trim() : 'VOLNÝ'
+                        };
+                    });
+                    saveLocal('containers', allContainers);
+                }
 
-                allCustomers = dedupAndClean('customers', allCustomers).map((c, idx) => {
-                    const company = String(c.company || c.firma || '').trim();
-                    const name = String(c.name || c.jmeno || c.vyrizuje || '').trim();
-                    const phone = String(c.phone || c.telefon || '').trim();
-                    return {
-                        ...c,
-                        company,
-                        firma: company,
-                        name,
-                        jmeno: name,
-                        phone,
-                        telefon: phone,
-                        cisloZakaznika: (c.cisloZakaznika && String(c.cisloZakaznika).trim()) ? String(c.cisloZakaznika).trim() : `AD-${String(idx + 1).padStart(4, '0')}`,
-                        depo: (c.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1'
-                    };
-                });
-                saveLocal('customers', allCustomers);
+                if (!isMobileMode && isHydrated('customers')) {
+                    allCustomers = dedupAndClean('customers', allCustomers).map((c, idx) => {
+                        const company = String(c.company || c.firma || '').trim();
+                        const name = String(c.name || c.jmeno || c.vyrizuje || '').trim();
+                        const phone = String(c.phone || c.telefon || '').trim();
+                        return {
+                            ...c,
+                            company,
+                            firma: company,
+                            name,
+                            jmeno: name,
+                            phone,
+                            telefon: phone,
+                            cisloZakaznika: (c.cisloZakaznika && String(c.cisloZakaznika).trim()) ? String(c.cisloZakaznika).trim() : `AD-${String(idx + 1).padStart(4, '0')}`,
+                            depo: (c.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1'
+                        };
+                    });
+                    saveLocal('customers', allCustomers);
+                }
 
                 const custIdSet = new Set();
                 const custByIc = new Map();
@@ -7628,117 +7643,145 @@
                     return docObj.adresarId || '';
                 };
 
-                allNabidky = dedupAndClean('nabidky', allNabidky).map((n, idx) => ({
-                    ...n,
-                    cislo: (n.cislo && String(n.cislo).trim()) ? String(n.cislo).trim() : `CN-${String(idx + 1).padStart(4, '0')}`,
-                    adresarId: linkAdresar(n),
-                    depo: (n.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1'
-                }));
-                saveLocal('nabidky', allNabidky);
+                if (!isMobileMode && isHydrated('nabidky')) {
+                    allNabidky = dedupAndClean('nabidky', allNabidky).map((n, idx) => ({
+                        ...n,
+                        cislo: (n.cislo && String(n.cislo).trim()) ? String(n.cislo).trim() : `CN-${String(idx + 1).padStart(4, '0')}`,
+                        adresarId: linkAdresar(n),
+                        depo: (n.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1'
+                    }));
+                    saveLocal('nabidky', allNabidky);
+                }
 
-                allZakazky = dedupAndClean('zakazky', allZakazky).map((z, idx) => {
-                    const num = (z.cislo || z.cisloZakazky || '').trim() || `ZA-${String(idx + 1).padStart(4, '0')}`;
-                    return {
+                if (!isMobileMode && isHydrated('zakazky')) {
+                    allZakazky = dedupAndClean('zakazky', allZakazky).map((z, idx) => {
+                        const num = (z.cislo || z.cisloZakazky || '').trim() || `ZA-${String(idx + 1).padStart(4, '0')}`;
+                        return {
+                            ...z,
+                            cislo: num,
+                            cisloZakazky: num,
+                            adresarId: linkAdresar(z),
+                            depo: (z.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1'
+                        };
+                    });
+                    saveLocal('zakazky', allZakazky);
+                }
+
+                if (!isMobileMode && isHydrated('faktury')) {
+                    allFaktury = dedupAndClean('faktury', allFaktury).map((f, idx) => ({
+                        ...f,
+                        cislo: (f.cislo && String(f.cislo).trim()) ? String(f.cislo).trim() : `VF-${String(idx + 1).padStart(4, '0')}`,
+                        adresarId: linkAdresar(f),
+                        depo: (f.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1'
+                    }));
+                    saveLocal('faktury', allFaktury);
+                }
+
+                if (!isMobileMode && isHydrated('zalohove_faktury')) {
+                    allZalohoveFaktury = dedupAndClean('zalohove_faktury', allZalohoveFaktury).map((zf, idx) => ({
+                        ...zf,
+                        cislo: (zf.cislo && String(zf.cislo).trim()) ? String(zf.cislo).trim() : `ZF-${String(idx + 1).padStart(4, '0')}`,
+                        adresarId: linkAdresar(zf),
+                        depo: (zf.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1'
+                    }));
+                    saveLocal('zalohove_faktury', allZalohoveFaktury);
+                }
+
+                if (!isMobileMode && isHydrated('pokladna')) {
+                    allPokladna = dedupAndClean('pokladna', allPokladna || []).map((pk, idx) => ({
+                        ...pk,
+                        cislo: (pk.cislo && String(pk.cislo).trim()) ? String(pk.cislo).trim() : `26PP${String(idx + 1).padStart(4, '0')}`,
+                        adresarId: linkAdresar(pk),
+                        depo: (pk.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1'
+                    }));
+                    saveLocal('pokladna', allPokladna);
+                }
+
+                if (!isMobileMode && isHydrated('objednavky')) {
+                    allExternalOrders = dedupAndClean('objednavky', allExternalOrders);
+                    saveLocal('objednavky', allExternalOrders);
+                }
+
+                if (isHydrated('transports')) {
+                    allTransports = dedupAndClean('transports', allTransports).map(t => ({
+                        ...t,
+                        depo: (t.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1',
+                        status: (t.status && String(t.status).trim()) ? String(t.status).trim() : 'PLÁNOVÁNO'
+                    }));
+                    saveLocal('transports', allTransports);
+                }
+
+                if (!isMobileMode && isHydrated('zajemci')) {
+                    allZajemci = dedupAndClean('zajemci', allZajemci).map((z, idx) => ({
                         ...z,
-                        cislo: num,
-                        cisloZakazky: num,
-                        adresarId: linkAdresar(z),
-                        depo: (z.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1'
-                    };
-                });
-                saveLocal('zakazky', allZakazky);
+                        cisloZajemce: (z.cisloZajemce && String(z.cisloZajemce).trim()) ? String(z.cisloZajemce).trim() : `ZAJ-${String(idx + 1).padStart(4, '0')}`,
+                        depo: (z.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1',
+                        status: (z.status && String(z.status).trim()) ? String(z.status).trim() : 'AKTIVNÍ',
+                        datePoizeni: z.datePoizeni || ''
+                    })).sort((a, b) => {
+                        const dateA = a.datePoizeni || a.timestamp;
+                        const dateB = b.datePoizeni || b.timestamp;
+                        return dateB - dateA;
+                    });
+                    saveLocal('zajemci', allZajemci);
+                }
 
-                allFaktury = dedupAndClean('faktury', allFaktury).map((f, idx) => ({
-                    ...f,
-                    cislo: (f.cislo && String(f.cislo).trim()) ? String(f.cislo).trim() : `VF-${String(idx + 1).padStart(4, '0')}`,
-                    adresarId: linkAdresar(f),
-                    depo: (f.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1'
-                }));
-                saveLocal('faktury', allFaktury);
+                if (!isMobileMode && isHydrated('inventories')) {
+                    allInventories = dedupAndClean('inventories', allInventories).map(inv => {
+                        const st = window.formatInventuraStatusJs ? window.formatInventuraStatusJs(inv.status) : (inv.status || 'Nové');
+                        let sJson = inv.sessionDataJson || '';
+                        let updatedDesignations = inv.containerDesignations || '';
+                        if (!silent && sJson && window.formatShortContainerDescJs) {
+                            try {
+                                const parsed = JSON.parse(sJson);
+                                if (parsed && Array.isArray(parsed.items)) {
+                                    parsed.items = parsed.items.map((it, idx) => ({
+                                        ...it,
+                                        designation: window.normalizeContainerDesignationJs
+                                            ? window.normalizeContainerDesignationJs(it.designation, String(idx + 1).padStart(2, '0'))
+                                            : it.designation,
+                                        description: window.formatShortContainerDescJs(it.color, it.type, it.description)
+                                    }));
+                                    updatedDesignations = parsed.items.map(it => it.designation).join(', ');
+                                    sJson = JSON.stringify(parsed);
+                                }
+                            } catch (e) {}
+                        }
+                        return { ...inv, containerDesignations: updatedDesignations, status: st, sessionDataJson: sJson };
+                    });
+                    saveLocal('inventories', allInventories);
+                }
 
-                allZalohoveFaktury = dedupAndClean('zalohove_faktury', allZalohoveFaktury).map((zf, idx) => ({
-                    ...zf,
-                    cislo: (zf.cislo && String(zf.cislo).trim()) ? String(zf.cislo).trim() : `ZF-${String(idx + 1).padStart(4, '0')}`,
-                    adresarId: linkAdresar(zf),
-                    depo: (zf.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1'
-                }));
-                saveLocal('zalohove_faktury', allZalohoveFaktury);
+                if (!isMobileMode && isHydrated('whatsapp_messages')) {
+                    allWaMessages = dedupAndClean('whatsapp_messages', allWaMessages);
+                    saveLocal('whatsapp_messages', allWaMessages);
+                }
 
-                allPokladna = dedupAndClean('pokladna', allPokladna || []).map((pk, idx) => ({
-                    ...pk,
-                    cislo: (pk.cislo && String(pk.cislo).trim()) ? String(pk.cislo).trim() : `26PP${String(idx + 1).padStart(4, '0')}`,
-                    adresarId: linkAdresar(pk),
-                    depo: (pk.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1'
-                }));
-                saveLocal('pokladna', allPokladna);
+                if (!isMobileMode && isHydrated('whatsapp_staging')) {
+                    allWaStaging = dedupAndClean('whatsapp_staging', allWaStaging);
+                    saveLocal('whatsapp_staging', allWaStaging);
+                }
 
-                allExternalOrders = dedupAndClean('objednavky', allExternalOrders);
-                saveLocal('objednavky', allExternalOrders);
+                if (!isMobileMode && isHydrated('catalog_items')) {
+                    allCatalogItems = normalizeCatalogItemsList(dedupAndClean('catalog_items', allCatalogItems));
+                    if (!allCatalogItems.length) allCatalogItems = [...DEFAULT_CATALOG_ITEMS];
+                    saveLocal('catalog_items', allCatalogItems);
+                }
 
-                allTransports = dedupAndClean('transports', allTransports).map(t => ({
-                    ...t,
-                    depo: (t.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1',
-                    status: (t.status && String(t.status).trim()) ? String(t.status).trim() : 'PLÁNOVÁNO'
-                }));
-                saveLocal('transports', allTransports);
-
-                allZajemci = dedupAndClean('zajemci', allZajemci).map((z, idx) => ({
-                    ...z,
-                    cisloZajemce: (z.cisloZajemce && String(z.cisloZajemce).trim()) ? String(z.cisloZajemce).trim() : `ZAJ-${String(idx + 1).padStart(4, '0')}`,
-                    depo: (z.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1',
-                    status: (z.status && String(z.status).trim()) ? String(z.status).trim() : 'AKTIVNÍ',
-                    datePoizeni: z.datePoizeni || ''
-                })).sort((a, b) => {
-                    const dateA = a.datePoizeni || a.timestamp;
-                    const dateB = b.datePoizeni || b.timestamp;
-                    return dateB - dateA;
-                });
-                saveLocal('zajemci', allZajemci);
-
-                allInventories = dedupAndClean('inventories', allInventories).map(inv => {
-                    const st = window.formatInventuraStatusJs ? window.formatInventuraStatusJs(inv.status) : (inv.status || 'Nové');
-                    let sJson = inv.sessionDataJson || '';
-                    let updatedDesignations = inv.containerDesignations || '';
-                    if (!silent && sJson && window.formatShortContainerDescJs) {
-                        try {
-                            const parsed = JSON.parse(sJson);
-                            if (parsed && Array.isArray(parsed.items)) {
-                                parsed.items = parsed.items.map((it, idx) => ({
-                                    ...it,
-                                    designation: window.normalizeContainerDesignationJs
-                                        ? window.normalizeContainerDesignationJs(it.designation, String(idx + 1).padStart(2, '0'))
-                                        : it.designation,
-                                    description: window.formatShortContainerDescJs(it.color, it.type, it.description)
-                                }));
-                                updatedDesignations = parsed.items.map(it => it.designation).join(', ');
-                                sJson = JSON.stringify(parsed);
-                            }
-                        } catch (e) {}
+                if (!silent) {
+                    if (!isMobileMode) {
+                        try { syncContactsFromDocsToAdresar(); } catch (e) {}
+                        try { updateDropdowns(); } catch (e) {}
+                        try { updateAdresarBadge(); } catch (e) {}
+                        try { updateZajemciBadge(); } catch (e) {}
+                        try { updateInventuraBadge(); } catch (e) {}
+                        try { updateUdalostiBadge(); } catch (e) {}
+                        try { updatePoznamkyBadge(); } catch (e) {}
+                        try { updateWhatsappBadge(); } catch (e) {}
                     }
-                    return { ...inv, containerDesignations: updatedDesignations, status: st, sessionDataJson: sJson };
-                });
-                saveLocal('inventories', allInventories);
-
-                allWaMessages = dedupAndClean('whatsapp_messages', allWaMessages);
-                saveLocal('whatsapp_messages', allWaMessages);
-
-                allWaStaging = dedupAndClean('whatsapp_staging', allWaStaging);
-                saveLocal('whatsapp_staging', allWaStaging);
-
-                allCatalogItems = normalizeCatalogItemsList(dedupAndClean('catalog_items', allCatalogItems));
-                if (!allCatalogItems.length) allCatalogItems = [...DEFAULT_CATALOG_ITEMS];
-                saveLocal('catalog_items', allCatalogItems);
-
-                try { syncContactsFromDocsToAdresar(); } catch (e) {}
-                try { updateDropdowns(); } catch (e) {}
-                try { updateAdresarBadge(); } catch (e) {}
-                try { updateZajemciBadge(); } catch (e) {}
-                try { updateInventuraBadge(); } catch (e) {}
-                try { updateUdalostiBadge(); } catch (e) {}
-                try { updatePoznamkyBadge(); } catch (e) {}
-                try { updateWhatsappBadge(); } catch (e) {}
-                try { renderCurrentView(); } catch (e) {}
-                try { pushSyncToMobileBridgeAndServer(); } catch (e) {}
+                    try { renderCurrentView(); } catch (e) {}
+                    try { pushSyncToMobileBridgeAndServer(); } catch (e) {}
+                }
 
                 const totalRecs = allContainers.length + allCustomers.length + allNabidky.length + allZakazky.length + allFaktury.length + allZalohoveFaktury.length + allTransports.length + allZajemci.length + allInventories.length;
                 if (!silent) {
@@ -8206,15 +8249,22 @@
                 }
             } catch (e) {}
         };
-        setTimeout(() => { window.pruneExpiredMobileTransportPhotos(false); }, 1800);
+        if (typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(() => { window.pruneExpiredMobileTransportPhotos(false); }, { timeout: 5000 });
+        } else {
+            setTimeout(() => { window.pruneExpiredMobileTransportPhotos(false); }, 3500);
+        }
 
         function applyIncomingSyncSnapshot(snap, isLocalRestore = false) {
             if (!snap || typeof snap !== 'object') return;
             const isMobileLightPull = Boolean(!isLocalRestore && (!window.IS_MASTER_PC_DATABASE || window.FORCE_IPHONE_APP_MODE || document.body.classList.contains('ios-app-mode') || localStorage.getItem('ko_ios_app_mode') === '1'));
             if (Array.isArray(snap.deletedIds) && snap.deletedIds.length > 0) {
+                const targetCols = isMobileLightPull
+                    ? ['transports']
+                    : ['containers', 'transports', 'customers', 'objednavky', 'nabidky', 'zakazky', 'faktury', 'zalohove_faktury', 'zajemci'];
                 snap.deletedIds.forEach(delId => {
                     if (!delId) return;
-                    ['containers', 'transports', 'customers', 'objednavky', 'nabidky', 'zakazky', 'faktury', 'zalohove_faktury', 'zajemci'].forEach(c => markDel(c, delId));
+                    targetCols.forEach(c => markDel(c, delId));
                 });
                 const filterDel = (k, arr) => {
                     const delSet = getDel(k);
@@ -8222,22 +8272,23 @@
                     saveLocal(k, filtered);
                     return filtered;
                 };
-                allContainers = filterDel('containers', allContainers);
                 allTransports = filterDel('transports', allTransports);
-                allCustomers = filterDel('customers', allCustomers);
-                allExternalOrders = filterDel('objednavky', allExternalOrders);
-                allNabidky = filterDel('nabidky', allNabidky);
-                allZakazky = filterDel('zakazky', allZakazky);
-                allFaktury = filterDel('faktury', allFaktury);
-                allZalohoveFaktury = filterDel('zalohove_faktury', allZalohoveFaktury);
-                allZajemci = filterDel('zajemci', allZajemci);
-                allInventories = filterDel('inventories', allInventories);
-                allWaMessages = filterDel('whatsapp_messages', allWaMessages);
-                allWaStaging = filterDel('whatsapp_staging', allWaStaging);
-                allEvents = filterDel('events', allEvents);
-                allNotes = filterDel('notes', allNotes);
+                if (!isMobileLightPull) {
+                    allContainers = filterDel('containers', allContainers);
+                    allCustomers = filterDel('customers', allCustomers);
+                    allExternalOrders = filterDel('objednavky', allExternalOrders);
+                    allNabidky = filterDel('nabidky', allNabidky);
+                    allZakazky = filterDel('zakazky', allZakazky);
+                    allFaktury = filterDel('faktury', allFaktury);
+                    allZalohoveFaktury = filterDel('zalohove_faktury', allZalohoveFaktury);
+                    allZajemci = filterDel('zajemci', allZajemci);
+                    allInventories = filterDel('inventories', allInventories);
+                    allWaMessages = filterDel('whatsapp_messages', allWaMessages);
+                    allWaStaging = filterDel('whatsapp_staging', allWaStaging);
+                    allEvents = filterDel('events', allEvents);
+                    allNotes = filterDel('notes', allNotes);
+                }
             }
-            if (Array.isArray(snap.containers)) allContainers = mergeData('containers', snap.containers, allContainers);
             if (Array.isArray(snap.transports)) {
                 // Na mobilu u přeprav ve stavu HOTOVO starších než 30 dní nestahujeme těžké fotky (v Hlavním PC zůstávají trvale)
                 const incomingTransports = isMobileLightPull
@@ -8259,9 +8310,16 @@
                     : snap.transports;
                 allTransports = mergeData('transports', incomingTransports, allTransports);
                 if (isMobileLightPull) {
-                    setTimeout(() => { window.pruneExpiredMobileTransportPhotos(false); }, 50);
+                    if (typeof window.requestIdleCallback === 'function') {
+                        window.requestIdleCallback(() => { window.pruneExpiredMobileTransportPhotos(false); }, { timeout: 4000 });
+                    } else {
+                        setTimeout(() => { window.pruneExpiredMobileTransportPhotos(false); }, 800);
+                    }
+                    return;
                 }
             }
+            if (isMobileLightPull) return;
+            if (Array.isArray(snap.containers)) allContainers = mergeData('containers', snap.containers, allContainers);
             if (Array.isArray(snap.customers)) allCustomers = mergeData('customers', snap.customers, allCustomers);
             if (Array.isArray(snap.objednavky)) allExternalOrders = mergeData('objednavky', snap.objednavky, allExternalOrders);
             if (Array.isArray(snap.nabidky)) allNabidky = mergeData('nabidky', snap.nabidky, allNabidky);
@@ -8282,11 +8340,11 @@
                 allWaMessages = mergeData('whatsapp_messages', snap.whatsappMessages, allWaMessages);
                 try { updateWhatsappBadge(); } catch (e) {}
             }
-            if (!isMobileLightPull && Array.isArray(snap.whatsappStaging)) {
+            if (Array.isArray(snap.whatsappStaging)) {
                 allWaStaging = mergeData('whatsapp_staging', snap.whatsappStaging, allWaStaging);
                 try { updateWhatsappBadge(); } catch (e) {}
             }
-            if (!isMobileLightPull && Array.isArray(snap.notes)) {
+            if (Array.isArray(snap.notes)) {
                 allNotes = mergeData('notes', snap.notes, allNotes);
                 try { updatePoznamkyBadge(); } catch (e) {}
                 if (currentTab === 'poznamky') renderCurrentView();
@@ -8305,51 +8363,62 @@
             }
         }
 
-        // Hydratace z trvalé IndexedDB databáze (KontejneryMasterDB) při startu PC aplikace
-        async function _hydrateFromMasterIndexedDb() {
+        // Lazy hydratace z trvalé IndexedDB databáze (KontejneryMasterDB) pouze pro aktivní / vyžádanou agendu
+        const _masterIdbGettersSetters = {
+            containers: [() => allContainers, v => { allContainers = v; }],
+            transports: [() => allTransports, v => { allTransports = v; }],
+            customers: [() => allCustomers, v => { allCustomers = v; }],
+            objednavky: [() => allExternalOrders, v => { allExternalOrders = v; }],
+            nabidky: [() => allNabidky, v => { allNabidky = v; }],
+            zakazky: [() => allZakazky, v => { allZakazky = v; }],
+            faktury: [() => allFaktury, v => { allFaktury = v; }],
+            zalohove_faktury: [() => allZalohoveFaktury, v => { allZalohoveFaktury = v; }],
+            zajemci: [() => allZajemci, v => { allZajemci = v; }],
+            inventories: [() => allInventories, v => { allInventories = v; }],
+            whatsapp_messages: [() => allWaMessages, v => { allWaMessages = v; }],
+            whatsapp_staging: [() => allWaStaging, v => { allWaStaging = v; }],
+            events: [() => allEvents, v => { allEvents = v; }],
+            notes: [() => allNotes, v => { allNotes = v; }]
+        };
+        const _masterIdbHydratedSet = new Set();
+
+        window._hydrateSingleAgendaFromMasterIdb = async function(k) {
             try {
                 if (typeof _loadFromMasterIndexedDb !== 'function') return;
-                const keysMap = [
-                    ['containers', () => allContainers, v => { allContainers = v; }],
-                    ['transports', () => allTransports, v => { allTransports = v; }],
-                    ['customers', () => allCustomers, v => { allCustomers = v; }],
-                    ['objednavky', () => allExternalOrders, v => { allExternalOrders = v; }],
-                    ['nabidky', () => allNabidky, v => { allNabidky = v; }],
-                    ['zakazky', () => allZakazky, v => { allZakazky = v; }],
-                    ['faktury', () => allFaktury, v => { allFaktury = v; }],
-                    ['zalohove_faktury', () => allZalohoveFaktury, v => { allZalohoveFaktury = v; }],
-                    ['zajemci', () => allZajemci, v => { allZajemci = v; }],
-                    ['inventories', () => allInventories, v => { allInventories = v; }],
-                    ['whatsapp_messages', () => allWaMessages, v => { allWaMessages = v; }],
-                    ['whatsapp_staging', () => allWaStaging, v => { allWaStaging = v; }],
-                    ['events', () => allEvents, v => { allEvents = v; }],
-                    ['notes', () => allNotes, v => { allNotes = v; }]
-                ];
-                let anyHydrated = false;
-                for (const [k, getter, setter] of keysMap) {
-                    const idbArr = await _loadFromMasterIndexedDb(k);
-                    if (Array.isArray(idbArr) && idbArr.length > 0) {
-                        const cur = getter() || [];
-                        if (idbArr.length > cur.length) {
-                            setter(mergeData(k, idbArr, cur));
-                            anyHydrated = true;
-                        } else {
-                            // Ujistíme se, že IndexedDB má aktuální plná data
-                            _saveToMasterIndexedDb(k, cur);
-                        }
+                if (_masterIdbHydratedSet.has(k)) return;
+                const pair = _masterIdbGettersSetters[k];
+                if (!pair) return;
+                _masterIdbHydratedSet.add(k);
+                const [getter, setter] = pair;
+                const idbArr = await _loadFromMasterIndexedDb(k);
+                if (Array.isArray(idbArr) && idbArr.length > 0) {
+                    const cur = getter() || [];
+                    if (idbArr.length > cur.length) {
+                        setter(mergeData(k, idbArr, cur));
+                        try { renderCurrentView(); } catch (e) {}
                     } else {
-                        const cur = getter() || [];
-                        if (cur.length > 0) _saveToMasterIndexedDb(k, cur);
+                        _saveToMasterIndexedDb(k, cur);
                     }
+                } else {
+                    const cur = getter() || [];
+                    if (cur.length > 0) _saveToMasterIndexedDb(k, cur);
                 }
-                if (anyHydrated) {
-                    try { renderCurrentView(); } catch (e) {}
+            } catch (e) {}
+        };
+
+        async function _hydrateFromMasterIndexedDb() {
+            try {
+                const isMobileMode = Boolean(window.FORCE_IPHONE_APP_MODE || document.body.classList.contains('ios-app-mode') || localStorage.getItem('ko_ios_app_mode') === '1');
+                if (isMobileMode) {
+                    await window._hydrateSingleAgendaFromMasterIdb('transports');
+                    return;
+                }
+                const activeKeys = Array.from(window._koHydratedLocalAgendas || []);
+                for (const k of activeKeys) {
+                    await window._hydrateSingleAgendaFromMasterIdb(k);
                 }
                 if (typeof window.updateMasterRecordCountBadges === 'function') {
                     window.updateMasterRecordCountBadges();
-                }
-                if (typeof window.saveMasterSafetySnapshot === 'function') {
-                    window.saveMasterSafetySnapshot();
                 }
             } catch (e) {}
         }
@@ -8904,6 +8973,7 @@
         let _lastAdrOptionsKey = '';
         let _lastAdrOptionsBodyHtml = '';
         var updateDropdowns = window.updateDropdowns = function updateDropdowns() {
+            if (window.FORCE_IPHONE_APP_MODE || document.body.classList.contains('ios-app-mode')) return;
             const orders = getMergedOrders();
             const newCnt = orders.filter(o => (o.status || 'NOVÁ') === 'NOVÁ').length;
             const b = document.getElementById('badge-objednavky');
@@ -13195,16 +13265,35 @@ ${itemsXml}
                 }
             } else if (currentTab === 'preprava') {
                 const parseTrDateEpoch = (t) => {
-                    const s = String(t.transportDate || t.dateText || t.date || '').trim();
-                    const mCz = s.match(/^(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{2,4})/);
+                    if (!t) return 9999999999999;
+                    const rawDate = String(t.transportDate || t.dateText || t.date || '').trim();
+                    if (t._cachedEpochDateStr === rawDate && typeof t._cachedEpochVal === 'number') {
+                        return t._cachedEpochVal;
+                    }
+                    t._cachedEpochDateStr = rawDate;
+                    const mCz = rawDate.match(/^(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{2,4})/);
                     if (mCz) {
                         let yr = Number(mCz[3]);
                         if (yr < 100) yr += 2000;
-                        return new Date(yr, Number(mCz[2]) - 1, Number(mCz[1])).getTime();
+                        t._cachedEpochVal = new Date(yr, Number(mCz[2]) - 1, Number(mCz[1])).getTime();
+                        return t._cachedEpochVal;
                     }
-                    const mIso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-                    if (mIso) return new Date(Number(mIso[1]), Number(mIso[2]) - 1, Number(mIso[3])).getTime();
-                    return Number(t.timestamp || 9999999999999);
+                    const mIso = rawDate.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+                    if (mIso) {
+                        t._cachedEpochVal = new Date(Number(mIso[1]), Number(mIso[2]) - 1, Number(mIso[3])).getTime();
+                        return t._cachedEpochVal;
+                    }
+                    t._cachedEpochVal = Number(t.timestamp || 9999999999999);
+                    return t._cachedEpochVal;
+                };
+                const getTrSearchHaystack = (t) => {
+                    const ver = (t.lastModified || t.timestamp || 0);
+                    if (t._cachedSearchVer === ver && typeof t._cachedSearchStr === 'string') {
+                        return t._cachedSearchStr;
+                    }
+                    t._cachedSearchVer = ver;
+                    t._cachedSearchStr = [t.designation, t.company, t.customerCompany, t.customerName, t.customerInitials, t.spz, t.driver, t.destinationLocation, t.customerAddress, t.internalNote, t.note, t.transportDate, t.dateText].join(' ').toLowerCase();
+                    return t._cachedSearchStr;
                 };
                 const extractAllTransportPhotosForCard = (t) => {
                     if (!t) return [];
@@ -13254,7 +13343,7 @@ ${itemsXml}
                     (t.note && String(t.note).toUpperCase().includes('VRÁCEN'))
                 );
                 const depoMatchedTransports = allTransports
-                    .filter(t => (currentDepo === 'VŠE' || (t.depo || 'Depo 1') === currentDepo) && (!q || [t.designation, t.company, t.customerCompany, t.customerName, t.customerInitials, t.spz, t.driver, t.destinationLocation, t.customerAddress, t.internalNote, t.note, t.transportDate, t.dateText].join(' ').toLowerCase().includes(q)))
+                    .filter(t => (currentDepo === 'VŠE' || (t.depo || 'Depo 1') === currentDepo) && (!q || getTrSearchHaystack(t).includes(q)))
                     .sort((a, b) => (parseTrDateEpoch(a) - parseTrDateEpoch(b)) || (Number(a.timestamp || 0) - Number(b.timestamp || 0)));
                 renderAgendaStatusSubMenuBar('preprava', depoMatchedTransports);
                 const activePrepSub = window.agendaSubTabByTab['preprava'] || 'NOVÉ';
@@ -23509,7 +23598,7 @@ function buildShareTextSummary(type, id) {
     </script>
 
     <!-- ============================================================================ -->
-    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v477)      -->
+    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v478)      -->
     <!-- Zkrácená verze Přepravy: ostatní agendy jsou na iPhonu kompletně skryté.     -->
     <!-- ============================================================================ -->
     <style id="iphoneAppStyles">
@@ -23614,7 +23703,8 @@ function buildShareTextSummary(type, id) {
             border-radius: 12px;
             font-weight: 800;
             letter-spacing: 0.02em;
-            transition: all 0.15s ease;
+            transition: transform 0.12s ease, opacity 0.12s ease;
+            touch-action: manipulation;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -23622,6 +23712,14 @@ function buildShareTextSummary(type, id) {
         }
         .ios-rect-btn:active {
             transform: scale(0.97);
+        }
+        body.ios-app-mode #dynamicGrid > div {
+            content-visibility: auto;
+            contain-intrinsic-size: 1px 160px;
+        }
+        body.ios-app-mode #listBody > tr {
+            content-visibility: auto;
+            contain-intrinsic-size: 1px 44px;
         }
     </style>
 
@@ -23707,7 +23805,7 @@ function buildShareTextSummary(type, id) {
     </div>
 
     <!-- ON-SCREEN SAFARI BUBLINA SE ŠIPKOU NA SPODNÍ LIŠTU SAFARI -->
-    <div id="iosSafariArrowOverlay" class="hidden fixed inset-0 z-[140] bg-black/75 backdrop-blur-sm flex flex-col justify-end p-4" onclick="closeIosSafariArrowGuide()">
+    <div id="iosSafariArrowOverlay" class="hidden fixed inset-0 z-[140] bg-black/80 flex flex-col justify-end p-4" onclick="closeIosSafariArrowGuide()">
         <div class="bg-[#0F172A] border-2 border-[#38BDF8] rounded-2xl p-4 text-white shadow-2xl max-w-sm mx-auto w-full mb-10 space-y-3" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between border-b border-[#334155] pb-2">
                 <div class="flex items-center gap-2">
@@ -23740,7 +23838,7 @@ function buildShareTextSummary(type, id) {
     </div>
 
     <!-- MODAL: RYCHLÉ FOCENÍ PŘEPRAVY PRO ŘIDIČE NA iPHONE -->
-    <div id="iosCameraModal" class="hidden fixed inset-0 z-[125] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div id="iosCameraModal" class="hidden fixed inset-0 z-[125] bg-black/85 flex items-center justify-center p-4">
         <div class="bg-[#F8FAFC] w-full max-w-sm rounded-2xl shadow-2xl border border-[#475569] overflow-hidden">
             <div class="bg-[#0F172A] text-white px-4 py-3 flex items-center justify-between">
                 <div class="flex items-center gap-2">
@@ -23778,7 +23876,7 @@ function buildShareTextSummary(type, id) {
     </div>
 
     <!-- MODAL: AKTUALIZACE Z GITHUBU S TACHOMETREM 4x4 CM PRO MOBILNÍ PROHLÍŽEČ CHROME / SAFARI -->
-    <div id="iosInstallModal" class="hidden fixed inset-0 z-[10050] bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div id="iosInstallModal" class="hidden fixed inset-0 z-[10050] bg-slate-950/90 flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-[#0F172A] text-white w-full max-w-sm max-h-[92dvh] overflow-y-auto rounded-2xl shadow-2xl border-2 border-[#0284C7] flex flex-col my-auto">
             <!-- Záhlaví -->
             <div class="bg-[#1E293B] px-4 py-3 flex items-center justify-between border-b border-[#334155]">
@@ -23786,7 +23884,7 @@ function buildShareTextSummary(type, id) {
                     <span class="material-icons text-[#38BDF8] text-xl">speed</span>
                     <div>
                         <div class="font-black text-sm leading-tight text-white">Aktualizace</div>
-                        <div id="iosModalVersionBadge" class="text-[11px] text-[#94A3B8] font-bold">Přeprava • v 475</div>
+                        <div id="iosModalVersionBadge" class="text-[11px] text-[#94A3B8] font-bold">Přeprava • v 478</div>
                     </div>
                 </div>
                 <button type="button" onclick="closeIphoneInstallModal()" class="px-3 py-1.5 rounded-lg bg-[#334155] hover:bg-[#475569] text-white text-xs font-extrabold transition" title="Zavřít">
@@ -23828,7 +23926,7 @@ function buildShareTextSummary(type, id) {
 
                 <!-- Skrytý progress bar element pro zpětnou kompatibilitu -->
                 <div id="iosGhUpdateProgressBar" class="hidden"></div>
-                <div id="iosGhRemoteVerBadge" class="hidden">v 475</div>
+                <div id="iosGhRemoteVerBadge" class="hidden">v 478</div>
 
                 <!-- Stavový text pod tachometrem -->
                 <p id="iosGhUpdateStatusText" class="text-xs font-bold text-[#CBD5E1] min-h-[32px] flex items-center justify-center px-2">
@@ -24215,7 +24313,7 @@ function buildShareTextSummary(type, id) {
         };
 
         window.shareAndroidInstallWhatsApp = function() {
-            const ver = window.CURRENT_SW_VERSION_NAME || '477';
+            const ver = window.CURRENT_SW_VERSION_NAME || '478';
             const url = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?android=1&install=1';
             const txt = `Kontejnery Ostrava — Rychlá instalace mobilní aplikace pro Android přes prohlížeč Chrome bez APK (v ${ver}): ${url}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');
