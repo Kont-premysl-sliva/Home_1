@@ -543,7 +543,7 @@ try {
             <!-- Verze aplikace a datum -->
             <div class="inline-flex items-center gap-1.5 bg-sky-950/80 border border-sky-400/40 text-sky-200 px-3 py-1 rounded-full text-xs font-black shadow-inner mb-4">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="loginVersionDisplay">v 480 • 7.11.2026</span>
+                <span id="loginVersionDisplay">v 481 • 7.11.2026</span>
             </div>
 
             <!-- Přepínač PC vs Řidič -->
@@ -931,7 +931,7 @@ try {
                 <span>KONTEJNERY OSTRAVA - POHODA</span>
                 <span class="hidden" id="pohodaWindowTitleAgenda"></span>
                 <button type="button" onclick="window.handleHeaderUpdateClick()" class="cursor-pointer bg-[#0A2E6E] hover:bg-blue-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm border border-sky-300/50 flex items-center gap-1" title="Verze aplikace • Kliknutím zkontrolujete nebo ručně potvrdíte novou aktualizaci">
-                    <span id="headerVersionBadge">v 480 • 7.11.2026</span>
+                    <span id="headerVersionBadge">v 481 • 7.11.2026</span>
                     <span id="ghUpdateBadge" class="hidden bg-[#CC0000] text-yellow-200 text-[10px] px-1.5 py-0.5 rounded font-black animate-pulse flex items-center gap-0.5"><span class="material-icons text-[11px]">system_update_alt</span><span>NOVÁ</span></span>
                 </button>
             </h1>
@@ -3438,7 +3438,7 @@ try {
 
     <script>
     (function() {
-        const CURRENT_SW_VERSION = 480;
+        const CURRENT_SW_VERSION = 481;
         const CURRENT_SW_VERSION_NAME = CURRENT_SW_VERSION;
         const CURRENT_SW_RELEASE_DATE = "7.11.2026";
         const CURRENT_SW_RELEASE_DATE_SPACED = "7. 11. 2026";
@@ -4648,8 +4648,17 @@ try {
                 window.ensureLocalAgendaHydrated(k);
             });
         };
-        // Při startu rozbalíme pouze aktivní sekci (Přeprava na mobilu, Objednávky na PC)
+        // Při startu rozbalíme aktivní sekci (Přeprava na mobilu, Objednávky na PC) a na PC ihned na pozadí přednačteme i Přeprava / NOVÁ
         window.ensureLocalAgendaHydrated(currentTab);
+        if (!window.FORCE_IPHONE_APP_MODE && !/iPhone|iPod|iPad|Android/i.test(navigator.userAgent || '')) {
+            setTimeout(() => {
+                if (typeof window.preloadPcPrepravaNovaInBackground === 'function') {
+                    window.preloadPcPrepravaNovaInBackground();
+                } else {
+                    window.ensureLocalAgendaHydrated('preprava');
+                }
+            }, 120);
+        }
 
         var showToast = window.showToast = (msg) => {
             const el = document.getElementById('toastNotification');
@@ -5868,14 +5877,123 @@ try {
             } catch (e) {}
         };
 
-        window.buildFullMasterDatabaseObject = () => {
+        window.stripRecordPhotosForGitHubBackup = (recordType, rec) => {
+            if (!rec || typeof rec !== 'object') return rec;
+            const out = { ...rec };
+            if (recordType === 'kontejner' || recordType === 'containers') {
+                const hydrated = typeof window.hydrateRecordPhotosForDetail === 'function'
+                    ? window.hydrateRecordPhotosForDetail('kontejner', { ...rec })
+                    : rec;
+                const photoCnt = Math.max(
+                    Number(rec._photoCount || 0),
+                    Array.isArray(hydrated.images) ? hydrated.images.filter(Boolean).length : 0,
+                    hydrated.imageUri ? 1 : 0
+                );
+                out.imageUri = '';
+                out.extraImages = '';
+                out.images = [];
+                delete out.photo;
+                delete out.photos;
+                out._photoCount = photoCnt;
+                out._photosStrippedForGitHub = photoCnt > 0;
+                return out;
+            }
+            if (recordType === 'preprava' || recordType === 'transports') {
+                const hydrated = typeof window.hydrateRecordPhotosForDetail === 'function'
+                    ? window.hydrateRecordPhotosForDetail('preprava', { ...rec })
+                    : rec;
+                const photoCnt = Math.max(
+                    Number(rec._photoCount || 0),
+                    Array.isArray(hydrated.photos) ? hydrated.photos.filter(Boolean).length : 0,
+                    [hydrated.containerImageUri, hydrated.containerImageUri2, hydrated.containerImageUri3, hydrated.imageUri].filter(Boolean).length
+                );
+                out.containerImageUri = '';
+                out.containerImageUri2 = '';
+                out.containerImageUri3 = '';
+                out.imageUri = '';
+                out.deliveryPhotos = '';
+                out.extraImages = '';
+                out.photos = [];
+                delete out.photo;
+                out._photoCount = photoCnt;
+                out._photosStrippedForGitHub = photoCnt > 0;
+                return out;
+            }
+            if (recordType === 'inventura' || recordType === 'inventories') {
+                if (out.sessionDataJson && typeof out.sessionDataJson === 'string' && out.sessionDataJson.includes('data:image/')) {
+                    try {
+                        const parsed = JSON.parse(out.sessionDataJson);
+                        if (parsed && Array.isArray(parsed.items)) {
+                            parsed.items = parsed.items.map(it => {
+                                if (!it || typeof it !== 'object') return it;
+                                const cleanIt = { ...it };
+                                if (typeof cleanIt.imageUri === 'string' && cleanIt.imageUri.startsWith('data:image/')) cleanIt.imageUri = '';
+                                if (typeof cleanIt.photo === 'string' && cleanIt.photo.startsWith('data:image/')) cleanIt.photo = '';
+                                if (Array.isArray(cleanIt.photos)) cleanIt.photos = [];
+                                if (Array.isArray(cleanIt.images)) cleanIt.images = [];
+                                return cleanIt;
+                            });
+                            out.sessionDataJson = JSON.stringify(parsed);
+                        }
+                    } catch (e) {}
+                }
+                return out;
+            }
+            return out;
+        };
+
+        window.hydrateAllDeepPhotosForBackup = () => {
+            try {
+                if (typeof window.ensureAllLocalAgendasHydrated === 'function') window.ensureAllLocalAgendasHydrated();
+                (allContainers || []).forEach(c => {
+                    if (!c || !c.id) return;
+                    if (typeof window.hydrateRecordPhotosForDetail === 'function') {
+                        window.hydrateRecordPhotosForDetail('kontejner', c);
+                    }
+                    const memPhoto = window._mobileFullPhotoMemoryMap && window._mobileFullPhotoMemoryMap.get(`kontejner_${c.id}`);
+                    if (memPhoto && !c.imageUri) c.imageUri = memPhoto;
+                });
+                (allTransports || []).forEach(t => {
+                    if (!t || !t.id) return;
+                    if (typeof window.hydrateRecordPhotosForDetail === 'function') {
+                        window.hydrateRecordPhotosForDetail('preprava', t);
+                    }
+                    const memPhoto = window._mobileFullPhotoMemoryMap && window._mobileFullPhotoMemoryMap.get(`preprava_${t.id}`);
+                    if (memPhoto && !t.containerImageUri && !t.imageUri) t.containerImageUri = memPhoto;
+                });
+            } catch (e) {}
+        };
+
+        window.buildFullMasterDatabaseObject = (options = {}) => {
+            const includePhotos = options && options.includePhotos !== undefined ? Boolean(options.includePhotos) : true;
             if (typeof window.ensureAllLocalAgendasHydrated === 'function') window.ensureAllLocalAgendasHydrated();
             const now = new Date();
             const { counts, totalRecords } = window.getMasterDatabaseStats();
+            const containersOut = includePhotos
+                ? (allContainers || []).map(c => {
+                    const copy = typeof window.hydrateRecordPhotosForDetail === 'function' ? window.hydrateRecordPhotosForDetail('kontejner', { ...c }) : { ...c };
+                    const memUri = window._mobileFullPhotoMemoryMap && window._mobileFullPhotoMemoryMap.get(`kontejner_${c.id}`);
+                    if (memUri && !copy.imageUri) copy.imageUri = memUri;
+                    return copy;
+                })
+                : (allContainers || []).map(c => window.stripRecordPhotosForGitHubBackup('kontejner', c));
+            const transportsOut = includePhotos
+                ? (allTransports || []).map(t => {
+                    const copy = typeof window.hydrateRecordPhotosForDetail === 'function' ? window.hydrateRecordPhotosForDetail('preprava', { ...t }) : { ...t };
+                    const memUri = window._mobileFullPhotoMemoryMap && window._mobileFullPhotoMemoryMap.get(`preprava_${t.id}`);
+                    if (memUri && !copy.containerImageUri && !copy.imageUri) copy.containerImageUri = memUri;
+                    return copy;
+                })
+                : (allTransports || []).map(t => window.stripRecordPhotosForGitHubBackup('preprava', t));
+            const inventoriesOut = includePhotos
+                ? (allInventories || [])
+                : (allInventories || []).map(inv => window.stripRecordPhotosForGitHubBackup('inventura', inv));
             return {
                 backupMetadata: {
                     source: "HLAVNI_PC_APLIKACE_MASTER",
                     isMasterPcBackup: true,
+                    photosIncluded: includePhotos,
+                    backupMode: includePhotos ? "PC_DISK_FULL_WITH_PHOTOS" : "GITHUB_CLOUD_NO_PHOTOS",
                     folder: "ZALOHA_DAT",
                     version: CURRENT_SW_VERSION,
                     versionName: CURRENT_SW_VERSION_NAME,
@@ -5884,8 +6002,8 @@ try {
                     totalRecords: totalRecords,
                     recordCounts: counts
                 },
-                containers: (allContainers || []).map(c => typeof window.hydrateRecordPhotosForDetail === 'function' ? window.hydrateRecordPhotosForDetail('kontejner', { ...c }) : c),
-                transports: (allTransports || []).map(t => typeof window.hydrateRecordPhotosForDetail === 'function' ? window.hydrateRecordPhotosForDetail('preprava', { ...t }) : t),
+                containers: containersOut,
+                transports: transportsOut,
                 customers: allCustomers || [],
                 objednavky: allExternalOrders || [],
                 nabidky: allNabidky || [],
@@ -5894,7 +6012,7 @@ try {
                 zalohoveFaktury: allZalohoveFaktury || [],
                 pokladna: allPokladna || [],
                 zajemci: allZajemci || [],
-                inventories: allInventories || [],
+                inventories: inventoriesOut,
                 whatsappMessages: allWaMessages || [],
                 whatsappStaging: allWaStaging || [],
                 events: allEvents || [],
@@ -7477,8 +7595,13 @@ try {
                 }
             };
 
-            // Při startu připojíme pouze aktivní sekci (na mobilu v Chrome jen Přepravu, na PC jen otevřenou záložku)
+            // Při startu připojíme aktivní sekci (na mobilu v Chrome jen Přepravu, na PC otevřenou záložku + na pozadí Přepravu / NOVÁ)
             window.ensureTabListenerBound(isMobileChromeMode ? 'preprava' : (currentTab || 'kontejnery'));
+            if (!isMobileChromeMode) {
+                setTimeout(() => {
+                    try { window.bindFirestoreColByName('transports'); } catch (e) {}
+                }, 180);
+            }
         }
 
         const genId = (prefix = 'id') => prefix + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
@@ -8487,6 +8610,86 @@ try {
             } catch (e) {}
         };
 
+        window.ensureAllMasterIdbAgendasHydrated = async function() {
+            try {
+                if (typeof window.ensureAllLocalAgendasHydrated === 'function') {
+                    window.ensureAllLocalAgendasHydrated();
+                }
+                const allKeys = Object.keys(_masterIdbGettersSetters);
+                for (const k of allKeys) {
+                    await window._hydrateSingleAgendaFromMasterIdb(k);
+                }
+                if (typeof window._koFastIndex === 'object' && window._koFastIndex) {
+                    window._koFastIndex.rebuild();
+                }
+                if (typeof window.updateMasterRecordCountBadges === 'function') {
+                    window.updateMasterRecordCountBadges();
+                }
+            } catch (e) {}
+        };
+
+        window._pcPrepravaNovaPreloaded = false;
+        window.preloadPcPrepravaNovaInBackground = async function() {
+            if (window._pcPrepravaNovaPreloaded) return;
+            const isMobileMode = Boolean(window.FORCE_IPHONE_APP_MODE || document.body.classList.contains('ios-app-mode') || localStorage.getItem('ko_ios_app_mode') === '1');
+            if (isMobileMode) return;
+            window._pcPrepravaNovaPreloaded = true;
+            try {
+                if (window.agendaSubTabByTab && !window.agendaSubTabByTab['preprava']) {
+                    window.agendaSubTabByTab['preprava'] = 'NOVÉ';
+                }
+                if (typeof window.ensureLocalAgendaHydrated === 'function') {
+                    window.ensureLocalAgendaHydrated('preprava');
+                }
+                if (typeof window._hydrateSingleAgendaFromMasterIdb === 'function') {
+                    await window._hydrateSingleAgendaFromMasterIdb('transports');
+                }
+                if (typeof window.bindFirestoreColByName === 'function') {
+                    window.bindFirestoreColByName('transports');
+                }
+                if (typeof window._koFastIndex === 'object' && window._koFastIndex) {
+                    window._koFastIndex.rebuild();
+                }
+                // Přednačtení miniatur fotek pro podzáložku Přeprava / NOVÁ v tichých dávkách na pozadí
+                const delSet = typeof getDel === 'function' ? getDel('transports') : new Set();
+                const novaTransports = (allTransports || []).filter(t => {
+                    if (!t || t.isDeleted || (t.id && delSet.has(t.id))) return false;
+                    if (typeof matchesAgendaStatusTabJs === 'function') {
+                        return matchesAgendaStatusTabJs(t.status, 'NOVÉ');
+                    }
+                    const st = String(t.status || 'PLÁNOVÁNO').trim().toUpperCase();
+                    return !['HOTOVO', 'HOTOVÉ', 'REALIZOVÁNO', 'REALIZOVANÉ', 'VYŘÍZENO', 'DOKONČENO', 'ZRUŠENO', 'ZRUŠENÉ', 'STORNO'].includes(st);
+                });
+                const batchSize = 8;
+                let idx = 0;
+                const warmNextBatch = () => {
+                    const slice = novaTransports.slice(idx, idx + batchSize);
+                    idx += batchSize;
+                    slice.forEach(t => {
+                        try {
+                            const vault = window._koDeepPhotoVault && window._koDeepPhotoVault.get(`preprava_${t.id}`);
+                            const rawMain = t.containerImageUri || t.imageUri || t.photo || (vault && (vault.containerImageUri || vault.imageUri)) || '';
+                            const mainPhoto = typeof sanitizeSinglePhotoUri === 'function' ? sanitizeSinglePhotoUri(rawMain) : rawMain;
+                            if (mainPhoto && typeof window.getMobileListThumbUri === 'function') {
+                                const thumbUri = window.getMobileListThumbUri('preprava', t.id, mainPhoto, t.status, t.completedAt || t.timestamp);
+                                if (thumbUri) {
+                                    const img = new Image();
+                                    img.decoding = 'async';
+                                    img.src = thumbUri;
+                                }
+                            }
+                        } catch (e) {}
+                    });
+                    if (idx < novaTransports.length) {
+                        setTimeout(warmNextBatch, 45);
+                    }
+                };
+                if (novaTransports.length > 0) {
+                    setTimeout(warmNextBatch, 60);
+                }
+            } catch (e) {}
+        };
+
         async function _hydrateFromMasterIndexedDb() {
             try {
                 const isMobileMode = Boolean(window.FORCE_IPHONE_APP_MODE || document.body.classList.contains('ios-app-mode') || localStorage.getItem('ko_ios_app_mode') === '1');
@@ -8494,9 +8697,14 @@ try {
                     await window._hydrateSingleAgendaFromMasterIdb('transports');
                     return;
                 }
-                const activeKeys = Array.from(window._koHydratedLocalAgendas || []);
+                const activeKeys = new Set(Array.from(window._koHydratedLocalAgendas || []));
+                activeKeys.add('objednavky');
+                activeKeys.add('transports');
                 for (const k of activeKeys) {
                     await window._hydrateSingleAgendaFromMasterIdb(k);
+                }
+                if (typeof window.preloadPcPrepravaNovaInBackground === 'function') {
+                    window.preloadPcPrepravaNovaInBackground();
                 }
                 if (typeof window.updateMasterRecordCountBadges === 'function') {
                     window.updateMasterRecordCountBadges();
@@ -14216,10 +14424,10 @@ ${itemsXml}
             }
         };
 
-        // 1. ZÁLOHOVÁNÍ A OBNOVA DATABÁZE (S TACHOMETREM)
+        // 1. ZÁLOHOVÁNÍ A OBNOVA DATABÁZE (S TACHOMETREM): SYNCHRONIZACE -> REINDEXACE -> ZÁLOHA (DISK S FOTKAMI + GITHUB BEZ FOTEK)
         window.performFullDatabaseBackup = async () => {
             return await window.runSpravaDbActionWithTachometer(
-                'Záloha celé databáze (GitHub ZALOHA_DAT + PC)',
+                'Kompletní záloha databáze (1. Synchronizace → 2. Reindexace → 3. Záloha PC + GitHub)',
                 async (step) => {
                     const repo = (document.getElementById('dbGhRepoInput')?.value || document.getElementById('ghRepoInput')?.value || localStorage.getItem('ko_gh_repo') || DEFAULT_GH_REPO).trim().replace(/^https:\/\/github\.com\//, '').replace(/\/$/, '');
                     const branch = (document.getElementById('dbGhBranchInput')?.value || document.getElementById('ghBranchInput')?.value || localStorage.getItem('ko_gh_branch') || 'main').trim();
@@ -14231,51 +14439,87 @@ ${itemsXml}
                     localStorage.setItem('ko_gh_backup_folder', folderVal);
                     if (token) localStorage.setItem('ko_gh_token', token);
 
-                    await step(15, 'Ukládám lokální záchranný snímek Master PC do IndexedDB (KontejneryMasterDB)...', 180);
-                    await window.saveMasterSafetySnapshot();
+                    // --- FÁZE 1: SYNCHRONIZACE A PLNÁ HYDRATACE VŠECH AGEND ---
+                    await step(10, 'FÁZE 1/3 [SYNCHRONIZACE]: Dočítám všechny líně načítané agendy z lokální paměti a IndexedDB (KontejneryMasterDB)...', 160);
+                    if (typeof window.ensureAllMasterIdbAgendasHydrated === 'function') {
+                        await window.ensureAllMasterIdbAgendasHydrated();
+                    } else if (typeof window.ensureAllLocalAgendasHydrated === 'function') {
+                        window.ensureAllLocalAgendasHydrated();
+                    }
 
-                    await step(32, `Kontroluji a bezpečně slučuji případné nové změny z mobilů (${repo})...`, 180);
+                    await step(24, `FÁZE 1/3 [SYNCHRONIZACE]: Odesílám lokální změny a slučuji rozdílová data z cloudu a mobilů (${repo})...`, 180);
+                    try {
+                        if (typeof window.flushOfflineDeltaQueue === 'function') {
+                            await window.flushOfflineDeltaQueue();
+                        }
+                    } catch (e) {}
                     try {
                         const existingText = await fetchGitHubFileContents(repo, branch, 'containers_sync.json', token);
                         if (existingText && existingText.trim().startsWith('{')) {
                             applyIncomingSyncSnapshot(JSON.parse(existingText));
-                            syncContactsFromDocsToAdresar();
                         }
                     } catch (e) {}
 
-                    await step(50, 'Sestavuji kompletní obraz všech agend Hlavní PC databáze...', 180);
-                    const snapObj = window.buildFullMasterDatabaseObject();
-                    const jsonStr = JSON.stringify(snapObj, null, 2);
-                    const sizeKb = Math.max(1, Math.round(jsonStr.length / 1024));
-                    const totalRec = snapObj.backupMetadata.totalRecords;
+                    await step(36, 'FÁZE 1/3 [SYNCHRONIZACE]: Dočítám plné fotografie kontejnerů a přeprav z lokální IndexedDB pro zálohu na disk...', 150);
+                    if (typeof window.hydrateAllDeepPhotosForBackup === 'function') {
+                        window.hydrateAllDeepPhotosForBackup();
+                    }
 
-                    await step(68, `Stahuji záložní soubor .JSON (${sizeKb} KB, ${totalRec} záznamů) přímo do PC...`, 200);
-                    const downloadedFileName = window.downloadFullDatabaseToPcOnly(snapObj);
+                    // --- FÁZE 2: REINDEXACE, DEDUPLIKACE A PÁROVÁNÍ KONTAKTŮ ---
+                    await step(48, 'FÁZE 2/3 [REINDEXACE]: Synchronizuji kontakty z dokladů do Adresáře (IČO, firmy) a páruji vazby adresarId...', 160);
+                    try { syncContactsFromDocsToAdresar(); } catch (e) {}
+
+                    await step(58, 'FÁZE 2/3 [REINDEXACE]: Provádím deduplikaci, kontrolu číselných řad všech agend a přestavbu vyhledávacího indexu...', 180);
+                    try {
+                        if (typeof window.reindexEntireDatabase === 'function') {
+                            window.reindexEntireDatabase(true);
+                        }
+                        if (typeof window._koFastIndex === 'object' && window._koFastIndex) {
+                            window._koFastIndex.rebuild();
+                        }
+                        if (typeof updateDropdowns === 'function') updateDropdowns();
+                        if (typeof window.updateMasterRecordCountBadges === 'function') window.updateMasterRecordCountBadges();
+                    } catch (e) {}
+
+                    // --- FÁZE 3: ZÁLOHA (NA DISK VČETNĚ PLNÝCH FOTEK + NA GITHUB BEZ FOTEK) ---
+                    await step(66, 'FÁZE 3/3 [ZÁLOHA]: Ukládám lokální záchranný snímek Master PC do IndexedDB (KontejneryMasterDB)...', 150);
+                    await window.saveMasterSafetySnapshot();
+
+                    await step(76, 'FÁZE 3/3 [ZÁLOHA DISK]: Sestavuji kompletní obraz VČETNĚ plných fotek a stahuji .JSON na disk PC...', 200);
+                    const fullDiskSnapObj = window.buildFullMasterDatabaseObject({ includePhotos: true });
+                    const fullDiskJsonStr = JSON.stringify(fullDiskSnapObj, null, 2);
+                    const diskSizeKb = Math.max(1, Math.round(fullDiskJsonStr.length / 1024));
+                    const totalRec = fullDiskSnapObj.backupMetadata.totalRecords;
+
+                    const downloadedFileName = window.downloadFullDatabaseToPcOnly(fullDiskSnapObj);
                     const now = new Date();
                     const czTime = now.toLocaleString('cs-CZ');
-                    localStorage.setItem('ko_last_master_backup_time', `${czTime} (${sizeKb} KB)`);
-                    localStorage.setItem('ko_last_full_backup_time', `${czTime} (${sizeKb} KB)`);
+                    localStorage.setItem('ko_last_master_backup_time', `${czTime} (${diskSizeKb} KB • PC s fotkami)`);
+                    localStorage.setItem('ko_last_full_backup_time', `${czTime} (${diskSizeKb} KB)`);
                     localStorage.setItem('ko_last_master_backup_file', downloadedFileName || 'Zaloha_Databaze.json');
 
                     if (!token) {
                         window.updateMasterRecordCountBadges();
-                        return `Staženo do PC: ${downloadedFileName} (${totalRec} záznamů, ${sizeKb} KB) • GitHub token není vyplněn`;
+                        return `Synchronizováno & Reindexováno • Staženo na disk PC s fotkami: ${downloadedFileName} (${totalRec} záznamů, ${diskSizeKb} KB) • GitHub token není vyplněn`;
                     }
 
-                    await step(82, `Nahrávám zálohu do složky ${folderVal}/ na GitHubu (${repo}, větev ${branch})...`, 200);
-                    const b64 = b64EncodeUnicode(jsonStr);
+                    await step(86, `FÁZE 3/3 [ZÁLOHA GITHUB]: Sestavuji odlehčenou zálohu BEZ fotek a nahrávám do ${folderVal}/ na GitHubu (${repo})...`, 200);
+                    const ghSlimSnapObj = window.buildFullMasterDatabaseObject({ includePhotos: false });
+                    const ghSlimJsonStr = JSON.stringify(ghSlimSnapObj, null, 2);
+                    const ghSizeKb = Math.max(1, Math.round(ghSlimJsonStr.length / 1024));
+                    const b64Slim = b64EncodeUnicode(ghSlimJsonStr);
                     const authHeader = (token.startsWith('ghp_') || token.startsWith('github_pat_')) ? `Bearer ${token}` : `token ${token}`;
                     const pad = (n) => String(n).padStart(2, '0');
                     const stamp = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}_${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`;
                     const masterPath = `${folderVal}/kompletni_databaze_master.json`;
                     const timestampedPath = `${folderVal}/Zaloha_Databaze_${stamp}.json`;
                     const manifestPath = `${folderVal}/seznam_zaloh.json`;
-                    const commitMsg = `${folderVal}: Kompletní záloha Hlavní PC databáze (${czTime} • ${totalRec} záznamů)`;
+                    const commitMsg = `${folderVal}: Kompletní záloha Hlavní PC databáze bez fotek (${czTime} • ${totalRec} záznamů • ${ghSizeKb} KB)`;
 
-                    const putMasterRes = await putFileToGitHubRepo(repo, branch, masterPath, b64, commitMsg, authHeader);
-                    await putFileToGitHubRepo(repo, branch, timestampedPath, b64, commitMsg, authHeader);
+                    const putMasterRes = await putFileToGitHubRepo(repo, branch, masterPath, b64Slim, commitMsg, authHeader);
+                    await putFileToGitHubRepo(repo, branch, timestampedPath, b64Slim, commitMsg, authHeader);
 
-                    await step(92, 'Aktualizuji seznam_zaloh.json a kořenový containers_sync.json na GitHubu...', 150);
+                    await step(94, 'FÁZE 3/3 [ZÁLOHA GITHUB]: Aktualizuji seznam_zaloh.json a kořenový containers_sync.json na GitHubu...', 150);
                     try {
                         const manifestObj = {
                             folder: folderVal,
@@ -14284,7 +14528,10 @@ ${itemsXml}
                             lastBackupAtIso: now.toISOString(),
                             version: CURRENT_SW_VERSION,
                             totalRecords: totalRec,
-                            recordCounts: snapObj.backupMetadata.recordCounts,
+                            diskBackupSizeKbWithPhotos: diskSizeKb,
+                            githubBackupSizeKbNoPhotos: ghSizeKb,
+                            photosIncludedOnGitHub: false,
+                            recordCounts: fullDiskSnapObj.backupMetadata.recordCounts,
                             latestMasterFile: masterPath,
                             latestTimestampedFile: timestampedPath,
                             localPcDownloadedFile: downloadedFileName
@@ -14293,13 +14540,13 @@ ${itemsXml}
                         await putFileToGitHubRepo(repo, branch, manifestPath, manifestB64, `${folderVal}: Aktualizace přehledu záloh (${czTime})`, authHeader);
                     } catch (e) {}
 
-                    await putFileToGitHubRepo(repo, branch, 'containers_sync.json', b64, commitMsg, authHeader);
+                    await putFileToGitHubRepo(repo, branch, 'containers_sync.json', b64Slim, commitMsg, authHeader);
                     window.updateMasterRecordCountBadges();
 
                     if (putMasterRes && putMasterRes.ok) {
-                        return `Zálohováno ${totalRec} záznamů (${sizeKb} KB) do GitHubu (${masterPath}) + stažen soubor ${downloadedFileName} do PC`;
+                        return `Synchronizováno & Reindexováno (${totalRec} záznamů) • Disk PC s fotkami: ${downloadedFileName} (${diskSizeKb} KB) • GitHub bez fotek: ${masterPath} (${ghSizeKb} KB)`;
                     } else {
-                        return `Staženo do PC (${downloadedFileName}, ${totalRec} záznamů, ${sizeKb} KB) • GitHub HTTP ${putMasterRes ? putMasterRes.status : 'offline'}`;
+                        return `Staženo na disk PC s fotkami (${downloadedFileName}, ${totalRec} záznamů, ${diskSizeKb} KB) • GitHub HTTP ${putMasterRes ? putMasterRes.status : 'offline'}`;
                     }
                 }
             );
@@ -14309,21 +14556,31 @@ ${itemsXml}
 
         window.exportDatabaseBackupJson = async () => {
             return await window.runSpravaDbActionWithTachometer(
-                'Stažení kompletní zálohy databáze do PC (.JSON)',
+                'Stažení kompletní zálohy databáze VČETNĚ fotek do PC (.JSON)',
                 async (step) => {
-                    await step(25, 'Ukládám bezpečnostní bod do IndexedDB (KontejneryMasterDB)...', 150);
+                    await step(18, 'FÁZE 1/3 [SYNCHRONIZACE]: Dočítám všechny agendy a plné fotky z IndexedDB...', 150);
+                    if (typeof window.ensureAllMasterIdbAgendasHydrated === 'function') {
+                        await window.ensureAllMasterIdbAgendasHydrated();
+                    }
+                    if (typeof window.hydrateAllDeepPhotosForBackup === 'function') {
+                        window.hydrateAllDeepPhotosForBackup();
+                    }
+                    await step(42, 'FÁZE 2/3 [REINDEXACE]: Páruji kontakty s Adresářem a provádím reindexaci všech agend...', 150);
+                    try { syncContactsFromDocsToAdresar(); } catch (e) {}
+                    try { if (typeof window.reindexEntireDatabase === 'function') window.reindexEntireDatabase(true); } catch (e) {}
+                    await step(64, 'FÁZE 3/3 [ZÁLOHA]: Ukládám bezpečnostní bod do IndexedDB (KontejneryMasterDB)...', 150);
                     await window.saveMasterSafetySnapshot();
-                    await step(60, 'Sestavuji kompletní JSON obraz všech agend a nastavení...', 160);
-                    const snapObj = window.buildFullMasterDatabaseObject();
+                    await step(82, 'Sestavuji kompletní JSON obraz všech agend VČETNĚ plných fotek...', 160);
+                    const snapObj = window.buildFullMasterDatabaseObject({ includePhotos: true });
                     const jsonStr = JSON.stringify(snapObj, null, 2);
                     const sizeKb = Math.max(1, Math.round(jsonStr.length / 1024));
-                    await step(88, `Generuji a stahuji soubor (${sizeKb} KB) do složky Stažené soubory v PC...`, 160);
+                    await step(92, `Generuji a stahuji soubor (${sizeKb} KB) do složky Stažené soubory v PC...`, 160);
                     const fileName = window.downloadFullDatabaseToPcOnly(snapObj);
                     const czTime = new Date().toLocaleString('cs-CZ');
-                    localStorage.setItem('ko_last_master_backup_time', `${czTime} (${sizeKb} KB • PC)`);
+                    localStorage.setItem('ko_last_master_backup_time', `${czTime} (${sizeKb} KB • PC s fotkami)`);
                     localStorage.setItem('ko_last_master_backup_file', fileName || 'Zaloha_Databaze.json');
                     window.updateMasterRecordCountBadges();
-                    return `Soubor ${fileName} (${snapObj.backupMetadata.totalRecords} záznamů, ${sizeKb} KB) byl uložen do PC`;
+                    return `Soubor ${fileName} (${snapObj.backupMetadata.totalRecords} záznamů včetně plných fotek, ${sizeKb} KB) byl uložen na disk PC`;
                 }
             );
         };
@@ -23785,7 +24042,7 @@ function buildShareTextSummary(type, id) {
     </script>
 
     <!-- ============================================================================ -->
-    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v480)      -->
+    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v481)      -->
     <!-- Zkrácená verze Přepravy: ostatní agendy jsou na iPhonu kompletně skryté.     -->
     <!-- ============================================================================ -->
     <style id="iphoneAppStyles">
@@ -24071,7 +24328,7 @@ function buildShareTextSummary(type, id) {
                     <span class="material-icons text-[#38BDF8] text-xl">speed</span>
                     <div>
                         <div class="font-black text-sm leading-tight text-white">Aktualizace</div>
-                        <div id="iosModalVersionBadge" class="text-[11px] text-[#94A3B8] font-bold">Přeprava • v 480</div>
+                        <div id="iosModalVersionBadge" class="text-[11px] text-[#94A3B8] font-bold">Přeprava • v 481</div>
                     </div>
                 </div>
                 <button type="button" onclick="closeIphoneInstallModal()" class="px-3 py-1.5 rounded-lg bg-[#334155] hover:bg-[#475569] text-white text-xs font-extrabold transition" title="Zavřít">
@@ -24113,7 +24370,7 @@ function buildShareTextSummary(type, id) {
 
                 <!-- Skrytý progress bar element pro zpětnou kompatibilitu -->
                 <div id="iosGhUpdateProgressBar" class="hidden"></div>
-                <div id="iosGhRemoteVerBadge" class="hidden">v 480</div>
+                <div id="iosGhRemoteVerBadge" class="hidden">v 481</div>
 
                 <!-- Stavový text pod tachometrem -->
                 <p id="iosGhUpdateStatusText" class="text-xs font-bold text-[#CBD5E1] min-h-[32px] flex items-center justify-center px-2">
@@ -24500,7 +24757,7 @@ function buildShareTextSummary(type, id) {
         };
 
         window.shareAndroidInstallWhatsApp = function() {
-            const ver = window.CURRENT_SW_VERSION_NAME || '480';
+            const ver = window.CURRENT_SW_VERSION_NAME || '481';
             const url = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?android=1&install=1';
             const txt = `Kontejnery Ostrava — Rychlá instalace mobilní aplikace pro Android přes prohlížeč Chrome bez APK (v ${ver}): ${url}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');
