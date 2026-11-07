@@ -533,7 +533,7 @@
             <!-- Verze aplikace a datum -->
             <div class="inline-flex items-center gap-1.5 bg-sky-950/80 border border-sky-400/40 text-sky-200 px-3 py-1 rounded-full text-xs font-black shadow-inner mb-4">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="loginVersionDisplay">v 483 • 7.11.2026</span>
+                <span id="loginVersionDisplay">v 484 • 7.11.2026</span>
             </div>
 
             <!-- Přepínač PC vs Řidič -->
@@ -921,7 +921,7 @@
                 <span>KONTEJNERY OSTRAVA - POHODA</span>
                 <span class="hidden" id="pohodaWindowTitleAgenda"></span>
                 <button type="button" onclick="window.handleHeaderUpdateClick()" class="cursor-pointer bg-[#0A2E6E] hover:bg-blue-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm border border-sky-300/50 flex items-center gap-1" title="Verze aplikace • Kliknutím zkontrolujete nebo ručně potvrdíte novou aktualizaci">
-                    <span id="headerVersionBadge">v 483 • 7.11.2026</span>
+                    <span id="headerVersionBadge">v 484 • 7.11.2026</span>
                     <span id="ghUpdateBadge" class="hidden bg-[#CC0000] text-yellow-200 text-[10px] px-1.5 py-0.5 rounded font-black animate-pulse flex items-center gap-0.5"><span class="material-icons text-[11px]">system_update_alt</span><span>NOVÁ</span></span>
                 </button>
             </h1>
@@ -3428,7 +3428,7 @@
 
     <script>
     (function() {
-        const CURRENT_SW_VERSION = 483;
+        const CURRENT_SW_VERSION = 484;
         const CURRENT_SW_VERSION_NAME = CURRENT_SW_VERSION;
         const CURRENT_SW_RELEASE_DATE = "7.11.2026";
         const CURRENT_SW_RELEASE_DATE_SPACED = "7. 11. 2026";
@@ -20765,24 +20765,75 @@ window.renderPrepravaGoogleCalendarView = function(grid, list, bar, depoMatchedT
                     .replace(/\b(?:22|42|45|20|40|L5)[GURPTVH][0-9]\b/gi, ' ')
                     .replace(/^(?:LBS|KGS|TAR|TARE|NET|MAX|CAP|ISO|MGW|KONT|FANC|FANG|DONG)[\s\-_./]*(?=\d{6}\b)/i, '');
             },
+            parseJoinedVerticalCandidate: (joined) => {
+                const str = String(joined || '').trim();
+                if (str.length < 7) return '';
+                const fullM = str.match(/([A-Za-z]{3}[UuJjZz0158])([0-9OQoIlZSB]{6})([0-9OQoIlZSB])/);
+                if (fullM) {
+                    const p = window.CONTAINER_OCR_METHODOLOGY.normalizeLetters(fullM[1]);
+                    const d6 = window.CONTAINER_OCR_METHODOLOGY.normalizeDigits(fullM[2]);
+                    const chk = window.CONTAINER_OCR_METHODOLOGY.normalizeDigits(fullM[3]);
+                    if (p.length === 4 && !window.CONTAINER_OCR_METHODOLOGY.isForbiddenTechnicalPrefix(p) && /^\d{6}$/.test(d6) && /^\d$/.test(chk)) {
+                        return `${p} ${d6}-${chk}`;
+                    }
+                }
+                const full6M = str.match(/([A-Za-z]{3}[UuJjZz0158])([0-9OQoIlZSB]{6})(?![0-9])/);
+                if (full6M) {
+                    const p = window.CONTAINER_OCR_METHODOLOGY.normalizeLetters(full6M[1]);
+                    const d6 = window.CONTAINER_OCR_METHODOLOGY.normalizeDigits(full6M[2]);
+                    if (p.length === 4 && !window.CONTAINER_OCR_METHODOLOGY.isForbiddenTechnicalPrefix(p) && /^\d{6}$/.test(d6)) {
+                        return `${p} ${d6}`;
+                    }
+                }
+                const partM = str.match(/([A-Za-z]{0,2}[UuJjZz])([0-9OQoIlZSB]{6})([0-9OQoIlZSB])/);
+                if (partM) {
+                    const p = window.CONTAINER_OCR_METHODOLOGY.normalizeLetters(partM[1]);
+                    const d6 = window.CONTAINER_OCR_METHODOLOGY.normalizeDigits(partM[2]);
+                    const chk = window.CONTAINER_OCR_METHODOLOGY.normalizeDigits(partM[3]);
+                    if (p && !window.CONTAINER_OCR_METHODOLOGY.isForbiddenTechnicalPrefix(p) && /^\d{6}$/.test(d6) && /^\d$/.test(chk)) {
+                        return `${p} ${d6}-${chk}`;
+                    }
+                }
+                return '';
+            },
             collapseVerticalSingleCharLines: (lines) => {
                 const arr = Array.isArray(lines) ? lines : [];
-                if (arr.length < 7) return arr;
+                if (arr.length < 3) return arr;
                 const result = [...arr];
-                const singleChars = arr.map(l => String(l || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '')).filter(s => s.length === 1);
-                if (singleChars.length >= 7) {
-                    const combined = singleChars.join('');
-                    const vertIso = combined.match(/([A-Z]{1,4})([0-9OQoIlZSB]{6})([0-9OQoIlZSB])?/);
-                    if (vertIso) {
-                        const p = window.CONTAINER_OCR_METHODOLOGY.normalizeLetters(vertIso[1]);
-                        const d6 = window.CONTAINER_OCR_METHODOLOGY.normalizeDigits(vertIso[2]);
-                        const chk = window.CONTAINER_OCR_METHODOLOGY.normalizeDigits(vertIso[3] || '');
-                        if (p && !window.CONTAINER_OCR_METHODOLOGY.isForbiddenTechnicalPrefix(p) && /^\d{6}$/.test(d6)) {
-                            result.unshift(/^\d$/.test(chk) ? `${p} ${d6}-${chk}` : `${p} ${d6}`);
-                        }
+                const cleanedTokens = arr
+                    .map(l => window.CONTAINER_OCR_METHODOLOGY.stripTechnicalWords(String(l || '')).trim().replace(/[\[\]()|{}]/g, '').replace(/[^A-Za-z0-9]/g, ''))
+                    .filter(t => t.length >= 1 && t.length <= 4 && !window.CONTAINER_OCR_METHODOLOGY.isForbiddenTechnicalPrefix(t) && !/^(?:22|42|45|20|40|L5)[GURPTVH][0-9]$/i.test(t));
+                const shortChars = cleanedTokens.filter(s => s.length <= 2);
+                if (shortChars.length >= 7) {
+                    const cand1 = window.CONTAINER_OCR_METHODOLOGY.parseJoinedVerticalCandidate(shortChars.join(''));
+                    if (cand1) {
+                        result.unshift(cand1);
+                        return result;
+                    }
+                }
+                if (cleanedTokens.length >= 3) {
+                    const cand2 = window.CONTAINER_OCR_METHODOLOGY.parseJoinedVerticalCandidate(cleanedTokens.join(''));
+                    if (cand2) {
+                        result.unshift(cand2);
                     }
                 }
                 return result;
+            },
+            collapseSpacedVerticalIsoText: (raw) => {
+                const tokens = String(raw || '')
+                    .replace(/[\[\]()|{}]/g, ' ')
+                    .split(/[\s\-_./,;:]+/)
+                    .map(t => t.trim().replace(/[^A-Za-z0-9]/g, ''))
+                    .filter(Boolean);
+                if (tokens.length < 4) return '';
+                const singleCount = tokens.filter(t => t.length === 1).length;
+                if (singleCount < 4) return '';
+                const collapsed = window.CONTAINER_OCR_METHODOLOGY.collapseVerticalSingleCharLines(tokens);
+                const first = collapsed && collapsed[0];
+                if (first && (/^[A-Z]{1,4}\s+\d{6}(?:-\d)?$/.test(first))) {
+                    return first;
+                }
+                return '';
             },
             sharpenAndEnhanceCanvas: (ctx, width, height) => {
                 try {
@@ -20861,7 +20912,7 @@ window.renderPrepravaGoogleCalendarView = function(grid, list, bar, depoMatchedT
                     .map(l => window.CONTAINER_OCR_METHODOLOGY.stripTechnicalWords(l).trim())
                     .filter(Boolean);
 
-                // First check standard 4-letter ISO ending in U/J/Z on the topmost non-technical line (e.g. MEDU 311432-9, OVLU 220728-3)
+                // First check standard 4-letter ISO ending in U/J/Z on the topmost non-technical line (e.g. OVLU 241816-2, MEDU 311432-9, OVLU 220728-3)
                 for (const line of lines) {
                     const mStd = line.match(/\b([A-Za-z]{3}[UuJjZz])[\s\-_./]*([0-9OQoIlZSB]{6})[\s\-_./]*\[?([0-9OQoIlZSB])\]?\b/);
                     if (mStd) {
@@ -20929,6 +20980,33 @@ window.renderPrepravaGoogleCalendarView = function(grid, list, bar, depoMatchedT
                     return null;
                 }
             },
+            cropVerticalRightColumnDataUrl: async (dataUrl) => {
+                try {
+                    const img = await new Promise((resolve, reject) => {
+                        const i = new Image();
+                        i.onload = () => resolve(i);
+                        i.onerror = reject;
+                        i.src = dataUrl;
+                    });
+                    if (img.width < 80 || img.height < 80) return null;
+                    const cropX = Math.floor(img.width * 0.46);
+                    const cropY = Math.floor(img.height * 0.08);
+                    const cropW = Math.max(1, Math.floor(img.width * 0.46));
+                    const cropH = Math.max(1, Math.floor(img.height * 0.74));
+                    const scale = cropH < 1500 ? Math.min(2.6, Math.max(1.3, 1500 / cropH)) : 1;
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.round(cropW * scale);
+                    canvas.height = Math.round(cropH * scale);
+                    const ctx = canvas.getContext('2d');
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+                    ctx.drawImage(img, cropX, cropY, cropW, cropH, 0, 0, canvas.width, canvas.height);
+                    window.CONTAINER_OCR_METHODOLOGY.sharpenAndEnhanceCanvas(ctx, canvas.width, canvas.height);
+                    return canvas.toDataURL('image/jpeg', 0.93);
+                } catch (e) {
+                    return null;
+                }
+            },
             cropTopRightCornerDataUrl: async (dataUrl) => {
                 try {
                     const img = await new Promise((resolve, reject) => {
@@ -20942,7 +21020,7 @@ window.renderPrepravaGoogleCalendarView = function(grid, list, bar, depoMatchedT
                     const cropX = Math.floor(img.width * startXFrac);
                     const cropY = 0;
                     const cropW = Math.max(1, img.width - cropX);
-                    const cropH = Math.max(1, Math.floor(img.height * 0.48));
+                    const cropH = Math.max(1, Math.floor(img.height * 0.65));
                     const scale = cropW < 1600 ? Math.min(3.0, Math.max(1.5, 1600 / cropW)) : 1;
                     const canvas = document.createElement('canvas');
                     canvas.width = Math.round(cropW * scale);
@@ -21038,8 +21116,16 @@ window.renderPrepravaGoogleCalendarView = function(grid, list, bar, depoMatchedT
             // Strip technical weight/volume & sticker labels (LBS, KGS, MAX. GROSS, TARE, NET, PAYLOAD, 22G1, 45G1, DONG FANG, KONTEJNERY OSTRAVA)
             const sanitizedIsoInput = window.CONTAINER_OCR_METHODOLOGY.stripTechnicalWords(cleanedRaw).trim();
 
-            // PRIORITY 2A-1: Standard 4-letter ISO 6346 owner code ending in U, J, or Z (e.g. MEDU 311432-9, CARU 002238-0)
-            const stdIsoMatches = [...sanitizedIsoInput.matchAll(/\b([A-Za-z]{3}[UuJjZz])[\s\-_./]*([0-9OQoIlZSB]{6})[\s\-_./]*\[?([0-9OQoIlZSB])\]?\b/g)];
+            // Check if input is a vertical single-character sequence (e.g. "O V L U 2 4 1 8 1 6 [2]" or newline-separated)
+            const collapsedVert = window.CONTAINER_OCR_METHODOLOGY.collapseSpacedVerticalIsoText(sanitizedIsoInput);
+            if (collapsedVert) {
+                return collapsedVert;
+            }
+
+            const unboxedIsoInput = sanitizedIsoInput.replace(/[\[\]()|{}]\s*([0-9OQoIlZSB])\s*[\[\]()|{}]/g, ' $1');
+
+            // PRIORITY 2A-1: Standard 4-letter ISO 6346 owner code ending in U, J, or Z (e.g. OVLU 241816-2, MEDU 311432-9, CARU 002238-0)
+            const stdIsoMatches = [...unboxedIsoInput.matchAll(/\b([A-Za-z]{3}[UuJjZz])[\s\-_./]*([0-9OQoIlZSB]{6})[\s\-_./]*\[?([0-9OQoIlZSB])\]?\b/g)];
             for (const m of stdIsoMatches) {
                 const prefix = window.CONTAINER_OCR_METHODOLOGY.normalizeLetters(m[1]);
                 const num6 = window.CONTAINER_OCR_METHODOLOGY.normalizeDigits(m[2]);
@@ -21051,7 +21137,7 @@ window.renderPrepravaGoogleCalendarView = function(grid, list, bar, depoMatchedT
 
             // PRIORITY 2A-2: Full ISO 6346 prefix (3 or 4 letters + 6 digits + check digit, single-line or multi-line,
             // with hyphen or space: e.g. CARU 002238-0, CARU 002266 7 -> CARU 002266-7, DSFU 237856 7 -> DSFU 237856-7)
-            const fullIsoMatches = [...sanitizedIsoInput.matchAll(/\b([A-Za-z]{3,4})[\s\-_./]*([0-9OQoIlZSB]{6})[\s\-_./]*\[?([0-9OQoIlZSB])\]?\b/g)];
+            const fullIsoMatches = [...unboxedIsoInput.matchAll(/\b([A-Za-z]{3,4})[\s\-_./]*([0-9OQoIlZSB]{6})[\s\-_./]*\[?([0-9OQoIlZSB])\]?\b/g)];
             for (const m of fullIsoMatches) {
                 const prefix = window.CONTAINER_OCR_METHODOLOGY.normalizeLetters(m[1]);
                 const num6 = window.CONTAINER_OCR_METHODOLOGY.normalizeDigits(m[2]);
@@ -21063,7 +21149,7 @@ window.renderPrepravaGoogleCalendarView = function(grid, list, bar, depoMatchedT
 
             // PRIORITY 2B: Partially covered prefix by sticker (1 or 2 visible letters + 6 digits + check digit).
             // Strict rule: Never reconstruct hidden prefix letters! Show only visible letters.
-            const partialIsoMatches = [...sanitizedIsoInput.matchAll(/\b([A-Za-z]{1,2})[\s\-_./]*([0-9OQoIlZSB]{6})[\s\-_./]*\[?([0-9OQoIlZSB])\]?\b/g)];
+            const partialIsoMatches = [...unboxedIsoInput.matchAll(/\b([A-Za-z]{1,2})[\s\-_./]*([0-9OQoIlZSB]{6})[\s\-_./]*\[?([0-9OQoIlZSB])\]?\b/g)];
             for (const m of partialIsoMatches) {
                 const prefix = window.CONTAINER_OCR_METHODOLOGY.normalizeLetters(m[1]);
                 const num6 = window.CONTAINER_OCR_METHODOLOGY.normalizeDigits(m[2]);
@@ -21074,7 +21160,7 @@ window.renderPrepravaGoogleCalendarView = function(grid, list, bar, depoMatchedT
             }
 
             // PRIORITY 2C: 1-4 letters + 7 contiguous digits (e.g. CARU 0022380 -> CARU 002238-0)
-            const contiguous7Matches = [...sanitizedIsoInput.matchAll(/\b([A-Za-z]{1,4})[\s\-_./]*(\d{6})(\d)\b/g)];
+            const contiguous7Matches = [...unboxedIsoInput.matchAll(/\b([A-Za-z]{1,4})[\s\-_./]*(\d{6})(\d)\b/g)];
             for (const m of contiguous7Matches) {
                 const prefix = window.CONTAINER_OCR_METHODOLOGY.normalizeLetters(m[1]);
                 if (prefix && prefix !== 'SK' && prefix !== 'OB' && !window.CONTAINER_OCR_METHODOLOGY.isForbiddenTechnicalPrefix(prefix)) {
@@ -21083,7 +21169,7 @@ window.renderPrepravaGoogleCalendarView = function(grid, list, bar, depoMatchedT
             }
 
             // PRIORITY 2D: 1-4 letters + 6 digits
-            const isoMatch6Matches = [...sanitizedIsoInput.matchAll(/\b([A-Za-z]{1,4})[\s\-_./]*(\d{6})\b/g)];
+            const isoMatch6Matches = [...unboxedIsoInput.matchAll(/\b([A-Za-z]{1,4})[\s\-_./]*(\d{6})\b/g)];
             for (const m of isoMatch6Matches) {
                 const prefix = window.CONTAINER_OCR_METHODOLOGY.normalizeLetters(m[1]);
                 if (prefix && prefix !== 'SK' && prefix !== 'OB' && !window.CONTAINER_OCR_METHODOLOGY.isForbiddenTechnicalPrefix(prefix)) {
@@ -21185,7 +21271,7 @@ window.renderPrepravaGoogleCalendarView = function(grid, list, bar, depoMatchedT
             });
         }
 
-        async function runBrowserLocalOcrOnContainerCrops(dataUrl, firstRowDoorDataUrl, cornerDataUrl, stickerDataUrl, fileHintName = '') {
+        async function runBrowserLocalOcrOnContainerCrops(dataUrl, firstRowDoorDataUrl, verticalColDataUrl, cornerDataUrl, stickerDataUrl, fileHintName = '') {
             try {
                 const TesseractLib = await ensureBrowserTesseractLoaded();
                 if (!TesseractLib || typeof TesseractLib.recognize !== 'function') return '';
@@ -21199,20 +21285,22 @@ window.renderPrepravaGoogleCalendarView = function(grid, list, bar, depoMatchedT
                         return '';
                     }
                 };
-                // 1. First read internal sticker crop (Priority 1: SK / OB) and 1st-row door band (Priority 2: ISO 6346 on topmost line)
-                const [stickerTxt, firstRowTxt] = await Promise.all([
+                // 1. First read internal sticker crop (Priority 1: SK / OB), 1st-row door band (Priority 2: horizontal ISO), and vertical right column crop (Priority 2: vertical ISO like OVLU 241816-2)
+                const [stickerTxt, firstRowTxt, vertColTxt] = await Promise.all([
                     recognizeCrop(stickerDataUrl),
-                    recognizeCrop(firstRowDoorDataUrl)
+                    recognizeCrop(firstRowDoorDataUrl),
+                    recognizeCrop(verticalColDataUrl)
                 ]);
                 if (stickerTxt) textChunks.push(stickerTxt);
                 if (firstRowTxt) textChunks.push(firstRowTxt);
+                if (vertColTxt) textChunks.push(vertColTxt);
 
                 let candidate = window.CONTAINER_OCR_METHODOLOGY.extractFromMultiLineOcrText(textChunks.join('\n'), fileHintName);
                 if (candidate && !candidate.startsWith('XXX')) {
                     return candidate;
                 }
 
-                // 2. Fallback to wider top-right corner crop (for vertical column markings like OVLU 250605-2)
+                // 2. Fallback to wider top-right corner crop
                 const cornerTxt = await recognizeCrop(cornerDataUrl || dataUrl);
                 if (cornerTxt) textChunks.push(cornerTxt);
                 return window.CONTAINER_OCR_METHODOLOGY.extractFromMultiLineOcrText(textChunks.join('\n'), fileHintName);
@@ -21248,37 +21336,41 @@ window.renderPrepravaGoogleCalendarView = function(grid, list, bar, depoMatchedT
 
             // Prepare sharpened crops identically to mobile app (GeminiApi.kt):
             // - firstRowDoorDataUrl: strictly only the 1st (topmost) text line on container door (excludes 22G1, 45G1, LBS, KGS)
-            // - cornerDataUrl: wider top-right door area (includes vertical column markings)
+            // - verticalColDataUrl: right-side vertical column crop (captures full vertical single-char codes like OVLU 241816-2 with boxed check digit [2])
+            // - cornerDataUrl: wider top-right door area
             // - stickerDataUrl: internal SK / OB sticker region
-            const [firstRowDoorDataUrl, cornerDataUrl, stickerDataUrl] = await Promise.all([
+            const [firstRowDoorDataUrl, verticalColDataUrl, cornerDataUrl, stickerDataUrl] = await Promise.all([
                 window.CONTAINER_OCR_METHODOLOGY.cropFirstRowDoorBandDataUrl(dataUrl),
+                window.CONTAINER_OCR_METHODOLOGY.cropVerticalRightColumnDataUrl(dataUrl),
                 window.CONTAINER_OCR_METHODOLOGY.cropTopRightCornerDataUrl(dataUrl),
                 window.CONTAINER_OCR_METHODOLOGY.cropStickerRegionDataUrl(dataUrl)
             ]);
 
-            // 2. Direct browser Gemini Vision API + sharpened 1st-row door band, top-right corner & sticker crops
+            // 2. Direct browser Gemini Vision API + sharpened 1st-row door band, vertical right column, top-right corner & sticker crops
             const apiKey = window.__GEMINI_API_KEY__ || localStorage.getItem('ko_gemini_api_key') || 'AIzaSyBkkArHtJZbNtqejCb8BbuVt4R5Dr66GKE';
             let aiJson = null;
             if (apiKey && apiKey !== 'MY_GEMINI_API_KEY') {
                 try {
                     const base64Main = String(dataUrl || '').includes(',') ? dataUrl.split(',')[1] : dataUrl;
                     const base64FirstRow = firstRowDoorDataUrl && firstRowDoorDataUrl.includes(',') ? firstRowDoorDataUrl.split(',')[1] : null;
+                    const base64VerticalCol = verticalColDataUrl && verticalColDataUrl.includes(',') ? verticalColDataUrl.split(',')[1] : null;
                     const base64Corner = cornerDataUrl && cornerDataUrl.includes(',') ? cornerDataUrl.split(',')[1] : null;
                     const base64Sticker = stickerDataUrl && stickerDataUrl.includes(',') ? stickerDataUrl.split(',')[1] : null;
                     const prompt = `Jsi expertní systém pro čtení označení kontejnerů z fotografií podle závazné firemní metodiky (sjednoceno s mobilní aplikací):
 1. PRIORITA 1 (Interní štítek OB a SK plus číslo - NEJVYŠŠÍ PRIORITA):
    - Skladové kontejnery ('SK'): 'SK' + 3 až 8 číslic (např. 'SK 6240221', 'SK 0789'). Typ: 'Skladový'.
    - Obytné kontejnery ('OB'): 'OB' + 3 až 8 číslic (např. 'OB 8967', 'OB 0749'). Typ: 'Obytný'.
-2. PRIORITA 2 (Mezinárodní formát ISO 6346 - VŽDY ČTI POUZE PRVNÍ NEJVYŠŠÍ ŘÁDEK S TEXTY V PRAVÉM HORNÍM ROHU VRAT!):
-   - V pravém horním rohu vrat kontejneru identifikuj VŽDY POUZE PRVNÍ (NEJVYŠŠÍ) ŘÁDEK S TEXTY, kde je 4místný kód vlastníka končící na 'U', 'J' nebo 'Z' (např. 'MEDU', 'OVLU', 'HNKU', 'PSXU', 'CAIU', 'CARU', 'DSFU', 'MSCU') a 6místné číslo s pomlčkou a kontrolní číslicí (např. 'MEDU 311432-9', 'OVLU 220728-3', 'HNKU 625609-5', 'PSXU 279587-1', 'CAIU 262362-5', 'CARU 002238-0', 'DSFU 237856-7').
-   - Podporuj jednořádkový zápis, dvouřádkový zápis (prefix nad číslem) i svislý zápis po jednotlivých znacích pod sebou (např. 'OVLU 250605-2', 'OVLU 211421-5').
+2. PRIORITA 2 (Mezinárodní formát ISO 6346 - VODOROVNÝ 1. ŘÁDEK NEBO SVISLÝ SLOUPEC V PRAVÉM PROLISU!):
+   - a) Vodorovné značení: V pravém horním rohu vrat kontejneru identifikuj VŽDY POUZE PRVNÍ (NEJVYŠŠÍ) ŘÁDEK S TEXTY, kde je 4místný kód vlastníka končící na 'U', 'J' nebo 'Z' (např. 'MEDU', 'OVLU', 'HNKU', 'PSXU', 'CAIU', 'CARU', 'DSFU', 'MSCU') a 6místné číslo s pomlčkou a kontrolní číslicí (např. 'MEDU 311432-9', 'OVLU 220728-3', 'HNKU 625609-5', 'PSXU 279587-1', 'CAIU 262362-5', 'CARU 002238-0', 'DSFU 237856-7').
+   - b) Svislé (sloupcové) značení v pravém prolisu stěny/vrat: Znaky označení mohou být napsány SVISLE POD SEBOU po jednotlivých písmenech a číslicích v jednom sloupci (např. pod sebou 'O', 'V', 'L', 'U', pod tím '2', '4', '1', '8', '1', '6' a dole kontrolní číslice v bílém čtvercovém rámečku '[2]' -> zapiš vždy ve standardním formátu s pomlčkou: 'OVLU 241816-2', 'OVLU 250605-2', 'OVLU 211421-5').
+   - c) Ignorování kontejnerů v pozadí: Pokud je v levém horním rohu snímku v pozadí částečně vidět jiný kontejner (např. uříznuté 'OVL...'), tento kontejner v pozadí STRIKTNĚ IGNORUJ a čti vždy označení hlavního kontejneru!
    - STRIKTNĚ ODFILTRUJ A IGNORUJ technické hodnoty na druhém a dalších řádcích pod číslem kontejneru (zejména kód rozměru '22G1', '45G1' a tabulku hmotností 'M. G. W.', 'MAX. GROSS', 'TARE', 'NET', 'PAYLOAD', 'CU. CAP.' a jednotky 'KGS', 'LBS', 'CUFT', 'CUM').
    - NIKDY nespojuj jednotku váhy 'LBS' nebo 'KGS' s číslem kontejneru (např. 'LBS 311432-9' je ZAKÁZANÁ CHYBA — správně je 'MEDU 311432-9' z prvního řádku!).
 3. PRIORITA 3 (Částečně zakrytý prefix - REKONSTRUKCE SE NEPROVÁDÍ!):
    - Pokud je začátek 4místného prefixu přelepený nálepkou (např. 'DONG FANG') nebo mimo záběr a viditelné je pouze koncové 'U' před 6místným číslem, zapiš POUZE viditelná písmena (např. 'U 297591-9', 'U 272460-5', 'U 113091-6', 'U 251501-9'). Nikdy neskládej 'FANC2724605'!
 4. PRIORITA 4 (Nečitelné):
    - Vrať 'XXX 01' (nikdy 'KONT-XX' ani 'LBS ...').
-Přiložené snímky: 1) celá fotka, 2) detailně přiostřený 1. nejvyšší řádek s označením na vratech bez váhových tabulek, 3) širší detail pravého horního rohu vrat, 4) detail oblasti interního štítku SK/OB.
+Přiložené snímky: 1) celá fotka, 2) detailně přiostřený 1. nejvyšší řádek s označením na vratech bez váhových tabulek, 3) detailně přiostřený svislý pravý prolis pro svislé značení (např. OVLU 241816-2), 4) širší detail pravého horního rohu vrat, 5) detail oblasti interního štítku SK/OB.
 Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', 'spz', 'rawExtractedText'.`;
                     const parts = [
                         { text: prompt },
@@ -21286,6 +21378,9 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
                     ];
                     if (base64FirstRow) {
                         parts.push({ inlineData: { mimeType: 'image/jpeg', data: base64FirstRow } });
+                    }
+                    if (base64VerticalCol) {
+                        parts.push({ inlineData: { mimeType: 'image/jpeg', data: base64VerticalCol } });
                     }
                     if (base64Corner) {
                         parts.push({ inlineData: { mimeType: 'image/jpeg', data: base64Corner } });
@@ -21333,8 +21428,8 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
                 } catch (e) {}
             }
 
-            // 3. Browser-side Local OCR fallback / verification (Tesseract.js on sharpened 1st-row door band, sticker & corner crops)
-            const localOcrDes = await runBrowserLocalOcrOnContainerCrops(dataUrl, firstRowDoorDataUrl, cornerDataUrl, stickerDataUrl, fileHintName);
+            // 3. Browser-side Local OCR fallback / verification (Tesseract.js on sharpened 1st-row door band, vertical column, sticker & corner crops)
+            const localOcrDes = await runBrowserLocalOcrOnContainerCrops(dataUrl, firstRowDoorDataUrl, verticalColDataUrl, cornerDataUrl, stickerDataUrl, fileHintName);
             if (localOcrDes && !localOcrDes.startsWith('XXX')) {
                 const baseInfo = aiJson || await analyzePhotoCanvasClientSide(dataUrl, fileHintName);
                 baseInfo.designation = window.normalizeContainerDesignationJs(localOcrDes, fileHintName);
@@ -24067,7 +24162,7 @@ function buildShareTextSummary(type, id) {
     </script>
 
     <!-- ============================================================================ -->
-    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v483)      -->
+    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v484)      -->
     <!-- Zkrácená verze Přepravy: ostatní agendy jsou na iPhonu kompletně skryté.     -->
     <!-- ============================================================================ -->
     <style id="iphoneAppStyles">
@@ -24353,7 +24448,7 @@ function buildShareTextSummary(type, id) {
                     <span class="material-icons text-[#38BDF8] text-xl">speed</span>
                     <div>
                         <div class="font-black text-sm leading-tight text-white">Aktualizace</div>
-                        <div id="iosModalVersionBadge" class="text-[11px] text-[#94A3B8] font-bold">Přeprava • v 483</div>
+                        <div id="iosModalVersionBadge" class="text-[11px] text-[#94A3B8] font-bold">Přeprava • v 484</div>
                     </div>
                 </div>
                 <button type="button" onclick="closeIphoneInstallModal()" class="px-3 py-1.5 rounded-lg bg-[#334155] hover:bg-[#475569] text-white text-xs font-extrabold transition" title="Zavřít">
@@ -24395,7 +24490,7 @@ function buildShareTextSummary(type, id) {
 
                 <!-- Skrytý progress bar element pro zpětnou kompatibilitu -->
                 <div id="iosGhUpdateProgressBar" class="hidden"></div>
-                <div id="iosGhRemoteVerBadge" class="hidden">v 483</div>
+                <div id="iosGhRemoteVerBadge" class="hidden">v 484</div>
 
                 <!-- Stavový text pod tachometrem -->
                 <p id="iosGhUpdateStatusText" class="text-xs font-bold text-[#CBD5E1] min-h-[32px] flex items-center justify-center px-2">
@@ -24771,7 +24866,7 @@ function buildShareTextSummary(type, id) {
         };
 
         window.shareAndroidInstallWhatsApp = function() {
-            const ver = window.CURRENT_SW_VERSION_NAME || '483';
+            const ver = window.CURRENT_SW_VERSION_NAME || '484';
             const url = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?android=1&install=1';
             const txt = `Kontejnery Ostrava — Rychlá instalace mobilní aplikace pro Android přes prohlížeč Chrome bez APK (v ${ver}): ${url}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');
