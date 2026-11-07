@@ -1,12 +1,12 @@
 {
   "folder": "ZALOHA_DAT",
   "masterSource": "HLAVNÍ PC APLIKACE (MASTER DATABÁZE)",
-  "lastBackupAtCz": "7. 11. 2026 10:25:55",
-  "lastBackupAtIso": "2026-11-07T09:25:55.653Z",
-  "version": 482,
+  "lastBackupAtCz": "7. 11. 2026 12:30:12",
+  "lastBackupAtIso": "2026-11-07T11:30:12.963Z",
+  "version": 483,
   "totalRecords": 1597,
-  "diskBackupSizeKbWithPhotos": 17871,
-  "githubBackupSizeKbNoPhotos": 2777,
+  "diskBackupSizeKbWithPhotos": 7422,
+  "githubBackupSizeKbNoPhotos": 2780,
   "photosIncludedOnGitHub": false,
   "recordCounts": {
     "containers": 50,
@@ -27,6 +27,6 @@
     "whatsappStaging": 9
   },
   "latestMasterFile": "ZALOHA_DAT/kompletni_databaze_master.json",
-  "latestTimestampedFile": "ZALOHA_DAT/Zaloha_Databaze_2026-11-07_10-25-55.json",
-  "localPcDownloadedFile": "Zaloha_Databaze_Kontejnery_Ostrava_2026-11-07_10-25-55.json"
+  "latestTimestampedFile": "ZALOHA_DAT/Zaloha_Databaze_2026-11-07_12-30-12.json",
+  "localPcDownloadedFile": "Zaloha_Databaze_Kontejnery_Ostrava_2026-11-07_12-30-12.json"
 }
