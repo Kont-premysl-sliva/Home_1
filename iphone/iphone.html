@@ -541,7 +541,7 @@ try {
             <!-- Verze aplikace a datum -->
             <div class="inline-flex items-center gap-1.5 bg-sky-950/80 border border-sky-400/40 text-sky-200 px-3 py-1 rounded-full text-xs font-black shadow-inner mb-4">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="loginVersionDisplay">v 482 • 7.11.2026</span>
+                <span id="loginVersionDisplay">v 483 • 7.11.2026</span>
             </div>
 
             <!-- Přepínač PC vs Řidič -->
@@ -929,7 +929,7 @@ try {
                 <span>KONTEJNERY OSTRAVA - POHODA</span>
                 <span class="hidden" id="pohodaWindowTitleAgenda"></span>
                 <button type="button" onclick="window.handleHeaderUpdateClick()" class="cursor-pointer bg-[#0A2E6E] hover:bg-blue-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm border border-sky-300/50 flex items-center gap-1" title="Verze aplikace • Kliknutím zkontrolujete nebo ručně potvrdíte novou aktualizaci">
-                    <span id="headerVersionBadge">v 482 • 7.11.2026</span>
+                    <span id="headerVersionBadge">v 483 • 7.11.2026</span>
                     <span id="ghUpdateBadge" class="hidden bg-[#CC0000] text-yellow-200 text-[10px] px-1.5 py-0.5 rounded font-black animate-pulse flex items-center gap-0.5"><span class="material-icons text-[11px]">system_update_alt</span><span>NOVÁ</span></span>
                 </button>
             </h1>
@@ -3436,7 +3436,7 @@ try {
 
     <script>
     (function() {
-        const CURRENT_SW_VERSION = 482;
+        const CURRENT_SW_VERSION = 483;
         const CURRENT_SW_VERSION_NAME = CURRENT_SW_VERSION;
         const CURRENT_SW_RELEASE_DATE = "7.11.2026";
         const CURRENT_SW_RELEASE_DATE_SPACED = "7. 11. 2026";
@@ -3853,20 +3853,26 @@ try {
                 images: finalPhotos
             };
         };
+        const PHOTO_SLOT_KEYS = new Set(['containerImageUri', 'containerImageUri2', 'containerImageUri3', 'imageUri', 'deliveryPhotos', 'extraImages', 'photo', 'photos']);
         const safeMasterMergeRecord = (ex, inc) => {
             if (!ex) return { ...inc };
             if (!inc) return { ...ex };
             const incomingTime = Math.max(Number(inc.timestamp || 0), Number(inc.lastModified || 0));
             const existingTime = Math.max(Number(ex.timestamp || 0), Number(ex.lastModified || 0));
             const isIncomingNewer = incomingTime >= existingTime;
+            const allowExplicitPhotoClear = Boolean(inc._explicitPhotoSlots && !inc._photosStrippedForGitHub && isIncomingNewer);
             const out = { ...ex };
             for (const [key, val] of Object.entries(inc)) {
                 if (val === undefined || val === null) continue;
                 const exVal = ex[key];
                 const isValEmpty = (typeof val === 'string' && val.trim() === '') || (Array.isArray(val) && val.length === 0);
                 const isExEmpty = exVal === undefined || exVal === null || (typeof exVal === 'string' && exVal.trim() === '') || (Array.isArray(exVal) && exVal.length === 0);
-                // V režimu Hlavní PC (Master) nikdy nepřepíšeme vyplněný údaj prázdnou hodnotou z mobilu
-                if (isValEmpty && !isExEmpty) continue;
+                if (isValEmpty && !isExEmpty) {
+                    if (allowExplicitPhotoClear && PHOTO_SLOT_KEYS.has(key)) {
+                        out[key] = val;
+                    }
+                    continue;
+                }
                 if (isExEmpty || isIncomingNewer) {
                     out[key] = val;
                 }
@@ -3876,47 +3882,141 @@ try {
         };
         window._koDeepPhotoVault = window._koDeepPhotoVault || new Map();
 
+        window.getPhotoFingerprint = function(uri) {
+            const clean = sanitizeSinglePhotoUri(uri);
+            if (!clean || !isPortablePhotoUri(clean)) return '';
+            const commaIdx = clean.indexOf(',');
+            const payload = (commaIdx !== -1 ? clean.slice(commaIdx + 1) : clean).trim();
+            const len = payload.length;
+            if (!len) return '';
+            const head = payload.slice(0, 64);
+            const mid = payload.slice(Math.max(0, (len >> 1) - 32), (len >> 1) + 32);
+            const tail = payload.slice(Math.max(0, len - 64));
+            return `${len}:${head}:${mid}:${tail}`;
+        };
+
+        window.dedupeTransportPhotoSlots = function(rec, options = {}) {
+            if (!rec || typeof rec !== 'object') {
+                return { slots: ['', '', '', ''], uniquePhotos: [], previewUri: '' };
+            }
+            const prevVault = (rec.id && window._koDeepPhotoVault && window._koDeepPhotoVault.get(`preprava_${rec.id}`)) || {};
+            const isFreshModalSave = Boolean(options.freshModalSave || rec._freshModalSave);
+            const preserveEmptySlots = Boolean(options.preserveEmptySlots || rec._explicitPhotoSlots || prevVault.explicitSlots);
+            const seenFp = new Set();
+            const acceptUnique = (u) => {
+                const c = sanitizeSinglePhotoUri(u);
+                if (!c || !isPortablePhotoUri(c)) return '';
+                const fp = window.getPhotoFingerprint(c);
+                if (!fp || seenFp.has(fp)) return '';
+                seenFp.add(fp);
+                return c;
+            };
+
+            if (isFreshModalSave) {
+                const s1 = acceptUnique(rec.containerImageUri);
+                const s2 = acceptUnique(rec.containerImageUri2);
+                const s3 = acceptUnique(rec.containerImageUri3);
+                const s4 = acceptUnique(rec.imageUri);
+                const slots = [s1, s2, s3, s4];
+                const uniquePhotos = slots.filter(Boolean);
+                return { slots, uniquePhotos, previewUri: uniquePhotos[0] || '' };
+            }
+
+            if (preserveEmptySlots) {
+                const raw1 = (rec._slot1HasPhoto === false || (prevVault.explicitSlots && prevVault.slot1HasPhoto === false && rec.containerImageUri === prevVault.previewUri))
+                    ? ''
+                    : (rec.containerImageUri || prevVault.containerImageUri || '');
+                const raw2 = rec.containerImageUri2 || prevVault.containerImageUri2 || '';
+                const raw3 = rec.containerImageUri3 || prevVault.containerImageUri3 || '';
+                const raw4 = rec.imageUri || prevVault.imageUri || '';
+                const s1 = acceptUnique(raw1);
+                const s2 = acceptUnique(raw2);
+                const s3 = acceptUnique(raw3);
+                const s4 = acceptUnique(raw4);
+                const slots = [s1, s2, s3, s4];
+                const uniquePhotos = slots.filter(Boolean);
+                return { slots, uniquePhotos, previewUri: uniquePhotos[0] || '' };
+            }
+
+            const candidates = [];
+            const pushSplit = (str) => {
+                if (!str) return;
+                String(str).split('|').forEach(p => { if (p) candidates.push(p); });
+            };
+            if (rec.containerImageUri) candidates.push(rec.containerImageUri);
+            if (prevVault.containerImageUri) candidates.push(prevVault.containerImageUri);
+            if (rec.containerImageUri2) candidates.push(rec.containerImageUri2);
+            if (prevVault.containerImageUri2) candidates.push(prevVault.containerImageUri2);
+            if (rec.containerImageUri3) candidates.push(rec.containerImageUri3);
+            if (prevVault.containerImageUri3) candidates.push(prevVault.containerImageUri3);
+            if (rec.imageUri) candidates.push(rec.imageUri);
+            if (prevVault.imageUri) candidates.push(prevVault.imageUri);
+            pushSplit(rec.deliveryPhotos);
+            pushSplit(prevVault.deliveryPhotos);
+            pushSplit(rec.extraImages);
+            pushSplit(prevVault.extraImages);
+            if (Array.isArray(rec.photos)) rec.photos.forEach(p => { if (p) candidates.push(p); });
+            if (rec.photo) candidates.push(rec.photo);
+            if (Array.isArray(prevVault.photos)) prevVault.photos.forEach(p => { if (p) candidates.push(p); });
+
+            const uniquePhotos = [];
+            for (const cand of candidates) {
+                const valid = acceptUnique(cand);
+                if (valid && uniquePhotos.length < 4) {
+                    uniquePhotos.push(valid);
+                }
+            }
+            const slots = [
+                uniquePhotos[0] || '',
+                uniquePhotos[1] || '',
+                uniquePhotos[2] || '',
+                uniquePhotos[3] || ''
+            ];
+            return { slots, uniquePhotos, previewUri: uniquePhotos[0] || '' };
+        };
+
         window.offloadRecordDeepPhotos = function(recordType, rec) {
             if (!rec || typeof rec !== 'object' || !rec.id) return rec;
-            const key = `${recordType}_${rec.id}`;
             if (recordType === 'preprava' || recordType === 'transports') {
-                const c1 = sanitizeSinglePhotoUri(rec.containerImageUri || (rec.deliveryPhotos ? String(rec.deliveryPhotos).split('|')[0] : ''));
-                const c2 = sanitizeSinglePhotoUri(rec.containerImageUri2 || (rec.extraImages ? String(rec.extraImages).split('|')[0] : (rec.deliveryPhotos ? String(rec.deliveryPhotos).split('|')[1] : '')));
-                const c3 = sanitizeSinglePhotoUri(rec.containerImageUri3 || (rec.extraImages ? String(rec.extraImages).split('|')[1] : (rec.deliveryPhotos ? String(rec.deliveryPhotos).split('|')[2] : '')));
-                const mainImg = sanitizeSinglePhotoUri(rec.imageUri || rec.photo || (Array.isArray(rec.photos) && rec.photos[0]) || '');
-                const prevVault = window._koDeepPhotoVault.get(`preprava_${rec.id}`) || {};
-                const fullC1 = c1 || prevVault.containerImageUri || '';
-                const fullC2 = c2 || prevVault.containerImageUri2 || '';
-                const fullC3 = c3 || prevVault.containerImageUri3 || '';
-                const fullMain = mainImg || prevVault.imageUri || '';
-                const allList = [fullC1, fullC2, fullC3, fullMain].filter(Boolean);
-                const uniquePhotos = [...new Set(allList)];
-                if (uniquePhotos.length > 0 || rec.deliveryPhotos || rec.extraImages) {
+                const { slots, uniquePhotos, previewUri } = window.dedupeTransportPhotoSlots(rec);
+                const [fullC1, fullC2, fullC3, fullMain] = slots;
+                const isExplicit = Boolean(rec._explicitPhotoSlots || rec._freshModalSave);
+                if (uniquePhotos.length > 0) {
                     window._koDeepPhotoVault.set(`preprava_${rec.id}`, {
                         containerImageUri: fullC1,
                         containerImageUri2: fullC2,
                         containerImageUri3: fullC3,
                         imageUri: fullMain,
-                        deliveryPhotos: rec.deliveryPhotos || prevVault.deliveryPhotos || [fullC1, fullC2, fullC3].filter(Boolean).join('|'),
-                        extraImages: rec.extraImages || prevVault.extraImages || [fullC2, fullC3].filter(Boolean).join('|'),
-                        photos: Array.isArray(rec.photos) && rec.photos.length ? rec.photos : uniquePhotos,
+                        previewUri: previewUri,
+                        slot1HasPhoto: Boolean(fullC1),
+                        explicitSlots: isExplicit,
+                        photos: uniquePhotos,
                         photoCount: uniquePhotos.length
                     });
-                    if ( window._mobileFullPhotoMemoryMap && uniquePhotos[0]) {
-                        window._mobileFullPhotoMemoryMap.set(`preprava_${rec.id}`, uniquePhotos[0]);
+                    if (window._mobileFullPhotoMemoryMap && previewUri) {
+                        window._mobileFullPhotoMemoryMap.set(`preprava_${rec.id}`, previewUri);
                     }
+                } else {
+                    if (window._koDeepPhotoVault) window._koDeepPhotoVault.delete(`preprava_${rec.id}`);
+                    if (window._mobileFullPhotoMemoryMap) window._mobileFullPhotoMemoryMap.delete(`preprava_${rec.id}`);
                 }
-                return {
+                const outRec = {
                     ...rec,
-                    containerImageUri: fullC1 || fullMain || '',
+                    containerImageUri: previewUri,
                     containerImageUri2: '',
                     containerImageUri3: '',
+                    imageUri: '',
+                    photo: '',
                     deliveryPhotos: '',
                     extraImages: '',
                     photos: [],
+                    _slot1HasPhoto: Boolean(fullC1),
+                    _explicitPhotoSlots: isExplicit,
                     _photoCount: uniquePhotos.length,
-                    _hasDeepPhotos: uniquePhotos.length > 1
+                    _hasDeepPhotos: uniquePhotos.length > 1 || (!fullC1 && uniquePhotos.length > 0)
                 };
+                delete outRec._freshModalSave;
+                return outRec;
             } else if (recordType === 'kontejner' || recordType === 'containers') {
                 const prevVault = window._koDeepPhotoVault.get(`kontejner_${rec.id}`) || {};
                 const extracted = extractPortablePhotosFromContainer(rec);
@@ -3949,23 +4049,35 @@ try {
             if (!rec || typeof rec !== 'object' || !rec.id) return rec;
             const normType = (recordType === 'transports' || recordType === 'preprava') ? 'preprava' : 'kontejner';
             const vault = window._koDeepPhotoVault && window._koDeepPhotoVault.get(`${normType}_${rec.id}`);
-            if (!vault) return rec;
             if (normType === 'preprava') {
-                rec.containerImageUri = rec.containerImageUri || vault.containerImageUri || '';
-                rec.containerImageUri2 = rec.containerImageUri2 || vault.containerImageUri2 || '';
-                rec.containerImageUri3 = rec.containerImageUri3 || vault.containerImageUri3 || '';
-                rec.imageUri = rec.imageUri || vault.imageUri || '';
-                rec.deliveryPhotos = rec.deliveryPhotos || vault.deliveryPhotos || '';
-                rec.extraImages = rec.extraImages || vault.extraImages || '';
-                if ((!Array.isArray(rec.photos) || !rec.photos.length) && Array.isArray(vault.photos)) {
-                    rec.photos = vault.photos;
+                if (vault) {
+                    rec.containerImageUri = vault.slot1HasPhoto === false ? '' : (vault.containerImageUri || '');
+                    rec.containerImageUri2 = vault.containerImageUri2 || '';
+                    rec.containerImageUri3 = vault.containerImageUri3 || '';
+                    rec.imageUri = vault.imageUri || '';
+                    rec.deliveryPhotos = '';
+                    rec.extraImages = '';
+                    rec.photo = '';
+                    rec.photos = Array.isArray(vault.photos) ? [...vault.photos] : [rec.containerImageUri, rec.containerImageUri2, rec.containerImageUri3, rec.imageUri].filter(Boolean);
+                    rec._explicitPhotoSlots = Boolean(vault.explicitSlots || rec._explicitPhotoSlots);
+                } else {
+                    const { slots, uniquePhotos } = window.dedupeTransportPhotoSlots(rec);
+                    rec.containerImageUri = slots[0];
+                    rec.containerImageUri2 = slots[1];
+                    rec.containerImageUri3 = slots[2];
+                    rec.imageUri = slots[3];
+                    rec.deliveryPhotos = '';
+                    rec.extraImages = '';
+                    rec.photo = '';
+                    rec.photos = uniquePhotos;
                 }
-            } else {
-                rec.imageUri = rec.imageUri || vault.imageUri || '';
-                rec.extraImages = rec.extraImages || vault.extraImages || '';
-                if ((!Array.isArray(rec.images) || rec.images.length <= 1) && Array.isArray(vault.images) && vault.images.length) {
-                    rec.images = vault.images;
-                }
+                return rec;
+            }
+            if (!vault) return rec;
+            rec.imageUri = rec.imageUri || vault.imageUri || '';
+            rec.extraImages = rec.extraImages || vault.extraImages || '';
+            if ((!Array.isArray(rec.images) || rec.images.length <= 1) && Array.isArray(vault.images) && vault.images.length) {
+                rec.images = vault.images;
             }
             return rec;
         };
@@ -5945,20 +6057,22 @@ try {
                 if (typeof window.ensureAllLocalAgendasHydrated === 'function') window.ensureAllLocalAgendasHydrated();
                 (allContainers || []).forEach(c => {
                     if (!c || !c.id) return;
-                    if (typeof window.hydrateRecordPhotosForDetail === 'function') {
-                        window.hydrateRecordPhotosForDetail('kontejner', c);
-                    }
                     const memPhoto = window._mobileFullPhotoMemoryMap && window._mobileFullPhotoMemoryMap.get(`kontejner_${c.id}`);
                     if (memPhoto && !c.imageUri) c.imageUri = memPhoto;
-                });
-                (allTransports || []).forEach(t => {
-                    if (!t || !t.id) return;
-                    if (typeof window.hydrateRecordPhotosForDetail === 'function') {
-                        window.hydrateRecordPhotosForDetail('preprava', t);
+                    if (typeof window.offloadRecordDeepPhotos === 'function') {
+                        window.offloadRecordDeepPhotos('kontejner', c);
                     }
-                    const memPhoto = window._mobileFullPhotoMemoryMap && window._mobileFullPhotoMemoryMap.get(`preprava_${t.id}`);
-                    if (memPhoto && !t.containerImageUri && !t.imageUri) t.containerImageUri = memPhoto;
                 });
+                if (Array.isArray(allTransports)) {
+                    allTransports = allTransports.map(t => {
+                        if (!t || !t.id) return t;
+                        const memPhoto = window._mobileFullPhotoMemoryMap && window._mobileFullPhotoMemoryMap.get(`preprava_${t.id}`);
+                        if (memPhoto && !t.containerImageUri && !t.imageUri) t.containerImageUri = memPhoto;
+                        return typeof window.offloadRecordDeepPhotos === 'function'
+                            ? window.offloadRecordDeepPhotos('preprava', t)
+                            : t;
+                    });
+                }
             } catch (e) {}
         };
 
@@ -7639,7 +7753,7 @@ try {
             const nowTs = Date.now();
             const isPhotoCol = (k === 'containers' || k === 'transports');
             const idx = list.findIndex(x => x.id === id);
-            if (idx >= 0 && isPhotoCol && typeof window.hydrateRecordPhotosForDetail === 'function') {
+            if (idx >= 0 && isPhotoCol && !data?._freshModalSave && typeof window.hydrateRecordPhotosForDetail === 'function') {
                 window.hydrateRecordPhotosForDetail(k, list[idx]);
             }
             const fullMerged = idx >= 0
@@ -7653,7 +7767,11 @@ try {
             try { if (typeof _markOfflinePendingChange === 'function') _markOfflinePendingChange(k, id); } catch (e) {}
             try {
                 if (db && fbSetDoc && fbDoc) {
-                    const cleanDoc = cleanForFirestore(fullMerged);
+                    const cloudCandidate = (k === 'transports' && typeof window.hydrateRecordPhotosForDetail === 'function')
+                        ? window.hydrateRecordPhotosForDetail('preprava', { ...m })
+                        : { ...fullMerged };
+                    delete cloudCandidate._freshModalSave;
+                    const cleanDoc = cleanForFirestore(cloudCandidate);
                     fbSetDoc(fbDoc(db, k, id), cleanDoc, { merge: true }).catch(()=>{});
                     if (k === 'customers') {
                         const mirror = cleanForFirestore({
@@ -7861,11 +7979,16 @@ try {
                 }
 
                 if (isHydrated('transports')) {
-                    allTransports = dedupAndClean('transports', allTransports).map(t => ({
-                        ...t,
-                        depo: (t.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1',
-                        status: (t.status && String(t.status).trim()) ? String(t.status).trim() : 'PLÁNOVÁNO'
-                    }));
+                    allTransports = dedupAndClean('transports', allTransports).map(t => {
+                        const base = {
+                            ...t,
+                            depo: (t.depo === 'Depo 2') ? 'Depo 2' : 'Depo 1',
+                            status: (t.status && String(t.status).trim()) ? String(t.status).trim() : 'PLÁNOVÁNO'
+                        };
+                        return typeof window.offloadRecordDeepPhotos === 'function'
+                            ? window.offloadRecordDeepPhotos('transports', base)
+                            : base;
+                    });
                     saveLocal('transports', allTransports);
                 }
 
@@ -8340,21 +8463,28 @@ try {
         };
 
         window.resolveFullResolutionPhotoUri = function(srcOrThumb, recordId = null, recordType = 'preprava') {
+            if (srcOrThumb && typeof srcOrThumb === 'string' && srcOrThumb.startsWith('data:image/') && srcOrThumb.length > 1000) {
+                return srcOrThumb;
+            }
             if (recordId) {
                 const byRec = window._mobileFullPhotoMemoryMap.get(`${recordType}_${recordId}`);
                 if (byRec && (!srcOrThumb || String(srcOrThumb).startsWith('blob:') || byRec.length >= (srcOrThumb || '').length)) return byRec;
                 if (recordType === 'preprava') {
                     const t = (allTransports || []).find(x => String(x.id) === String(recordId));
                     if (t) {
-                        if (typeof window.hydrateRecordPhotosForDetail === 'function') window.hydrateRecordPhotosForDetail('preprava', t);
-                        const raw = t.containerImageUri || t.photo || (Array.isArray(t.photos) && t.photos[0]) || t.imageUri || '';
+                        const copy = typeof window.hydrateRecordPhotosForDetail === 'function'
+                            ? window.hydrateRecordPhotosForDetail('preprava', { ...t })
+                            : t;
+                        const raw = copy.containerImageUri || copy.containerImageUri2 || copy.containerImageUri3 || copy.imageUri || '';
                         if (raw) return raw;
                     }
                 } else if (recordType === 'kontejner') {
                     const k = (allContainers || []).find(x => String(x.id) === String(recordId));
                     if (k) {
-                        if (typeof window.hydrateRecordPhotosForDetail === 'function') window.hydrateRecordPhotosForDetail('kontejner', k);
-                        const raw = resolveContainerMainPhoto(k);
+                        const copy = typeof window.hydrateRecordPhotosForDetail === 'function'
+                            ? window.hydrateRecordPhotosForDetail('kontejner', { ...k })
+                            : k;
+                        const raw = resolveContainerMainPhoto(copy);
                         if (raw) return raw;
                     }
                 }
@@ -10636,9 +10766,11 @@ try {
         window.handleCompletePhotoUpload = async (input) => {
             const files = Array.from(input?.files || []);
             if (!files.length) return;
+            window._completeModalPhotos = Array.isArray(window._completeModalPhotos) ? window._completeModalPhotos.filter(Boolean) : [];
+            const existingFps = new Set(window._completeModalPhotos.map(p => window.getPhotoFingerprint ? window.getPhotoFingerprint(p) : p).filter(Boolean));
             for (const f of files) {
                 if (!f.type.startsWith('image/')) continue;
-                if ((window._completeModalPhotos || []).length >= 3) {
+                if (window._completeModalPhotos.length >= 3) {
                     showToast('Lze vložit maximálně 3 fotografie');
                     break;
                 }
@@ -10652,7 +10784,13 @@ try {
                 const comp = typeof window.compressImageDataUrlForSync === 'function'
                     ? await window.compressImageDataUrlForSync(rawUrl, 960, 0.82)
                     : rawUrl;
-                if (comp && (window._completeModalPhotos || []).length < 3) {
+                if (comp && window._completeModalPhotos.length < 3) {
+                    const fp = window.getPhotoFingerprint ? window.getPhotoFingerprint(comp) : comp;
+                    if (fp && existingFps.has(fp)) {
+                        showToast('⚠️ Tato fotografie je již vložena');
+                        continue;
+                    }
+                    if (fp) existingFps.add(fp);
                     window._completeModalPhotos.push(comp);
                 }
             }
@@ -10741,23 +10879,36 @@ try {
                 }
             }
 
-            // 2. Zkontrolujeme přepravu v databázi
+            // 2. Zkontrolujeme přepravu v databázi (přes 4 kanonické sloty bez duplicit)
             if (tId && typeof allTransports !== 'undefined' && Array.isArray(allTransports)) {
                 const t = allTransports.find(x => String(x.id) === String(tId));
                 if (t) {
-                    const photos = Array.isArray(t.photos) ? [...t.photos] : (t.photo ? [t.photo] : []);
-                    const pIdx = photos.indexOf(orig);
-                    if (pIdx !== -1) {
-                        photos[pIdx] = rotated;
-                    } else if (photos.length > 0) {
-                        photos[0] = rotated;
-                    } else {
-                        photos.push(rotated);
-                    }
+                    const hydrated = typeof window.hydrateRecordPhotosForDetail === 'function'
+                        ? window.hydrateRecordPhotosForDetail('preprava', { ...t })
+                        : { ...t };
+                    const origFp = window.getPhotoFingerprint ? window.getPhotoFingerprint(orig) : '';
+                    const matchSlot = (val) => val && (val === orig || (origFp && window.getPhotoFingerprint(val) === origFp));
+                    let s1 = hydrated.containerImageUri || '';
+                    let s2 = hydrated.containerImageUri2 || '';
+                    let s3 = hydrated.containerImageUri3 || '';
+                    let s4 = hydrated.imageUri || '';
+                    if (matchSlot(s1)) s1 = rotated;
+                    else if (matchSlot(s2)) s2 = rotated;
+                    else if (matchSlot(s3)) s3 = rotated;
+                    else if (matchSlot(s4)) s4 = rotated;
+                    else s1 = rotated;
                     const updated = {
-                        ...t,
-                        photo: photos[0],
-                        photos: photos,
+                        ...hydrated,
+                        containerImageUri: s1,
+                        containerImageUri2: s2,
+                        containerImageUri3: s3,
+                        imageUri: s4,
+                        photo: '',
+                        photos: [],
+                        deliveryPhotos: '',
+                        extraImages: '',
+                        _explicitPhotoSlots: true,
+                        _freshModalSave: true,
                         timestamp: Date.now()
                     };
                     if (typeof upsert === 'function') {
@@ -10816,25 +10967,38 @@ try {
                 if (!transportId) return;
                 const t = (allTransports || []).find(x => String(x.id) === String(transportId));
                 if (!t) return;
-                const photos = Array.isArray(t.photos) ? [...t.photos] : (t.photo ? [t.photo] : []);
-                const targetPhoto = photos[photoIndex] || t.photo || '';
-                if (!targetPhoto) {
+                const hydrated = typeof window.hydrateRecordPhotosForDetail === 'function'
+                    ? window.hydrateRecordPhotosForDetail('preprava', { ...t })
+                    : { ...t };
+                const slots = [
+                    hydrated.containerImageUri || '',
+                    hydrated.containerImageUri2 || '',
+                    hydrated.containerImageUri3 || '',
+                    hydrated.imageUri || ''
+                ];
+                let targetSlotIdx = slots.findIndex(Boolean);
+                if (photoIndex > 0 && slots[photoIndex]) targetSlotIdx = photoIndex;
+                if (targetSlotIdx === -1) {
                     showToast("Tato přeprava nemá fotografii");
                     return;
                 }
                 showToast("Otáčím fotografii přepravy o 90°...");
-                const rotated = await window.rotateImageDataUrl(targetPhoto, degrees);
+                const rotated = await window.rotateImageDataUrl(slots[targetSlotIdx], degrees);
                 if (!rotated) return;
+                slots[targetSlotIdx] = rotated;
 
-                if (photos.length > photoIndex) {
-                    photos[photoIndex] = rotated;
-                } else {
-                    photos.push(rotated);
-                }
                 const updated = {
-                    ...t,
-                    photo: photos[0],
-                    photos: photos,
+                    ...hydrated,
+                    containerImageUri: slots[0],
+                    containerImageUri2: slots[1],
+                    containerImageUri3: slots[2],
+                    imageUri: slots[3],
+                    photo: '',
+                    photos: [],
+                    deliveryPhotos: '',
+                    extraImages: '',
+                    _explicitPhotoSlots: true,
+                    _freshModalSave: true,
                     timestamp: Date.now()
                 };
                 if (typeof upsert === 'function') {
@@ -10994,9 +11158,14 @@ try {
                     driSel.value = existingDriver;
                 }
 
-                // Fotografie (max. 3)
-                const existingPhotos = Array.isArray(t.photos) ? [...t.photos] : (t.photo ? [t.photo] : []);
-                window._completeModalPhotos = existingPhotos.filter(Boolean).slice(0, 3);
+                // Fotografie (max. 3, unikátní zleva od FOTO 1)
+                const hydratedForModal = typeof window.hydrateRecordPhotosForDetail === 'function'
+                    ? window.hydrateRecordPhotosForDetail('preprava', { ...t })
+                    : { ...t };
+                const { uniquePhotos: existingUnique } = window.dedupeTransportPhotoSlots
+                    ? window.dedupeTransportPhotoSlots(hydratedForModal)
+                    : { uniquePhotos: [hydratedForModal.containerImageUri, hydratedForModal.containerImageUri2, hydratedForModal.containerImageUri3].filter(Boolean) };
+                window._completeModalPhotos = existingUnique.slice(0, 3);
                 window.renderCompleteModalPhotoSlots();
 
                 const modal = document.getElementById('transportCompleteModal');
@@ -11059,16 +11228,26 @@ try {
                 const finalDriver = document.getElementById('completeTransportDriverSelect')?.value || 'Martin';
                 const noteVal = (document.getElementById('completeTransportNoteInput')?.value || '').trim();
 
-                // Spojení fotek: nově nahrané z modálu mají prioritu, doplněné do max 3
-                const modalPhotos = (window._completeModalPhotos || []).filter(Boolean);
-                const existingPhotos = Array.isArray(t.photos) ? [...t.photos].filter(Boolean) : (t.photo ? [t.photo] : []);
-                const mergedPhotos = [...modalPhotos];
-                for (const p of existingPhotos) {
-                    if (!mergedPhotos.includes(p) && mergedPhotos.length < 3) {
-                        mergedPhotos.push(p);
-                    }
+                // Srovnání unikátních fotek z modálu zleva (FOTO 1 -> FOTO 3) bez duplikace do FOTO 4
+                const seenFp = new Set();
+                const cleanModalPhotos = [];
+                for (const p of (window._completeModalPhotos || [])) {
+                    const clean = sanitizeSinglePhotoUri(p);
+                    if (!clean || !isPortablePhotoUri(clean)) continue;
+                    const fp = window.getPhotoFingerprint ? window.getPhotoFingerprint(clean) : clean;
+                    if (!fp || seenFp.has(fp)) continue;
+                    seenFp.add(fp);
+                    cleanModalPhotos.push(clean);
+                    if (cleanModalPhotos.length >= 3) break;
                 }
-                const primaryPhoto = mergedPhotos[0] || '';
+
+                const hydratedPrev = typeof window.hydrateRecordPhotosForDetail === 'function'
+                    ? window.hydrateRecordPhotosForDetail('preprava', { ...t })
+                    : { ...t };
+                let slot4Uri = sanitizeSinglePhotoUri(hydratedPrev.imageUri || '');
+                if (slot4Uri && seenFp.has(window.getPhotoFingerprint ? window.getPhotoFingerprint(slot4Uri) : slot4Uri)) {
+                    slot4Uri = '';
+                }
 
                 const updated = {
                     ...t,
@@ -11088,9 +11267,16 @@ try {
                     driver: finalDriver,
                     driverNote: noteVal,
                     note: noteVal || t.note || '',
-                    photos: mergedPhotos,
-                    photo: primaryPhoto,
-                    containerImageUri: primaryPhoto,
+                    containerImageUri: cleanModalPhotos[0] || '',
+                    containerImageUri2: cleanModalPhotos[1] || '',
+                    containerImageUri3: cleanModalPhotos[2] || '',
+                    imageUri: slot4Uri,
+                    photo: '',
+                    photos: [],
+                    deliveryPhotos: '',
+                    extraImages: '',
+                    _explicitPhotoSlots: true,
+                    _freshModalSave: true,
                     completedAt: Date.now(),
                     timestamp: Date.now()
                 };
@@ -13695,44 +13881,22 @@ ${itemsXml}
                 };
                 const extractAllTransportPhotosForCard = (t) => {
                     if (!t) return [];
-                    const primaryFast = sanitizeSinglePhotoUri(t.containerImageUri || t.imageUri || t.photo || '');
+                    const primaryFast = sanitizeSinglePhotoUri(t.containerImageUri || '');
                     if (primaryFast && isPortablePhotoUri(primaryFast)) {
                         const totalCnt = Math.max(1, Number(t._photoCount || 1));
                         const arr = [primaryFast];
-                        for (let i = 1; i < totalCnt; i++) arr.push(primaryFast);
+                        for (let i = 1; i < totalCnt; i++) arr.push(`__DEEP_SLOT_${i + 1}__`);
                         return arr;
                     }
                     const vault = window._koDeepPhotoVault && window._koDeepPhotoVault.get(`preprava_${t.id}`);
-                    if (vault && (vault.containerImageUri || vault.imageUri)) {
-                        const vMain = vault.containerImageUri || vault.imageUri;
+                    if (vault && vault.previewUri) {
                         const totalCnt = Math.max(1, Number(vault.photoCount || 1));
-                        const arr = [vMain];
-                        for (let i = 1; i < totalCnt; i++) arr.push(vMain);
+                        const arr = [vault.previewUri];
+                        for (let i = 1; i < totalCnt; i++) arr.push(`__DEEP_SLOT_${i + 1}__`);
                         return arr;
                     }
-                    const list = [];
-                    const addUri = (u) => {
-                        const clean = sanitizeSinglePhotoUri(u);
-                        if (clean && isPortablePhotoUri(clean) && !list.includes(clean)) list.push(clean);
-                    };
-                    if (t.deliveryPhotos) String(t.deliveryPhotos).split('|').forEach(addUri);
-                    addUri(t.containerImageUri);
-                    addUri(t.containerImageUri2);
-                    addUri(t.containerImageUri3);
-                    if (t.extraImages) String(t.extraImages).split('|').forEach(addUri);
-                    addUri(t.imageUri);
-                    if (!list.length && Array.isArray(allContainers) && allContainers.length && t.designation) {
-                        const desigs = String(t.designation).split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
-                        if (desigs.length) {
-                            const matched = allContainers.find(c => {
-                                const cd = String(c.designation || '').trim().toLowerCase();
-                                const cid = String(c.id || '').trim().toLowerCase();
-                                return desigs.some(d => (cd && cd === d) || (cid && cid === d));
-                            });
-                            if (matched) addUri(resolveContainerMainPhoto(matched));
-                        }
-                    }
-                    return list;
+                    const { uniquePhotos } = window.dedupeTransportPhotoSlots ? window.dedupeTransportPhotoSlots(t) : { uniquePhotos: [] };
+                    return uniquePhotos;
                 };
                 const isTransportVraceni = (t) => Boolean(t.isVraceni ||
                     (t.type && String(t.type).toUpperCase().includes('VRÁCEN')) ||
@@ -18332,14 +18496,27 @@ window.renderPrepravaGoogleCalendarView = function(grid, list, bar, depoMatchedT
             if (ag === 'preprava' || ag === 'vraceni') {
                 const t = (allTransports || []).find(x => x.id === recId);
                 if (!t) return;
-                const updated = { ...t, timestamp: Date.now() };
+                const hydrated = typeof window.hydrateRecordPhotosForDetail === 'function'
+                    ? window.hydrateRecordPhotosForDetail('preprava', { ...t })
+                    : { ...t };
+                const updated = { ...hydrated, timestamp: Date.now() };
                 if (ag === 'vraceni') updated.isVraceni = true;
-                if (usePhoto) {
-                    if (!updated.containerImageUri) updated.containerImageUri = currentWaAssignPhotoUri;
-                    else if (!updated.containerImageUri2) updated.containerImageUri2 = currentWaAssignPhotoUri;
-                    else if (!updated.containerImageUri3) updated.containerImageUri3 = currentWaAssignPhotoUri;
-                    else updated.imageUri = currentWaAssignPhotoUri;
-                    updated.deliveryPhotos = [updated.containerImageUri, updated.containerImageUri2, updated.containerImageUri3].filter(Boolean).join('|');
+                if (usePhoto && currentWaAssignPhotoUri) {
+                    const newFp = window.getPhotoFingerprint ? window.getPhotoFingerprint(currentWaAssignPhotoUri) : currentWaAssignPhotoUri;
+                    const curSlots = [updated.containerImageUri, updated.containerImageUri2, updated.containerImageUri3, updated.imageUri];
+                    const alreadyHas = curSlots.some(s => s && (window.getPhotoFingerprint ? window.getPhotoFingerprint(s) === newFp : s === currentWaAssignPhotoUri));
+                    if (!alreadyHas) {
+                        if (!updated.containerImageUri) updated.containerImageUri = currentWaAssignPhotoUri;
+                        else if (!updated.containerImageUri2) updated.containerImageUri2 = currentWaAssignPhotoUri;
+                        else if (!updated.containerImageUri3) updated.containerImageUri3 = currentWaAssignPhotoUri;
+                        else updated.imageUri = currentWaAssignPhotoUri;
+                    }
+                    updated.deliveryPhotos = '';
+                    updated.extraImages = '';
+                    updated.photo = '';
+                    updated.photos = [];
+                    updated._explicitPhotoSlots = true;
+                    updated._freshModalSave = true;
                 }
                 if (useText) {
                     updated.note = [updated.note, `[WhatsApp přeprava]: ${textToUse}`].filter(Boolean).join('\n');
@@ -18564,16 +18741,8 @@ window.renderPrepravaGoogleCalendarView = function(grid, list, bar, depoMatchedT
             const chosenText = includeText ? (src.text || '') : '';
 
             if (currentWaPickerTargetType === 'preprava') {
-                if (chosenPhoto) {
-                    const c1 = document.getElementById('t_containerImageUri');
-                    const c2 = document.getElementById('t_containerImage2Uri');
-                    const c3 = document.getElementById('t_containerImage3Uri');
-                    const main = document.getElementById('t_imageUri');
-                    if (c1 && !c1.value) c1.value = chosenPhoto;
-                    else if (c2 && !c2.value) c2.value = chosenPhoto;
-                    else if (c3 && !c3.value) c3.value = chosenPhoto;
-                    else if (main) main.value = chosenPhoto;
-                    window.updateTransportPhotoPreviews(main?.value, c1?.value, c2?.value, c3?.value);
+                if (chosenPhoto && typeof window.insertPhotoIntoTransportModalSlots === 'function') {
+                    window.insertPhotoIntoTransportModalSlots(chosenPhoto, 'auto');
                 }
                 if (chosenText) {
                     const noteEl = document.getElementById('t_note');
@@ -19119,17 +19288,14 @@ window.renderPrepravaGoogleCalendarView = function(grid, list, bar, depoMatchedT
                 const extracted = await window.extractDataFromPhotoAsync(firstUri, 'container');
                 window.applyExtractedContainerData(extracted);
             } else if (isPrepravaOpen) {
-                const tImg = document.getElementById('t_imageUri');
-                if (tImg) tImg.value = firstUri;
-                window.updateTransportPhotoPreviews(
-                    firstUri,
-                    document.getElementById('t_containerImageUri')?.value,
-                    document.getElementById('t_containerImage2Uri')?.value,
-                    document.getElementById('t_containerImage3Uri')?.value
-                );
-                showToast('📋 Fotografie dokladu vložena — vytěžuji údaje...');
-                const extracted = await window.extractDataFromPhotoAsync(firstUri, 'transport');
-                window.applyExtractedTransportData(extracted, 'main');
+                const resSlot = typeof window.insertPhotoIntoTransportModalSlots === 'function'
+                    ? window.insertPhotoIntoTransportModalSlots(firstUri, 'auto')
+                    : { inserted: false, slotNum: 1, slotKind: 'container1' };
+                if (resSlot.inserted) {
+                    showToast(`📋 Fotografie vložena do Foto ${resSlot.slotNum} — vytěžuji údaje...`);
+                    const extracted = await window.extractDataFromPhotoAsync(firstUri, 'transport');
+                    window.applyExtractedTransportData(extracted, resSlot.slotKind);
+                }
             } else if (isZakazkaOpen) {
                 const emptyIdx = (window.currentZakazkaPhotos || []).findIndex(x => !x);
                 const targetIdx = emptyIdx !== -1 ? emptyIdx : 0;
@@ -22069,6 +22235,51 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
             }
         };
 
+        window.insertPhotoIntoTransportModalSlots = (photoUri, preferredKind = 'auto') => {
+            const clean = sanitizeSinglePhotoUri(photoUri);
+            if (!clean || !isPortablePhotoUri(clean)) return { inserted: false, slotNum: 1, slotKind: 'container1' };
+            const slotDefs = [
+                { num: 1, kind: 'container1', id: 't_containerImageUri' },
+                { num: 2, kind: 'container2', id: 't_containerImage2Uri' },
+                { num: 3, kind: 'container3', id: 't_containerImage3Uri' },
+                { num: 4, kind: 'main', id: 't_imageUri' }
+            ];
+            const newFp = window.getPhotoFingerprint ? window.getPhotoFingerprint(clean) : clean;
+            let targetDef = slotDefs[0];
+            if (preferredKind === 'container1' || preferredKind === 'container') targetDef = slotDefs[0];
+            else if (preferredKind === 'container2') targetDef = slotDefs[1];
+            else if (preferredKind === 'container3') targetDef = slotDefs[2];
+            else if (preferredKind === 'main') targetDef = slotDefs[3];
+            else {
+                const firstEmpty = slotDefs.find(s => !sanitizeSinglePhotoUri(document.getElementById(s.id)?.value || ''));
+                targetDef = firstEmpty || slotDefs[3];
+            }
+
+            // Zákaz duplicitní fotky na více pozicích v téže kartě
+            for (const s of slotDefs) {
+                const existingVal = sanitizeSinglePhotoUri(document.getElementById(s.id)?.value || '');
+                if (!existingVal) continue;
+                const exFp = window.getPhotoFingerprint ? window.getPhotoFingerprint(existingVal) : existingVal;
+                if (exFp && exFp === newFp) {
+                    if (s.id === targetDef.id) {
+                        return { inserted: true, slotNum: s.num, slotKind: s.kind };
+                    }
+                    showToast(`⚠️ Tato fotografie je již v kartě vložena na pozici Foto ${s.num}`);
+                    return { inserted: false, duplicateSlot: s.num, slotNum: s.num, slotKind: s.kind };
+                }
+            }
+
+            const targetEl = document.getElementById(targetDef.id);
+            if (targetEl) targetEl.value = clean;
+            window.updateTransportPhotoPreviews(
+                document.getElementById('t_imageUri')?.value,
+                document.getElementById('t_containerImageUri')?.value,
+                document.getElementById('t_containerImage2Uri')?.value,
+                document.getElementById('t_containerImage3Uri')?.value
+            );
+            return { inserted: true, slotNum: targetDef.num, slotKind: targetDef.kind };
+        };
+
         window.handleTransportPhotoFile = (inputEl, kind) => {
             const file = inputEl?.files?.[0];
             if (!file) return;
@@ -22076,27 +22287,14 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
             reader.onload = async (ev) => {
                 const rawUrl = ev.target?.result || '';
                 const compressed = await compressImageDataUrlForSync(rawUrl, 760, 0.78);
-                if (kind === 'container1' || kind === 'container') {
-                    document.getElementById('t_containerImageUri').value = compressed;
-                } else if (kind === 'container2') {
-                    document.getElementById('t_containerImage2Uri').value = compressed;
-                } else if (kind === 'container3') {
-                    document.getElementById('t_containerImage3Uri').value = compressed;
-                } else {
-                    document.getElementById('t_imageUri').value = compressed;
-                }
-                window.updateTransportPhotoPreviews(
-                    document.getElementById('t_imageUri')?.value,
-                    document.getElementById('t_containerImageUri')?.value,
-                    document.getElementById('t_containerImage2Uri')?.value,
-                    document.getElementById('t_containerImage3Uri')?.value
-                );
+                const resSlot = window.insertPhotoIntoTransportModalSlots(compressed, kind || 'auto');
                 inputEl.value = '';
-                showToast('Fotografie kontejneru / dokladu připravena');
+                if (!resSlot.inserted) return;
+                showToast(`Fotografie vložena do Foto ${resSlot.slotNum}`);
 
                 // Auto-extract transport / container / document data from full-resolution rawUrl
                 const extracted = await window.extractDataFromPhotoAsync(rawUrl || compressed, 'transport', file.name || '');
-                window.applyExtractedTransportData(extracted, kind);
+                window.applyExtractedTransportData(extracted, resSlot.slotKind);
             };
             reader.readAsDataURL(file);
         };
@@ -22767,8 +22965,11 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
         };
 
         window.openPrepravaModal = (id, forceVraceni = false) => {
-            currentTransportId = id; const t = id ? allTransports.find(x => x.id === id) : null;
-            if (t && typeof window.hydrateRecordPhotosForDetail === 'function') window.hydrateRecordPhotosForDetail('preprava', t);
+            currentTransportId = id;
+            const rawT = id ? allTransports.find(x => x.id === id) : null;
+            const t = (rawT && typeof window.hydrateRecordPhotosForDetail === 'function')
+                ? window.hydrateRecordPhotosForDetail('preprava', { ...rawT })
+                : rawT;
             populateTransportSourceDropdowns();
             const today = new Date().toLocaleDateString('cs-CZ');
             const isVraceni = t
@@ -22830,10 +23031,8 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
             const badge = document.getElementById('t_customerSourceBadge');
             if (badge) badge.innerText = t?.cisloDokladuZdroj ? `${t?.customerSource || (isVraceni ? 'VRÁCENÍ' : 'ZDROJ')} • ${t.cisloDokladuZdroj}` : (t?.customerSource || (isVraceni ? 'VRÁCENÍ' : 'RUČNĚ'));
 
-            const c1 = sanitizeSinglePhotoUri(t?.containerImageUri || (t?.deliveryPhotos ? t.deliveryPhotos.split('|')[0] : ''));
-            const c2 = sanitizeSinglePhotoUri(t?.containerImageUri2 || (t?.extraImages ? t.extraImages.split('|')[0] : (t?.deliveryPhotos ? t.deliveryPhotos.split('|')[1] : '')));
-            const c3 = sanitizeSinglePhotoUri(t?.containerImageUri3 || (t?.extraImages ? t.extraImages.split('|')[1] : (t?.deliveryPhotos ? t.deliveryPhotos.split('|')[2] : '')));
-            const mainImg = sanitizeSinglePhotoUri(t?.imageUri || '');
+            const deduped = t ? window.dedupeTransportPhotoSlots(t) : { slots: ['', '', '', ''] };
+            const [c1, c2, c3, mainImg] = deduped.slots;
 
             document.getElementById('t_containerImageUri').value = c1;
             document.getElementById('t_containerImage2Uri').value = c2;
@@ -22864,12 +23063,16 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
             const addrLoc = document.getElementById('t_custAddress').value.trim();
             const intNoteVal = (document.getElementById('t_internalNote')?.value || '').trim();
 
-            const c1 = sanitizeSinglePhotoUri(document.getElementById('t_containerImageUri').value) || existing.containerImageUri || '';
-            const c2 = sanitizeSinglePhotoUri(document.getElementById('t_containerImage2Uri').value) || existing.containerImageUri2 || '';
-            const c3 = sanitizeSinglePhotoUri(document.getElementById('t_containerImage3Uri').value) || existing.containerImageUri3 || '';
-            const mainImg = sanitizeSinglePhotoUri(document.getElementById('t_imageUri').value) || existing.imageUri || '';
-            const extraStr = [c2, c3].filter(Boolean).join('|');
-            const deliveryPhotosStr = [c1, c2, c3].filter(Boolean).join('|');
+            const rawSlots = {
+                containerImageUri: sanitizeSinglePhotoUri(document.getElementById('t_containerImageUri')?.value || ''),
+                containerImageUri2: sanitizeSinglePhotoUri(document.getElementById('t_containerImage2Uri')?.value || ''),
+                containerImageUri3: sanitizeSinglePhotoUri(document.getElementById('t_containerImage3Uri')?.value || ''),
+                imageUri: sanitizeSinglePhotoUri(document.getElementById('t_imageUri')?.value || ''),
+                _freshModalSave: true,
+                _explicitPhotoSlots: true
+            };
+            const { slots } = window.dedupeTransportPhotoSlots(rawSlots, { freshModalSave: true, preserveEmptySlots: true });
+            const [c1, c2, c3, mainImg] = slots;
 
             const newSt = (document.getElementById('t_status')?.value || '').trim().toUpperCase();
             // Shromáždění všech kontejnerů z dynamických slotů
@@ -22912,9 +23115,13 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
                 containerImageUri: c1,
                 containerImageUri2: c2,
                 containerImageUri3: c3,
-                extraImages: extraStr,
-                deliveryPhotos: deliveryPhotosStr,
                 imageUri: mainImg,
+                extraImages: '',
+                deliveryPhotos: '',
+                photo: '',
+                photos: [],
+                _explicitPhotoSlots: true,
+                _freshModalSave: true,
                 timestamp: Date.now()
             };
             upsert('transports', allTransports, currentTransportId, updatedRec);
@@ -23868,7 +24075,7 @@ function buildShareTextSummary(type, id) {
     </script>
 
     <!-- ============================================================================ -->
-    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v482)      -->
+    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v483)      -->
     <!-- Zkrácená verze Přepravy: ostatní agendy jsou na iPhonu kompletně skryté.     -->
     <!-- ============================================================================ -->
     <style id="iphoneAppStyles">
@@ -24154,7 +24361,7 @@ function buildShareTextSummary(type, id) {
                     <span class="material-icons text-[#38BDF8] text-xl">speed</span>
                     <div>
                         <div class="font-black text-sm leading-tight text-white">Aktualizace</div>
-                        <div id="iosModalVersionBadge" class="text-[11px] text-[#94A3B8] font-bold">Přeprava • v 482</div>
+                        <div id="iosModalVersionBadge" class="text-[11px] text-[#94A3B8] font-bold">Přeprava • v 483</div>
                     </div>
                 </div>
                 <button type="button" onclick="closeIphoneInstallModal()" class="px-3 py-1.5 rounded-lg bg-[#334155] hover:bg-[#475569] text-white text-xs font-extrabold transition" title="Zavřít">
@@ -24196,7 +24403,7 @@ function buildShareTextSummary(type, id) {
 
                 <!-- Skrytý progress bar element pro zpětnou kompatibilitu -->
                 <div id="iosGhUpdateProgressBar" class="hidden"></div>
-                <div id="iosGhRemoteVerBadge" class="hidden">v 482</div>
+                <div id="iosGhRemoteVerBadge" class="hidden">v 483</div>
 
                 <!-- Stavový text pod tachometrem -->
                 <p id="iosGhUpdateStatusText" class="text-xs font-bold text-[#CBD5E1] min-h-[32px] flex items-center justify-center px-2">
@@ -24539,19 +24746,8 @@ function buildShareTextSummary(type, id) {
                 window.openPrepravaModal(id);
             }
 
-            let targetKind = slotChoice;
-            if (targetKind === 'auto') {
-                const c1 = document.getElementById('t_containerImageUri')?.value;
-                const c2 = document.getElementById('t_containerImage2Uri')?.value;
-                const c3 = document.getElementById('t_containerImage3Uri')?.value;
-                if (!c1) targetKind = 'container1';
-                else if (!c2) targetKind = 'container2';
-                else if (!c3) targetKind = 'container3';
-                else targetKind = 'container1';
-            }
-
             if (typeof window.handleTransportPhotoFile === 'function') {
-                window.handleTransportPhotoFile(input, targetKind);
+                window.handleTransportPhotoFile(input, slotChoice || 'auto');
             }
         };
 
@@ -24583,7 +24779,7 @@ function buildShareTextSummary(type, id) {
         };
 
         window.shareAndroidInstallWhatsApp = function() {
-            const ver = window.CURRENT_SW_VERSION_NAME || '482';
+            const ver = window.CURRENT_SW_VERSION_NAME || '483';
             const url = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?android=1&install=1';
             const txt = `Kontejnery Ostrava — Rychlá instalace mobilní aplikace pro Android přes prohlížeč Chrome bez APK (v ${ver}): ${url}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');
