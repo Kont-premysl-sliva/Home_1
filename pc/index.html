@@ -543,7 +543,7 @@ try {
             <!-- Verze aplikace a datum -->
             <div class="inline-flex items-center gap-1.5 bg-sky-950/80 border border-sky-400/40 text-sky-200 px-3 py-1 rounded-full text-xs font-black shadow-inner mb-4">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="loginVersionDisplay">v 481 • 7.11.2026</span>
+                <span id="loginVersionDisplay">v 482 • 7.11.2026</span>
             </div>
 
             <!-- Přepínač PC vs Řidič -->
@@ -931,7 +931,7 @@ try {
                 <span>KONTEJNERY OSTRAVA - POHODA</span>
                 <span class="hidden" id="pohodaWindowTitleAgenda"></span>
                 <button type="button" onclick="window.handleHeaderUpdateClick()" class="cursor-pointer bg-[#0A2E6E] hover:bg-blue-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm border border-sky-300/50 flex items-center gap-1" title="Verze aplikace • Kliknutím zkontrolujete nebo ručně potvrdíte novou aktualizaci">
-                    <span id="headerVersionBadge">v 481 • 7.11.2026</span>
+                    <span id="headerVersionBadge">v 482 • 7.11.2026</span>
                     <span id="ghUpdateBadge" class="hidden bg-[#CC0000] text-yellow-200 text-[10px] px-1.5 py-0.5 rounded font-black animate-pulse flex items-center gap-0.5"><span class="material-icons text-[11px]">system_update_alt</span><span>NOVÁ</span></span>
                 </button>
             </h1>
@@ -957,7 +957,7 @@ try {
         <div class="flex items-center gap-1">
             <span class="text-slate-500 px-1">⋮</span>
             <button type="button" onclick="window.openDatabazeSubSection('ZALOHA')" class="pohoda-menu-item"><u>S</u>OUBOR</button>
-            <button type="button" onclick="window.openDatabazeSubSection('PC_ERP')" class="pohoda-menu-item"><u>N</u>ASTAVENÍ</button>
+            <button type="button" onclick="window.openDatabazeSubSection('GITHUB_NASTAVENI')" class="pohoda-menu-item"><u>N</u>ASTAVENÍ</button>
             <button type="button" onclick="window.openAdresarSubSection('ADRESAR')" class="pohoda-menu-item"><u>A</u>DRESÁŘ</button>
             <button type="button" onclick="window.openUcetnictviSubSection('POKLADNA')" class="pohoda-menu-item font-bold text-[#0A2E6E]"><u>Ú</u>ČETNICTVÍ</button>
             <button type="button" onclick="window.openUcetnictviSubSection('FAKTURY')" class="pohoda-menu-item font-bold text-[#0A2E6E]"><u>F</u>AKTURACE</button>
@@ -966,7 +966,7 @@ try {
             <button type="button" onclick="setTab('preprava')" class="pohoda-menu-item"><u>J</u>ÍZDY</button>
             <button type="button" onclick="window.openKontejnerySubSection('PRONÁJEM')" class="pohoda-menu-item"><u>P</u>RONÁJEM</button>
             <button type="button" onclick="openAddModal()" class="pohoda-menu-item font-bold">ZÁZNA<u>M</u></button>
-            <button type="button" onclick="window.openDatabazeSubSection('REINDEXACE')" class="pohoda-menu-item">NÁP<u>O</u>VĚDA</button>
+            <button type="button" onclick="window.openDatabazeSubSection('MOBILNI_QR')" class="pohoda-menu-item">NÁP<u>O</u>VĚDA</button>
         </div>
         <div class="flex items-center gap-1.5 text-[11px]">
             <span class="bg-[#FFFFFF] border border-[#7C99B8] px-2 py-0.5 text-[#0A2E6E] font-bold">ÚČETNÍ JEDNOTKA: KONTEJNERY OSTRAVA, S.R.O. (2026)</span>
@@ -1024,7 +1024,7 @@ try {
         <button onclick="setTab('poznamky')" oncontextmenu="window.openTabReorderContextMenu(event, 'main', 'main', 'tab-poznamky', 'POZNÁMKY')" id="tab-poznamky" draggable="true" class="sub-tab sub-tab-inactive text-xs whitespace-nowrap flex items-center justify-center gap-1.5" title="POZNÁMKY A ÚKOLY (Stormware Pohoda)">
             <span onclick="event.stopPropagation(); window.moveMainAgendaTab('tab-poznamky', 'left')" class="sub-tab-move-btn" title="Posunout doleva">◀</span><span class="material-icons text-xs text-[#1B5E8B] shrink-0">sticky_note_2</span><span>POZNÁMKY</span><span id="badge-poznamky" class="bg-[#1B5E8B] text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded">0</span><span onclick="event.stopPropagation(); window.moveMainAgendaTab('tab-poznamky', 'right')" class="sub-tab-move-btn" title="Posunout doprava">▶</span><span onclick="event.stopPropagation(); window.moveMainAgendaTab('tab-poznamky', 'end')" class="sub-tab-move-btn" title="Přesunout na konec">⇥</span>
         </button>
-        <button onclick="setTab('databaze')" oncontextmenu="window.openTabReorderContextMenu(event, 'main', 'main', 'tab-databaze', 'DATABÁZE')" id="tab-databaze" draggable="true" class="sub-tab sub-tab-inactive text-xs whitespace-nowrap flex items-center justify-center gap-1.5" title="SPRÁVA DATABÁZE: REINDEXACE, SYNCHRONIZACE, PC ERP, NASTAVENÍ NA GITHUB, INSTALACE IPHONE, INSTALACE ANDROID">
+        <button onclick="setTab('databaze')" oncontextmenu="window.openTabReorderContextMenu(event, 'main', 'main', 'tab-databaze', 'DATABÁZE')" id="tab-databaze" draggable="true" class="sub-tab sub-tab-inactive text-xs whitespace-nowrap flex items-center justify-center gap-1.5" title="SPRÁVA DATABÁZE: ZÁLOHA, POLOŽKY, GITHUB, MOBILNÍ QR">
             <span onclick="event.stopPropagation(); window.moveMainAgendaTab('tab-databaze', 'left')" class="sub-tab-move-btn" title="Posunout doleva">◀</span><span class="material-icons text-xs text-[#0A2E6E] shrink-0">storage</span><span>DATABÁZE</span><span onclick="event.stopPropagation(); window.moveMainAgendaTab('tab-databaze', 'right')" class="sub-tab-move-btn" title="Posunout doprava">▶</span><span onclick="event.stopPropagation(); window.moveMainAgendaTab('tab-databaze', 'end')" class="sub-tab-move-btn" title="Přesunout na konec">⇥</span>
         </button>
     </div>
@@ -3438,7 +3438,7 @@ try {
 
     <script>
     (function() {
-        const CURRENT_SW_VERSION = 481;
+        const CURRENT_SW_VERSION = 482;
         const CURRENT_SW_VERSION_NAME = CURRENT_SW_VERSION;
         const CURRENT_SW_RELEASE_DATE = "7.11.2026";
         const CURRENT_SW_RELEASE_DATE_SPACED = "7. 11. 2026";
@@ -6756,7 +6756,7 @@ try {
                 if (wantCheck) {
                     await window.performUnifiedGitHubUpdate(true);
                 } else if (typeof window.openDatabazeSubSection === 'function') {
-                    window.openDatabazeSubSection('SYNCHRONIZACE');
+                    window.openDatabazeSubSection('ZALOHA');
                 }
             }
         };
@@ -9541,7 +9541,15 @@ try {
             if (document.body.classList.contains('ios-app-mode') || window.FORCE_IPHONE_APP_MODE) {
                 return window.setTab('preprava');
             }
-            window.agendaSubTabByTab['databaze'] = subKey || 'ZALOHA';
+            const normMap = {
+                REINDEXACE: 'ZALOHA',
+                SYNCHRONIZACE: 'ZALOHA',
+                SPRAVA_DATABAZE: 'ZALOHA',
+                PC_ERP: 'GITHUB_NASTAVENI',
+                QR_IPHONE: 'MOBILNI_QR',
+                QR_ANDROID: 'MOBILNI_QR'
+            };
+            window.agendaSubTabByTab['databaze'] = normMap[subKey] || subKey || 'ZALOHA';
             window.setTab('databaze');
         };
 
@@ -11312,23 +11320,27 @@ try {
             }
 
             if (tabKey === 'databaze') {
-                const selectedSub = window.agendaSubTabByTab['databaze'] || 'ZALOHA';
-                const evCount = (allEvents || []).length;
+                const rawSub = window.agendaSubTabByTab['databaze'] || 'ZALOHA';
+                const normMap = {
+                    REINDEXACE: 'ZALOHA',
+                    SYNCHRONIZACE: 'ZALOHA',
+                    SPRAVA_DATABAZE: 'ZALOHA',
+                    PC_ERP: 'GITHUB_NASTAVENI',
+                    QR_IPHONE: 'MOBILNI_QR',
+                    QR_ANDROID: 'MOBILNI_QR'
+                };
+                const selectedSub = normMap[rawSub] || rawSub;
                 const polCount = (allCatalogItems || []).length;
                 const rawTabs = [
-                    { key: 'ZALOHA', title: 'SPRÁVA DB', icon: 'storage' },
-                    { key: 'REINDEXACE', title: 'REINDEXACE', icon: 'sync' },
-                    { key: 'SYNCHRONIZACE', title: 'SYNCHRONIZACE', icon: 'cloud_sync' },
-                    { key: 'PC_ERP', title: 'PC ERP', icon: 'desktop_windows' },
+                    { key: 'ZALOHA', title: 'ZÁLOHA', icon: 'backup' },
+                    { key: 'POLOZKY', title: 'POLOŽKY', count: polCount, badgeBg: 'bg-[#1B5E8B]', icon: 'category' },
                     { key: 'GITHUB_NASTAVENI', title: 'GITHUB', icon: 'code' },
-                    { key: 'QR_IPHONE', title: 'INST. IPHONE', icon: 'phone_iphone' },
-                    { key: 'QR_ANDROID', title: 'INST. ANDROID', icon: 'android' },
-                    { key: 'POLOZKY', title: 'POLOŽKY', count: polCount, badgeBg: 'bg-[#1B5E8B]', icon: 'category' }
+                    { key: 'MOBILNI_QR', title: 'MOBILNÍ QR', icon: 'qr_code_2' }
                 ];
                 renderSubTabsWithOrder(
                     'databaze',
                     rawTabs,
-                    (t) => selectedSub === t.key || (t.key === 'ZALOHA' && selectedSub === 'SPRAVA_DATABAZE'),
+                    (t) => selectedSub === t.key,
                     (t) => `setAgendaSubTab('databaze', '${t.key}')`,
                     true
                 );
@@ -12871,15 +12883,11 @@ ${itemsXml}
             const activeKontSub = window.agendaSubTabByTab['kontejnery'] || 'VŠE';
             const activeAdrSub = window.agendaSubTabByTab['adresar'] || 'ADRESAR';
             const dbSubTitles = {
-                ZALOHA: 'SPRÁVA DATABÁZE',
-                REINDEXACE: 'SPRÁVA DATABÁZE — REINDEXACE',
-                SYNCHRONIZACE: 'SPRÁVA DATABÁZE — SYNCHRONIZACE',
-                PC_ERP: 'SPRÁVA DATABÁZE — PC ERP',
+                ZALOHA: 'SPRÁVA DATABÁZE — ZÁLOHOVÁNÍ',
                 POLOZKY: 'DATABÁZE — POLOŽKY',
                 UDALOSTI: 'DATABÁZE — HISTORIE UDÁLOSTÍ',
-                GITHUB_NASTAVENI: 'SPRÁVA DATABÁZE — GITHUB',
-                QR_IPHONE: 'SPRÁVA DATABÁZE — INSTALACE IPHONE',
-                QR_ANDROID: 'SPRÁVA DATABÁZE — INSTALACE ANDROID'
+                GITHUB_NASTAVENI: 'SPRÁVA DATABÁZE — GITHUB & TRVALÝ ODKAZ',
+                MOBILNI_QR: 'SPRÁVA DATABÁZE — MOBILNÍ QR (IPHONE & ANDROID)'
             };
             const ucSubTitles = {
                 FAKTURY: 'VYDANÉ FAKTURY',
@@ -15189,196 +15197,155 @@ ${itemsXml}
             const branchVal = (localStorage.getItem('ko_gh_branch') || 'main').trim();
             const folderVal = (localStorage.getItem('ko_gh_backup_folder') || 'ZALOHA_DAT').trim();
             const tokenVal = (localStorage.getItem('ko_gh_token') || DEFAULT_GH_TOKEN).trim();
-            const pendingVer = window.__pendingRemoteSwVersion || 0;
             const iphoneUrl = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?iphone=1';
             const androidChromeUrl = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?android=1&install=1';
             const androidApkUrl = 'https://raw.githubusercontent.com/Kont-premysl-sliva/Home_1/main/android/Kontejnery_Ostrava_Android_latest.apk';
 
-            // Rozcestník sekcí uvnitř SPRÁVY DATABÁZE
-            const navHeaderHtml = `
-            <div class="bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-900 text-white rounded-2xl p-4 shadow-md border-2 border-emerald-600/80">
-                <div class="flex flex-wrap items-center justify-between gap-3">
-                    <div class="flex items-center gap-3">
-                        <span class="w-11 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-md">
-                            <span class="material-icons text-2xl">admin_panel_settings</span>
-                        </span>
-                        <div>
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <h1 class="text-base md:text-lg font-black tracking-wide text-white">SPRÁVA DATABÁZE — HLAVNÍ PC (MASTER)</h1>
-                                <span class="bg-emerald-500/20 border border-emerald-400 text-emerald-200 text-[10px] font-black px-2.5 py-0.5 rounded-full">v ${CURRENT_SW_VERSION} • VŠECHNY SEKCE AKTIVNÍ</span>
-                            </div>
-                            <p class="text-xs text-slate-300 font-semibold">Jednotlivé sekce: <b>Reindexace</b> • <b>Synchronizace</b> • <b>PC ERP</b> • <b>Nastavení na GitHUB</b> • <b>Instalace Iphone</b> • <b>Instalace Android</b> + Zálohování databáze</p>
-                        </div>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-1.5">
-                        <button onclick="window.setAgendaSubTab('databaze','ZALOHA')" class="px-3 py-1.5 rounded-lg text-xs font-black cursor-pointer transition ${subKey === 'ZALOHA' ? 'bg-emerald-500 text-slate-950 shadow' : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-600'}">🛠️ Všechny sekce Správy DB</button>
-                        <button onclick="window.scrollToSpravaSection('sec-sprava-reindexace','REINDEXACE')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition ${subKey === 'REINDEXACE' ? 'bg-amber-500 text-slate-950 shadow font-black' : 'bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700'}">🔄 Reindexace</button>
-                        <button onclick="window.scrollToSpravaSection('sec-sprava-synchronizace','SYNCHRONIZACE')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition ${subKey === 'SYNCHRONIZACE' ? 'bg-sky-400 text-slate-950 shadow font-black' : 'bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700'}">☁️ Synchronizace</button>
-                        <button onclick="window.scrollToSpravaSection('sec-sprava-pcerp','PC_ERP')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition ${subKey === 'PC_ERP' ? 'bg-blue-400 text-slate-950 shadow font-black' : 'bg-slate-800 hover:bg-slate-700 text-blue-300 border border-slate-700'}">🖥️ PC ERP</button>
-                        <button onclick="window.scrollToSpravaSection('sec-sprava-github','GITHUB_NASTAVENI')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition ${subKey === 'GITHUB_NASTAVENI' ? 'bg-emerald-400 text-slate-950 shadow font-black' : 'bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700'}">🔑 Nastavení na GitHUB</button>
-                        <button onclick="window.scrollToSpravaSection('sec-sprava-iphone','QR_IPHONE')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition ${subKey === 'QR_IPHONE' ? 'bg-teal-400 text-slate-950 shadow font-black' : 'bg-slate-800 hover:bg-slate-700 text-teal-300 border border-slate-700'}">📱 Instalace Iphone</button>
-                        <button onclick="window.scrollToSpravaSection('sec-sprava-android','QR_ANDROID')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition ${subKey === 'QR_ANDROID' ? 'bg-lime-400 text-slate-950 shadow font-black' : 'bg-slate-800 hover:bg-slate-700 text-lime-300 border border-slate-700'}">🤖 Instalace Android</button>
-                    </div>
-                </div>
-            </div>`;
+            const normMap = {
+                REINDEXACE: 'ZALOHA',
+                SYNCHRONIZACE: 'ZALOHA',
+                SPRAVA_DATABAZE: 'ZALOHA',
+                PC_ERP: 'GITHUB_NASTAVENI',
+                QR_IPHONE: 'MOBILNI_QR',
+                QR_ANDROID: 'MOBILNI_QR'
+            };
+            const effSub = normMap[subKey] || subKey || 'ZALOHA';
 
-            // SEKCE A: ZÁLOHOVÁNÍ A OBNOVA DATABÁZE (HLAVNÍ PC MASTER)
+            // 1. TACHOMETR ZÁLOHOVÁNÍ + POPIS CO SE DĚJE PŘI ZÁLOHOVÁNÍ
+            const inlineTachoHtml = window.renderSpravaInlineTachoHtml();
+
+            // 2. HLAVNÍ KARTA ZÁLOHA: VYTVOŘIT ZÁLOHU (PC + GITHUB) + NAČÍST ZÁLOHU (2 VARIANTY, PRIMÁRNĚ Z GITHUBU)
             const secZalohaHtml = `
             <div id="sec-sprava-zaloha" class="bg-white rounded-2xl border-2 border-emerald-600 shadow-lg p-6 space-y-5">
                 <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4">
                     <div class="flex items-center gap-3">
                         <span class="w-12 h-12 rounded-xl bg-emerald-700 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">backup</span></span>
                         <div>
-                            <div class="flex items-center gap-2">
-                                <span class="bg-emerald-700 text-white text-[10px] font-black px-2 py-0.5 rounded">SEKCE ZÁLOHOVÁNÍ</span>
-                                <h2 class="text-lg font-black text-slate-900">SPRÁVA DATABÁZE — ZÁLOHOVÁNÍ A OBNOVA (GITHUB ZALOHA_DAT + PC)</h2>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="bg-emerald-700 text-white text-[10px] font-black px-2 py-0.5 rounded">HLAVNÍ PC MASTER</span>
+                                <h2 class="text-lg font-black text-slate-900">ZÁLOHOVÁNÍ A OBNOVA DATABÁZE</h2>
                             </div>
-                            <p class="text-xs text-slate-600 font-semibold">Uložení kompletní databáze do složky <b>${folderVal}/</b> na GitHubu (${repoVal}) + současné stažení záložního souboru <b>.json</b> do PC</p>
+                            <p class="text-xs text-slate-600 font-semibold">Automatický proces: <b>1. Synchronizace</b> → <b>2. Reindexace</b> → <b>3. Záloha</b> (na disk PC včetně fotek + na GitHub <b>${folderVal}/</b> bez fotek)</p>
                         </div>
                     </div>
                     <span class="bg-emerald-100 text-emerald-900 border border-emerald-400 px-3 py-1.5 rounded-lg text-xs font-black">Poslední záloha: ${lastBackupTime}</span>
                 </div>
 
+                <!-- Popis co se děje při zálohování -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                    <div class="bg-sky-50 border border-sky-200 rounded-xl p-3.5">
+                        <div class="font-black text-sky-900 uppercase mb-1">1. Synchronizace (10–36 %)</div>
+                        <p class="text-slate-700 font-semibold leading-snug">Dočte všechny agendy z lokální paměti a IndexedDB, sloučí nové změny z mobilů/cloudu a připraví plné fotky.</p>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5">
+                        <div class="font-black text-amber-900 uppercase mb-1">2. Reindexace (48–58 %)</div>
+                        <p class="text-slate-700 font-semibold leading-snug">Spáruje firmy z dokladů do Adresáře (IČO), odstraní duplicity, zkontroluje číselné řady a přestaví vyhledávací index.</p>
+                    </div>
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5">
+                        <div class="font-black text-emerald-900 uppercase mb-1">3. Záloha PC + GitHub (66–100 %)</div>
+                        <p class="text-slate-700 font-semibold leading-snug">Stáhne kompletní <b>.JSON s plnými fotkami</b> na disk PC a zároveň nahraje <b>odlehčenou zálohu bez fotek</b> na GitHub.</p>
+                    </div>
+                </div>
+
+                <!-- Přehled počtu záznamů -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
                     <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-slate-500 font-bold">Kontejnery / Přeprava</div><div class="text-lg font-black text-slate-900">${(allContainers || []).length} / ${(allTransports || []).length}</div></div>
                     <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-slate-500 font-bold">Objednávky / CN Nabídky</div><div class="text-lg font-black text-slate-900">${(allExternalOrders || []).length} / ${(allNabidky || []).length}</div></div>
                     <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-slate-500 font-bold">Zakázky / Faktury</div><div class="text-lg font-black text-slate-900">${(allZakazky || []).length} / ${(allFaktury || []).length + (allZalohoveFaktury || []).length}</div></div>
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-slate-500 font-bold">Adresář / Události</div><div class="text-lg font-black text-slate-900">${(allCustomers || []).length} / ${(allEvents || []).length}</div></div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-slate-500 font-bold">Adresář / Zájemci</div><div class="text-lg font-black text-slate-900">${(allCustomers || []).length} / ${(allZajemci || []).length}</div></div>
                 </div>
 
-                <div class="flex flex-wrap items-center gap-3 pt-1">
-                    <button onclick="window.performFullDatabaseBackup()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-3 rounded-xl font-black text-sm flex items-center gap-2 shadow-md cursor-pointer">
-                        <span class="material-icons">cloud_upload</span> VYTVOŘIT KOMPLETNÍ ZÁLOHU DATABÁZE (GITHUB + PC)
-                    </button>
-                    <button onclick="window.loadBackupFromGitHubWithTacho()" class="bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-3 rounded-xl font-extrabold text-xs flex items-center gap-2 shadow cursor-pointer">
-                        <span class="material-icons text-base">cloud_download</span> NAČÍST A SLOUČIT ZÁLOHU Z GITHUBU (ZALOHA_DAT)
-                    </button>
-                    <button onclick="document.getElementById('restoreBackupFileInput')?.click()" class="bg-sky-700 hover:bg-sky-800 text-white px-4 py-3 rounded-xl font-extrabold text-xs flex items-center gap-2 shadow cursor-pointer">
-                        <span class="material-icons text-base">restore</span> OBNOVIT / SLOUČIT ZE SOUBORU (.JSON)
-                    </button>
-                    <button onclick="window.exportDatabaseBackupJson()" class="bg-slate-700 hover:bg-slate-800 text-white px-4 py-3 rounded-xl font-extrabold text-xs flex items-center gap-2 shadow cursor-pointer">
-                        <span class="material-icons text-base">download</span> STÁHNOUT POUZE DO PC (.JSON)
-                    </button>
+                <!-- Hlavní akce: Vytvořit zálohu + 2 varianty Načíst zálohu -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-1">
+                    <!-- Vytvořit zálohu -->
+                    <div class="bg-emerald-50/80 border-2 border-emerald-500 rounded-2xl p-4 flex flex-col justify-between gap-3">
+                        <div>
+                            <div class="text-[11px] font-black uppercase tracking-wider text-emerald-900">Uložení kompletní zálohy</div>
+                            <h3 class="text-sm font-black text-slate-900 mt-0.5">Vytvořit zálohu (PC + GitHUB)</h3>
+                            <p class="text-xs text-slate-600 font-medium mt-1">Automaticky provede Synchronizaci a Reindexaci, uloží plný soubor s fotkami na disk PC a odešle zálohu bez fotek na GitHub.</p>
+                        </div>
+                        <button onclick="window.performFullDatabaseBackup()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-3.5 rounded-xl font-black text-sm flex items-center justify-center gap-2 shadow-md cursor-pointer">
+                            <span class="material-icons">cloud_upload</span> VYTVOŘIT ZÁLOHU (PC + GITHUB)
+                        </button>
+                    </div>
+
+                    <!-- Načíst zálohu ze 2 variant (primárně GitHub) -->
+                    <div class="bg-indigo-50/70 border-2 border-indigo-400 rounded-2xl p-4 flex flex-col justify-between gap-3">
+                        <div>
+                            <div class="text-[11px] font-black uppercase tracking-wider text-indigo-900">Obnova a bezpečné sloučení dat</div>
+                            <h3 class="text-sm font-black text-slate-900 mt-0.5">Načíst zálohu z: (primárně z GitHUB)</h3>
+                            <p class="text-xs text-slate-600 font-medium mt-1">Bezpečně sloučí záznamy do hlavní PC databáze (žádná novější data v PC se nepřepíší).</p>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-stretch gap-2.5">
+                            <button onclick="window.loadBackupFromGitHubWithTacho()" class="flex-1 bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-3 rounded-xl font-black text-xs flex items-center justify-center gap-2 shadow-md cursor-pointer">
+                                <span class="material-icons text-base">cloud_download</span> 1. Z GITHUBU (PRIMÁRNÍ)
+                            </button>
+                            <button onclick="document.getElementById('restoreBackupFileInput')?.click()" class="bg-white hover:bg-sky-50 text-slate-800 border-2 border-slate-300 px-4 py-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-sm cursor-pointer">
+                                <span class="material-icons text-base text-sky-700">folder_open</span> 2. ZE SOUBORU V PC (.JSON)
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="text-xs text-slate-600 bg-emerald-50 border border-emerald-200 rounded-xl p-3 font-medium">
-                    <b>Bezpečnostní pojistka Master PC:</b> PC aplikace uchovává data současně v <b>IndexedDB (KontejneryMasterDB)</b> i v <b>localStorage</b>. Změny z mobilních telefonů se vždy pouze bezpečně slučují a nikdy nemohou přepsat nebo vymazat hlavní databázi na PC. Poslední soubor: <b>${lastBackupFile}</b>
+
+                <div class="text-xs text-slate-600 bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium flex flex-wrap items-center justify-between gap-2">
+                    <span><b>Bezpečnostní pojistka Master PC:</b> Data jsou uložena v <b>IndexedDB (KontejneryMasterDB)</b> i v <b>localStorage</b>. Poslední záložní soubor: <b>${lastBackupFile}</b></span>
                 </div>
             </div>`;
 
-            // SEKCE 1: REINDEXACE
-            const secReindexaceHtml = `
-            <div id="sec-sprava-reindexace" class="bg-white rounded-2xl border-2 border-amber-500 shadow-lg p-6 space-y-5">
-                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
-                    <div class="flex items-center gap-3">
-                        <span class="w-12 h-12 rounded-xl bg-amber-600 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">autorenew</span></span>
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <span class="bg-amber-600 text-white text-[10px] font-black px-2 py-0.5 rounded">SEKCE 1 • REINDEXACE</span>
-                                <h2 class="text-lg font-black text-slate-900">REINDEXACE</h2>
+            // 3. ZÁLOŽKA GITHUB: NASTAVENÍ GITHUBU + TRVALÝ ODKAZ NA PC APLIKACI (PŘESUNUTO Z PC ERP)
+            const secGitHubHtml = `
+            <div id="sec-sprava-github" class="space-y-5">
+                <div class="bg-white rounded-2xl border-2 border-slate-700 shadow-lg p-6 space-y-5">
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="w-12 h-12 rounded-xl bg-slate-800 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">key</span></span>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="bg-slate-800 text-white text-[10px] font-black px-2 py-0.5 rounded">GITHUB CLOUD</span>
+                                    <h2 class="text-lg font-black text-slate-900">NASTAVENÍ NA GITHUB (CESTA & TOKEN OVĚŘENÍ)</h2>
+                                </div>
+                                <p class="text-xs text-slate-600 font-semibold">Konfigurace repozitáře GitHub pro zálohování databáze do složky <b>${folderVal}</b>, synchronizaci a aktualizace</p>
                             </div>
-                            <p class="text-xs text-slate-600 font-semibold">Automatické spárování kontaktů z dokladů do Adresáře, přepočet indexů kontejnerů, přeprav a sjednocení duplicitních záznamů</p>
                         </div>
+                        <span class="bg-slate-100 text-slate-900 border border-slate-300 px-3 py-1 rounded-lg text-xs font-black font-mono">${repoVal} (${branchVal})</span>
                     </div>
-                    <span class="bg-amber-100 text-amber-950 border border-amber-400 px-3 py-1 rounded-lg text-xs font-black">Kontrola integrity Master DB</span>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 font-semibold text-amber-950">1. Sjednocení a pročištění všech agend (Objednávky, CN Nabídky, Zakázky, Faktury, Kontejnery, Přeprava)</div>
-                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 font-semibold text-amber-950">2. Automatické doplnění chybějících firem a kontaktů z dokladů do Adresáře</div>
-                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 font-semibold text-amber-950">3. Zápis čistého snímku do trvalé databáze IndexedDB (KontejneryMasterDB)</div>
-                </div>
-                <div class="flex flex-wrap items-center gap-3 pt-1">
-                    <button onclick="window.reindexAllAgendas()" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-3 rounded-xl font-black text-sm flex items-center gap-2 shadow-md cursor-pointer">
-                        <span class="material-icons">published_with_changes</span> SPUSTIT KOMPLETNÍ REINDEXACI DATABÁZE
-                    </button>
-                </div>
-            </div>`;
-
-            // SEKCE 2: SYNCHRONIZACE
-            const secSynchronizaceHtml = `
-            <div id="sec-sprava-synchronizace" class="bg-white rounded-2xl border-2 border-sky-600 shadow-lg p-6 space-y-5">
-                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4">
-                    <div class="flex items-center gap-3">
-                        <span class="w-12 h-12 rounded-xl bg-sky-700 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">sync</span></span>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <div class="flex items-center gap-2">
-                                <span class="bg-sky-700 text-white text-[10px] font-black px-2 py-0.5 rounded">SEKCE 2 • SYNCHRONIZACE</span>
-                                <h2 class="text-lg font-black text-slate-900">SYNCHRONIZACE</h2>
-                            </div>
-                            <p class="text-xs text-slate-600 font-semibold">Bezpečné sloučení změn z mobilních aplikací do Hlavního PC, odeslání jízd na GitHub a ruční správa aktualizací (v ${CURRENT_SW_VERSION})</p>
+                            <label class="block text-xs font-extrabold text-slate-700 mb-1">Cesta k repozitáři GitHub (vlastník/repozitář)</label>
+                            <input id="dbGhRepoInput" type="text" value="${repoVal.replace(/"/g, '&quot;')}" placeholder="Kont-premysl-sliva/Home_1" class="w-full border-2 border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:border-sky-600 focus:outline-none">
                         </div>
-                    </div>
-                    ${pendingVer > CURRENT_SW_VERSION
-                        ? `<button onclick="window.performUnifiedGitHubUpdateWithTacho()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 px-4 py-2 rounded-xl text-xs font-black animate-pulse shadow cursor-pointer">🔔 K DISPOZICI NOVÁ AKTUALIZACE v${pendingVer} – KLIKNĚTE PRO SPUŠTĚNÍ</button>`
-                        : `<span class="bg-emerald-100 text-emerald-900 border border-emerald-400 px-3 py-1.5 rounded-lg text-xs font-black">✅ Program je aktuální (v ${CURRENT_SW_VERSION})</span>`}
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-sky-50 border border-sky-200 rounded-xl p-4 space-y-3">
-                        <h3 class="text-sm font-black text-sky-950 flex items-center gap-1.5"><span class="material-icons text-base">devices</span> Synchronizace dat (PC ↔ Mobil ↔ Cloud)</h3>
-                        <p class="text-xs text-slate-600">Sloučí nové jízdy Přepravy, fotografie, Zájemce a dávky Událostí (po 50) z mobilních telefonů do hlavní PC databáze.</p>
-                        <div class="flex flex-wrap gap-2">
-                            <button onclick="window.syncWithMobileAndCloudWithTacho()" class="bg-sky-700 hover:bg-sky-800 text-white px-4 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer"><span class="material-icons text-sm">sync</span> SYNCHRONIZOVAT DATA NYNÍ</button>
-                            <button onclick="window.pushMasterDataToGitHubManual()" class="bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2.5 rounded-xl font-extrabold text-xs flex items-center gap-1.5 shadow cursor-pointer"><span class="material-icons text-sm">cloud_upload</span> ODESLAT JÍZDY NA GITHUB</button>
-                        </div>
-                    </div>
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
-                        <h3 class="text-sm font-black text-slate-900 flex items-center gap-1.5"><span class="material-icons text-base">system_update_alt</span> Ruční aktualizace programu</h3>
-                        <p class="text-xs text-slate-600">Aktualizace se <b>nikdy nespouští automaticky</b>. Zde můžete ručně zkontrolovat a odsouhlasit stažení nové verze nebo otevřít detailní panel aktualizací.</p>
-                        <div class="flex flex-wrap gap-2">
-                            <button onclick="window.performUnifiedGitHubUpdateWithTacho()" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer"><span class="material-icons text-sm">download</span> ZKONTROLOVAT A SPUSTIT AKTUALIZACI</button>
-                            <button onclick="window.openSwUpdateModal()" class="bg-slate-700 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl font-extrabold text-xs flex items-center gap-1.5 shadow cursor-pointer"><span class="material-icons text-sm">settings_backup_restore</span> POKROČILÁ SPRÁVA VERZÍ</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-emerald-50 border-2 border-emerald-400 rounded-xl p-4 space-y-3">
-                    <div class="flex flex-wrap items-center justify-between gap-2">
-                        <h3 class="text-sm font-black text-emerald-950 flex items-center gap-1.5"><span class="material-icons text-base text-emerald-700">photo_size_select_large</span> Lokální cache miniatur (Přeprava & Kontejnery • expirace 30 dní po HOTOVO)</h3>
-                        <span class="bg-white border border-emerald-300 text-emerald-900 px-2.5 py-1 rounded-lg text-xs font-extrabold">Miniatury v paměti: ${(window._mobileThumbMemoryMap && window._mobileThumbMemoryMap.size) || 0} • Uvolněno &gt;30 dní po HOTOVO: ${localStorage.getItem('ko_mobile_thumb_pruned_count') || 0}</span>
-                    </div>
-                    <p class="text-xs text-slate-700 font-medium">V seznamech a na kartách sekcí <b>Přeprava</b> a <b>Kontejnery</b> se vykreslují lehké miniatury (240×240 px) a plná fotografie se načítá až po rozkliknutí detailu. U přeprav ve stavu <b>HOTOVO</b> se lokální fotky v mobilních aplikacích automaticky vymažou po <b>30 dnech</b> od dokončení (v Hlavním PC zůstávají uložené trvale).</p>
-                    <div class="flex flex-wrap gap-2">
-                        <button onclick="window.warmUpMobileThumbnailsCacheWithTacho()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer"><span class="material-icons text-sm">bolt</span> PŘEDGENEROVAT MINIATURY NYNÍ</button>
-                        <button onclick="window.pruneExpiredMobileTransportPhotosWithTacho()" class="bg-teal-700 hover:bg-teal-800 text-white px-4 py-2 rounded-xl font-extrabold text-xs flex items-center gap-1.5 shadow cursor-pointer"><span class="material-icons text-sm">cleaning_services</span> VYČISTIT FOTKY HOTOVO &gt; 30 DNÍ</button>
-                    </div>
-                </div>
-            </div>`;
-
-            // SEKCE 3: PC ERP
-            const secPcErpHtml = `
-            <div id="sec-sprava-pcerp" class="bg-white rounded-2xl border-2 border-blue-600 shadow-lg p-6 space-y-5">
-                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
-                    <div class="flex items-center gap-3">
-                        <span class="w-12 h-12 rounded-xl bg-blue-700 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">desktop_windows</span></span>
                         <div>
-                            <div class="flex items-center gap-2">
-                                <span class="bg-blue-700 text-white text-[10px] font-black px-2 py-0.5 rounded">SEKCE 3 • PC ERP</span>
-                                <h2 class="text-lg font-black text-slate-900">PC ERP (STORMWARE POHODA & XML KOMUNIKACE)</h2>
-                            </div>
-                            <p class="text-xs text-slate-600 font-semibold">Přímé propojení s účetním systémem Stormware POHODA (mServer / XML import a export dokladů, nabídek, faktur a adresáře)</p>
+                            <label class="block text-xs font-extrabold text-slate-700 mb-1">Větev (Branch)</label>
+                            <input id="dbGhBranchInput" type="text" value="${branchVal.replace(/"/g, '&quot;')}" placeholder="main" class="w-full border-2 border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:border-sky-600 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-extrabold text-slate-700 mb-1">Cesta složky pro zálohu databáze</label>
+                            <input id="dbGhBackupFolderInput" type="text" value="${folderVal.replace(/"/g, '&quot;')}" placeholder="ZALOHA_DAT" class="w-full border-2 border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:border-sky-600 focus:outline-none">
                         </div>
                     </div>
-                    <span class="bg-blue-100 text-blue-950 border border-blue-400 px-3 py-1 rounded-lg text-xs font-black">IČO: 28654565 • XML v2.0</span>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-3"><div class="text-slate-600 font-bold">Faktury & Zálohové faktury k exportu</div><div class="text-lg font-black text-blue-950">${(allFaktury || []).length} / ${(allZalohoveFaktury || []).length}</div></div>
-                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-3"><div class="text-slate-600 font-bold">Cenové nabídky (CN) & Zakázky</div><div class="text-lg font-black text-blue-950">${(allNabidky || []).length} / ${(allZakazky || []).length}</div></div>
-                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-3"><div class="text-slate-600 font-bold">Adresář firem (POHODA)</div><div class="text-lg font-black text-blue-950">${(allCustomers || []).length} firem</div></div>
-                </div>
-                <div class="flex flex-wrap items-center gap-3">
-                    <button onclick="window.openPcIntegrationModal()" class="bg-blue-700 hover:bg-blue-800 text-white px-5 py-3 rounded-xl font-black text-sm flex items-center gap-2 shadow-md cursor-pointer">
-                        <span class="material-icons">integration_instructions</span> OTEVŘÍT NASTAVENÍ A TERMINÁL PC ERP (POHODA)
-                    </button>
-                    <button onclick="window.exportAllPohodaXml()" class="bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-3 rounded-xl font-extrabold text-xs flex items-center gap-2 shadow cursor-pointer">
-                        <span class="material-icons text-base">description</span> EXPORTOVAT XML PRO POHODU
-                    </button>
-                    <button onclick="window.syncPohodaAdresarErp()" class="bg-sky-700 hover:bg-sky-800 text-white px-4 py-3 rounded-xl font-extrabold text-xs flex items-center gap-2 shadow cursor-pointer">
-                        <span class="material-icons text-base">contacts</span> SYNCHRONIZOVAT ADRESÁŘ POHODA
-                    </button>
+                    <div>
+                        <label class="block text-xs font-extrabold text-slate-700 mb-1">Token ověření (GitHub Personal Access Token – ghp_... / github_pat_...)</label>
+                        <input id="dbGhTokenInput" type="password" value="${tokenVal.replace(/"/g, '&quot;')}" placeholder="ghp_..." class="w-full border-2 border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-mono font-bold text-slate-900 focus:border-sky-600 focus:outline-none">
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3 pt-1">
+                        <button onclick="window.saveDatabazeGitHubSettings()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer">
+                            <span class="material-icons text-sm">save</span> ULOŽIT NASTAVENÍ GITHUBU
+                        </button>
+                        <button onclick="window.testDatabazeGitHubConnection()" class="bg-sky-700 hover:bg-sky-800 text-white px-4 py-2.5 rounded-xl font-extrabold text-xs flex items-center gap-1.5 shadow cursor-pointer">
+                            <span class="material-icons text-sm">verified</span> OVĚŘIT SPOJENÍ A TOKEN
+                        </button>
+                        <button onclick="window.uploadAppHtmlToGitHubWithTacho()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl font-extrabold text-xs flex items-center gap-1.5 shadow cursor-pointer">
+                            <span class="material-icons text-sm">publish</span> NAHRÁT AKTUALIZACI SW NA GITHUB (v ${CURRENT_SW_VERSION})
+                        </button>
+                    </div>
+                    <div id="dbGhTestStatus" class="hidden"></div>
                 </div>
 
-                <div class="p-4 bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900 text-white rounded-xl border-2 border-blue-500 shadow-md space-y-3">
+                <!-- Trvalý konstantní odkaz pro spuštění na PC (přesunuto ze zrušené záložky PC ERP) -->
+                <div class="p-5 bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900 text-white rounded-2xl border-2 border-blue-500 shadow-lg space-y-3">
                     <div class="flex items-center justify-between flex-wrap gap-2">
                         <div class="flex items-center gap-2.5">
-                            <span class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center shadow"><span class="material-icons text-lg">link</span></span>
+                            <span class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow"><span class="material-icons text-lg">link</span></span>
                             <div>
                                 <span class="font-black text-sm tracking-wide text-white block">TRVALÝ KONSTANTNÍ ODKAZ PRO SPUŠTĚNÍ NA PC (PRO FIREMNÍ WEB)</span>
                                 <span class="text-[11px] text-blue-200">Vložitelný do firemních web stránek nebo pro vytvoření zástupce na plochu Windows / Mac</span>
@@ -15386,9 +15353,6 @@ ${itemsXml}
                         </div>
                         <span class="bg-emerald-500 text-slate-950 text-[10px] font-black px-2.5 py-1 rounded shadow">VŽDY NEJNOVĚJŠÍ VERZE • BEZ NUTNOSTI ZMĚNY ODKAZU</span>
                     </div>
-                    <p class="text-xs text-slate-200 leading-relaxed">
-                        Tento konstantní odkaz směřuje na hlavní vstupní bod systému na GitHub Pages. Při jakýchkoliv budoucích aktualizacích a úpravách zůstává tato URL adresa <b>stále stejná</b> a uživatelům se vždy automaticky načte nejnovější verze PC ERP aplikace.
-                    </p>
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-2 items-center">
                         <div class="md:col-span-8">
                             <input id="pcPermanentLinkInput" type="text" readonly value="https://kont-premysl-sliva.github.io/Home_1/" class="w-full bg-slate-950 text-sky-300 border-2 border-blue-400 font-mono font-black text-xs px-3.5 py-2.5 rounded-lg select-all shadow-inner">
@@ -15411,239 +15375,103 @@ ${itemsXml}
                 </div>
             </div>`;
 
-            // SEKCE 4: NASTAVENÍ NA GITHUB
-            const secGitHubHtml = `
-            <div id="sec-sprava-github" class="bg-white rounded-2xl border-2 border-slate-700 shadow-lg p-6 space-y-5">
-                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
-                    <div class="flex items-center gap-3">
-                        <span class="w-12 h-12 rounded-xl bg-slate-800 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">key</span></span>
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <span class="bg-slate-800 text-white text-[10px] font-black px-2 py-0.5 rounded">SEKCE 4 • GITHUB</span>
-                                <h2 class="text-lg font-black text-slate-900">NASTAVENÍ NA GITHUB (CESTA & TOKEN OVĚŘENÍ)</h2>
-                            </div>
-                            <p class="text-xs text-slate-600 font-semibold">Konfigurace repozitáře GitHub pro zálohování databáze do složky <b>${folderVal}</b>, synchronizaci Přepravy a aktualizace</p>
-                        </div>
-                    </div>
-                    <span class="bg-slate-100 text-slate-900 border border-slate-300 px-3 py-1 rounded-lg text-xs font-black font-mono">${repoVal} (${branchVal})</span>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-xs font-extrabold text-slate-700 mb-1">Cesta k repozitáři GitHub (vlastník/repozitář)</label>
-                        <input id="dbGhRepoInput" type="text" value="${repoVal.replace(/"/g, '&quot;')}" placeholder="Kont-premysl-sliva/Home_1" class="w-full border-2 border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:border-sky-600 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-extrabold text-slate-700 mb-1">Větev (Branch)</label>
-                        <input id="dbGhBranchInput" type="text" value="${branchVal.replace(/"/g, '&quot;')}" placeholder="main" class="w-full border-2 border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:border-sky-600 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-extrabold text-slate-700 mb-1">Cesta složky pro zálohu databáze</label>
-                        <input id="dbGhBackupFolderInput" type="text" value="${folderVal.replace(/"/g, '&quot;')}" placeholder="ZALOHA_DAT" class="w-full border-2 border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:border-sky-600 focus:outline-none">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-extrabold text-slate-700 mb-1">Token ověření (GitHub Personal Access Token – ghp_... / github_pat_...)</label>
-                    <input id="dbGhTokenInput" type="password" value="${tokenVal.replace(/"/g, '&quot;')}" placeholder="ghp_..." class="w-full border-2 border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-mono font-bold text-slate-900 focus:border-sky-600 focus:outline-none">
-                </div>
-                <div class="flex flex-wrap items-center gap-3 pt-1">
-                    <button onclick="window.saveDatabazeGitHubSettings()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer">
-                        <span class="material-icons text-sm">save</span> ULOŽIT NASTAVENÍ GITHUBU
-                    </button>
-                    <button onclick="window.testDatabazeGitHubConnection()" class="bg-sky-700 hover:bg-sky-800 text-white px-4 py-2.5 rounded-xl font-extrabold text-xs flex items-center gap-1.5 shadow cursor-pointer">
-                        <span class="material-icons text-sm">verified</span> OVĚŘIT SPOJENÍ A TOKEN
-                    </button>
-                    <button onclick="window.uploadAppHtmlToGitHubWithTacho()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl font-extrabold text-xs flex items-center gap-1.5 shadow cursor-pointer">
-                        <span class="material-icons text-sm">publish</span> NAHRÁT AKTUALIZACI SW NA GITHUB (v ${CURRENT_SW_VERSION})
-                    </button>
-                </div>
-                <div id="dbGhTestStatus" class="hidden"></div>
-            </div>`;
-
-            // SEKCE 5: INSTALACE IPHONE
-            const secIphoneHtml = `
-            <div id="sec-sprava-iphone" class="bg-white rounded-2xl border-2 border-teal-600 shadow-lg p-6 space-y-5">
-                <div class="flex items-center justify-between flex-wrap gap-3 border-b border-slate-200 pb-4">
-                    <div class="flex items-center gap-3">
-                        <span class="w-12 h-12 rounded-xl bg-teal-700 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">phone_iphone</span></span>
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <span class="bg-teal-700 text-white text-[10px] font-black px-2 py-0.5 rounded">SEKCE 5 • IPHONE</span>
-                                <h2 class="text-lg font-black text-slate-900">INSTALACE IPHONE (PŘEPRAVA PRO ŘIDIČE & DISPEČINK)</h2>
-                            </div>
-                            <p class="text-xs text-slate-600 font-semibold">Naskenujte fotoaparátem iPhonu pro přímé otevření v Safari a uložení mobilní aplikace na plochu</p>
-                        </div>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <button onclick="window.openIphoneInstallModalWithTacho()" class="bg-teal-700 hover:bg-teal-800 text-white px-4 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer">
-                            <span class="material-icons text-sm">open_in_new</span> OTEVŘÍT CELOOBRAZOVKOVÝ QR KÓD & NÁVOD
-                        </button>
-                        <button onclick="window.shareIphoneInstallWhatsApp()" class="bg-[#16A34A] hover:bg-green-700 text-white px-3.5 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer">
-                            <span class="material-icons text-sm">share</span> POSLAT ODKAZ NA WHATSAPP
-                        </button>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                    <div class="flex flex-col items-center justify-center bg-slate-50 border-2 border-teal-500 rounded-2xl p-4">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=${encodeURIComponent(iphoneUrl)}" alt="QR iPhone" class="w-48 h-48 rounded-lg shadow-sm bg-white p-2">
-                        <span class="mt-2 text-[11px] font-black text-teal-900">Naskenujte přes Fotoaparát v iPhonu</span>
-                    </div>
-                    <div class="md:col-span-2 space-y-3 text-xs text-slate-700">
-                        <div class="bg-teal-50 border border-teal-200 rounded-xl p-3.5">
-                            <div class="flex items-center justify-between gap-2 mb-1">
-                                <span class="font-black text-teal-950 text-sm">Přímá adresa aplikace pro iPhone:</span>
-                                <button type="button" onclick="window.copyIphoneInstallUrl()" class="bg-teal-700 hover:bg-teal-800 text-white px-2.5 py-1 rounded text-[11px] font-extrabold flex items-center gap-1 cursor-pointer">
-                                    <span class="material-icons text-xs">content_copy</span> Kopírovat odkaz
-                                </button>
-                            </div>
-                            <code class="block bg-white border border-teal-300 rounded px-2.5 py-1.5 font-mono text-xs text-teal-900 select-all break-all">${iphoneUrl}</code>
-                        </div>
-                        <ol class="list-decimal list-inside space-y-1.5 font-semibold">
-                            <li>Otevřete na iPhonu aplikaci <b>Fotoaparát</b> a namiřte ji na QR kód vlevo.</li>
-                            <li>Klepněte na zobrazený odkaz pro otevření v prohlížeči <b>Safari</b>.</li>
-                            <li>Dole v Safari klepněte na ikonu <b>Sdílet</b> a zvolte <b>Přidat na plochu</b>.</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>`;
-
-            // SEKCE 6: INSTALACE ANDROID
-            const secAndroidHtml = `
-            <div id="sec-sprava-android" class="space-y-6">
-                <!-- KARTA 1: DOPORUČENÁ RYCHLÁ INSTALACE PŘES PROHLÍŽEČ CHROME -->
-                <div class="bg-white rounded-2xl border-2 border-emerald-600 shadow-lg p-6 space-y-5">
-                    <div class="flex items-center justify-between flex-wrap gap-3 border-b border-slate-200 pb-4">
-                        <div class="flex items-center gap-3">
-                            <span class="w-12 h-12 rounded-xl bg-emerald-700 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">android</span></span>
-                            <div>
-                                <div class="flex items-center gap-2 flex-wrap">
-                                    <span class="bg-emerald-700 text-white text-[10px] font-black px-2 py-0.5 rounded">SEKCE 6 • ANDROID</span>
-                                    <h2 class="text-lg font-black text-slate-900">INSTALACE ANDROID — 1. RYCHLÁ INSTALACE PŘES CHROME (BEZ SOUBORU .APK)</h2>
-                                    <span class="bg-emerald-100 text-emerald-900 border border-emerald-400 text-[10px] font-black px-2 py-0.5 rounded-full">DOPORUČENO • STEJNĚ SNADNÉ JAKO IPHONE</span>
+            // 4. ZÁLOŽKA MOBILNÍ QR: SJEDNOCENÁ INSTALACE IPHONE & ANDROID
+            const secMobilniQrHtml = `
+            <div id="sec-sprava-mobilni-qr" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <!-- IPHONE (SAFARI) -->
+                <div id="sec-sprava-iphone" class="bg-white rounded-2xl border-2 border-teal-600 shadow-lg p-5 space-y-4 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-200 pb-3">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-11 h-11 rounded-xl bg-teal-700 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">phone_iphone</span></span>
+                                <div>
+                                    <span class="bg-teal-700 text-white text-[10px] font-black px-2 py-0.5 rounded">IPHONE • SAFARI</span>
+                                    <h2 class="text-base font-black text-slate-900">INSTALACE IPHONE (PŘEPRAVA)</h2>
                                 </div>
-                                <p class="text-xs text-slate-600 font-semibold">Naskenujte fotoaparátem Android telefonu — otevře se v Google Chrome a 1 kliknutím přidáte ikonu na plochu (bez zapínání vývojářského režimu a bez varování)</p>
                             </div>
-                        </div>
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <button onclick="window.openAndroidInstallModalWithTacho()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer">
-                                <span class="material-icons text-sm">qr_code_scanner</span> OTEVŘÍT VELKÝ QR KÓD & NÁVOD CHROME
-                            </button>
-                            <button onclick="window.shareAndroidInstallWhatsAppWithTacho()" class="bg-[#16A34A] hover:bg-green-700 text-white px-3.5 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer">
-                                <span class="material-icons text-sm">share</span> POSLAT ODKAZ NA WHATSAPP
+                            <button onclick="window.shareIphoneInstallWhatsApp()" class="bg-[#16A34A] hover:bg-green-700 text-white px-3 py-2 rounded-xl font-black text-xs flex items-center gap-1 shadow cursor-pointer">
+                                <span class="material-icons text-sm">share</span> WhatsApp
                             </button>
                         </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                        <div class="flex flex-col items-center justify-center bg-emerald-50/70 border-2 border-emerald-500 rounded-2xl p-4">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=${encodeURIComponent(androidChromeUrl)}" alt="QR Android Chrome" class="w-48 h-48 rounded-lg shadow-sm bg-white p-2">
-                            <span class="mt-2 text-[11px] font-black text-emerald-950 text-center">Naskenujte přes Fotoaparát / Google Lens v Androidu</span>
-                            <span class="mt-0.5 text-[10px] font-bold text-emerald-700">Otevře se rovnou v prohlížeči Chrome</span>
-                        </div>
-                        <div class="md:col-span-2 space-y-3 text-xs text-slate-700">
-                            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5">
-                                <div class="flex items-center justify-between gap-2 mb-1">
-                                    <span class="font-black text-emerald-950 text-sm">Přímá adresa pro prohlížeč Google Chrome na Androidu:</span>
-                                    <button type="button" onclick="window.copyAndroidInstallUrlWithTacho()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-2.5 py-1 rounded text-[11px] font-extrabold flex items-center gap-1 cursor-pointer">
-                                        <span class="material-icons text-xs">content_copy</span> Kopírovat odkaz
-                                    </button>
-                                </div>
-                                <code id="androidChromeUrlCode" class="block bg-white border border-emerald-300 rounded px-2.5 py-1.5 font-mono text-xs text-emerald-900 select-all break-all">${androidChromeUrl}</code>
+                        <div class="flex flex-col sm:flex-row items-center gap-4">
+                            <div class="flex flex-col items-center justify-center bg-slate-50 border-2 border-teal-500 rounded-2xl p-3 shrink-0">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data=${encodeURIComponent(iphoneUrl)}" alt="QR iPhone" class="w-40 h-40 rounded-lg shadow-sm bg-white p-1.5">
+                                <span class="mt-1.5 text-[10px] font-black text-teal-900">Fotoaparát v iPhonu</span>
                             </div>
-
-                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2">
-                                <div class="font-black text-slate-900 text-xs uppercase tracking-wider">Postup instalace přes Chrome (trvá 10 vteřin):</div>
-                                <ol class="list-decimal list-inside space-y-1.5 font-semibold text-slate-800">
-                                    <li>Otevřete na Android telefonu <b>Fotoaparát</b> a namiřte jej na zelený QR kód vlevo.</li>
-                                    <li>Po otevření stránky v prohlížeči <b>Google Chrome</b> klepněte nahoře na zelené tlačítko <b>„📲 Přidat aplikaci na plochu telefonu (Chrome)“</b> (nebo v menu Chrome <b>⋮</b> zvolte <b>Přidat na plochu / Nainstalovat aplikaci</b>).</li>
-                                    <li>Potvrďte <b>Přidat / Nainstalovat</b> — na ploše telefonu se vytvoří ikona <b>Kontejnery Ostrava</b> v režimu celé obrazovky.</li>
+                            <div class="space-y-2.5 text-xs text-slate-700 min-w-0 flex-1">
+                                <div class="bg-teal-50 border border-teal-200 rounded-xl p-2.5">
+                                    <div class="flex items-center justify-between gap-2 mb-1">
+                                        <span class="font-black text-teal-950 text-xs">Adresa pro Safari:</span>
+                                        <button type="button" onclick="window.copyIphoneInstallUrl()" class="bg-teal-700 hover:bg-teal-800 text-white px-2 py-0.5 rounded text-[10px] font-extrabold cursor-pointer">Kopírovat</button>
+                                    </div>
+                                    <code class="block bg-white border border-teal-300 rounded px-2 py-1 font-mono text-[11px] text-teal-900 select-all break-all">${iphoneUrl}</code>
+                                </div>
+                                <ol class="list-decimal list-inside space-y-1 font-semibold">
+                                    <li>Naskenujte QR kód přes <b>Fotoaparát</b> na iPhonu.</li>
+                                    <li>Otevřete odkaz v <b>Safari</b>.</li>
+                                    <li>Klepněte na <b>Sdílet</b> → <b>Přidat na plochu</b>.</li>
                                 </ol>
                             </div>
                         </div>
                     </div>
+                    <button onclick="window.openIphoneInstallModalWithTacho()" class="w-full bg-teal-700 hover:bg-teal-800 text-white px-4 py-2.5 rounded-xl font-black text-xs flex items-center justify-center gap-1.5 shadow cursor-pointer">
+                        <span class="material-icons text-sm">open_in_new</span> OTEVŘÍT VELKÝ QR KÓD & NÁVOD PRO IPHONE
+                    </button>
                 </div>
 
-                <!-- KARTA 2: VOLITELNÁ INSTALACE SOUBORU .APK -->
-                <div class="bg-white rounded-2xl border-2 border-slate-300 shadow p-6 space-y-5">
-                    <div class="flex items-center justify-between flex-wrap gap-3 border-b border-slate-200 pb-4">
-                        <div class="flex items-center gap-3">
-                            <span class="w-11 h-11 rounded-xl bg-slate-800 text-amber-400 flex items-center justify-center shadow"><span class="material-icons text-xl">system_security_update</span></span>
-                            <div>
-                                <h3 class="text-base font-black text-slate-900">2. VOLITELNÁ INSTALACE CELÉHO SOUBORU .APK & SROVNÁNÍ VARIANT</h3>
-                                <p class="text-xs text-slate-600 font-semibold">Kdy stačí rychlá instalace přes prohlížeč Chrome a jaké jsou výhody plného souboru .APK</p>
+                <!-- ANDROID (CHROME + APK) -->
+                <div id="sec-sprava-android" class="bg-white rounded-2xl border-2 border-emerald-600 shadow-lg p-5 space-y-4 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-200 pb-3">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-11 h-11 rounded-xl bg-emerald-700 text-white flex items-center justify-center shadow"><span class="material-icons text-2xl">android</span></span>
+                                <div>
+                                    <span class="bg-emerald-700 text-white text-[10px] font-black px-2 py-0.5 rounded">ANDROID • CHROME & APK</span>
+                                    <h2 class="text-base font-black text-slate-900">INSTALACE ANDROID (PŘEPRAVA)</h2>
+                                </div>
+                            </div>
+                            <button onclick="window.shareAndroidInstallWhatsAppWithTacho()" class="bg-[#16A34A] hover:bg-green-700 text-white px-3 py-2 rounded-xl font-black text-xs flex items-center gap-1 shadow cursor-pointer">
+                                <span class="material-icons text-sm">share</span> WhatsApp
+                            </button>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-center gap-4">
+                            <div class="flex flex-col items-center justify-center bg-emerald-50/70 border-2 border-emerald-500 rounded-2xl p-3 shrink-0">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data=${encodeURIComponent(androidChromeUrl)}" alt="QR Android Chrome" class="w-40 h-40 rounded-lg shadow-sm bg-white p-1.5">
+                                <span class="mt-1.5 text-[10px] font-black text-emerald-950">Fotoaparát / Google Lens</span>
+                            </div>
+                            <div class="space-y-2.5 text-xs text-slate-700 min-w-0 flex-1">
+                                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-2.5">
+                                    <div class="flex items-center justify-between gap-2 mb-1">
+                                        <span class="font-black text-emerald-950 text-xs">Adresa pro Google Chrome:</span>
+                                        <button type="button" onclick="window.copyAndroidInstallUrlWithTacho()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-2 py-0.5 rounded text-[10px] font-extrabold cursor-pointer">Kopírovat</button>
+                                    </div>
+                                    <code id="androidChromeUrlCode" class="block bg-white border border-emerald-300 rounded px-2 py-1 font-mono text-[11px] text-emerald-900 select-all break-all">${androidChromeUrl}</code>
+                                </div>
+                                <ol class="list-decimal list-inside space-y-1 font-semibold">
+                                    <li>Naskenujte QR kód v <b>Android telefonu</b>.</li>
+                                    <li>V <b>Google Chrome</b> klepněte na <b>Přidat na plochu</b>.</li>
+                                </ol>
                             </div>
                         </div>
-                        <button onclick="window.downloadAndroidApkDirectWithTacho()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow cursor-pointer">
-                            <span class="material-icons text-sm text-amber-400">download</span> STÁHNOUT INSTALAČNÍ SOUBOR .APK (v ${CURRENT_SW_VERSION})
-                        </button>
                     </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-                        <div class="flex flex-col items-center justify-center bg-slate-50 border border-slate-300 rounded-2xl p-4">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data=${encodeURIComponent(androidApkUrl)}" alt="QR Android APK" class="w-40 h-40 rounded-lg shadow-sm bg-white p-2">
-                            <span class="mt-2 text-[11px] font-black text-slate-800 text-center">QR kód pro přímé stažení souboru .APK</span>
-                            <span class="text-[10px] text-slate-500 text-center mt-0.5">Ani pro .APK se nezapíná vývojářský režim (jen souhlas s instalací z prohlížeče)</span>
-                        </div>
-
-                        <div class="lg:col-span-2 overflow-x-auto">
-                            <table class="w-full text-xs border-collapse border border-slate-300 rounded-xl overflow-hidden">
-                                <thead>
-                                    <tr class="bg-slate-800 text-white text-left">
-                                        <th class="p-2.5 font-black">Vlastnost / Funkce</th>
-                                        <th class="p-2.5 font-black text-emerald-300">Přes prohlížeč Chrome (PWA)</th>
-                                        <th class="p-2.5 font-black text-amber-300">Celý soubor .APK</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-200 font-semibold text-slate-700">
-                                    <tr class="bg-emerald-50/40">
-                                        <td class="p-2.5 font-black text-slate-900">Nutnost zapínat „Prostředí pro vývojáře“</td>
-                                        <td class="p-2.5 text-emerald-800 font-black">✅ NE — nikdy se nic nepovoluje</td>
-                                        <td class="p-2.5 text-slate-800 font-bold">✅ NE — jen 1× povolit instalaci z Chrome</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-2.5 font-black text-slate-900">Rychlost instalace na další telefony</td>
-                                        <td class="p-2.5 text-emerald-800 font-black">⚡ Za 5 vteřin přes QR kód (jako iPhone)</td>
-                                        <td class="p-2.5">Stažení balíčku (~15 MB) a spuštění instalátoru</td>
-                                    </tr>
-                                    <tr class="bg-emerald-50/40">
-                                        <td class="p-2.5 font-black text-slate-900">Napojení na Hlavní PC & cache miniatur (30 dní po HOTOVO)</td>
-                                        <td class="p-2.5 text-emerald-800 font-black">✅ ANO — 100% plná podpora</td>
-                                        <td class="p-2.5 text-emerald-800 font-black">✅ ANO — 100% plná podpora</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-2.5 font-black text-slate-900">Ruční schvalování aktualizací jedním kliknutím</td>
-                                        <td class="p-2.5 text-emerald-800 font-black">✅ Okamžitě v prohlížeči bez přeinstalace</td>
-                                        <td class="p-2.5">Přes stažení nové verze z GitHubu / cloudu</td>
-                                    </tr>
-                                    <tr class="bg-amber-50/50">
-                                        <td class="p-2.5 font-black text-slate-900">Hlavní výhody instalace celého souboru .APK</td>
-                                        <td class="p-2.5 text-slate-600">Běží v zabezpečeném prostředí Google Chrome</td>
-                                        <td class="p-2.5 text-amber-950 font-bold">🔒 Nativní systémový otisk prstu Androidu, přímé ukládání souborů do paměti telefonu bez limitů prohlížeče a systémový Android tisk</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="window.openAndroidInstallModalWithTacho()" class="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-2.5 rounded-xl font-black text-xs flex items-center justify-center gap-1.5 shadow cursor-pointer">
+                            <span class="material-icons text-sm">qr_code_scanner</span> VELKÝ QR CHROME
+                        </button>
+                        <button onclick="window.downloadAndroidApkDirectWithTacho()" class="bg-slate-800 hover:bg-slate-900 text-white px-3 py-2.5 rounded-xl font-black text-xs flex items-center justify-center gap-1.5 shadow cursor-pointer" title="Volitelné stažení instalačního souboru .APK">
+                            <span class="material-icons text-sm text-amber-400">download</span> STÁHNOUT .APK
+                        </button>
                     </div>
                 </div>
             </div>`;
 
-            // Vykreslení: Tachometr je VŽDY nahoře, následovaný rozcestníkem a jednotlivými sekcemi
-            const inlineTachoHtml = window.renderSpravaInlineTachoHtml();
-
-            if (subKey === 'REINDEXACE') {
-                grid._add = navHeaderHtml + inlineTachoHtml + secReindexaceHtml;
-            } else if (subKey === 'SYNCHRONIZACE') {
-                grid._add = navHeaderHtml + inlineTachoHtml + secSynchronizaceHtml;
-            } else if (subKey === 'PC_ERP') {
-                grid._add = navHeaderHtml + inlineTachoHtml + secPcErpHtml;
-            } else if (subKey === 'GITHUB_NASTAVENI') {
-                grid._add = navHeaderHtml + inlineTachoHtml + secGitHubHtml;
-            } else if (subKey === 'QR_IPHONE') {
-                grid._add = navHeaderHtml + inlineTachoHtml + secIphoneHtml;
-            } else if (subKey === 'QR_ANDROID') {
-                grid._add = navHeaderHtml + inlineTachoHtml + secAndroidHtml;
+            if (effSub === 'GITHUB_NASTAVENI') {
+                grid._add = inlineTachoHtml + secGitHubHtml;
+            } else if (effSub === 'MOBILNI_QR') {
+                grid._add = secMobilniQrHtml;
             } else {
-                // Výchozí pohled SPRÁVA DATABÁZE ('ZALOHA') obsahuje všechny požadované sekce přehledně pod sebou
-                grid._add = navHeaderHtml + inlineTachoHtml + secZalohaHtml + secReindexaceHtml + secSynchronizaceHtml + secPcErpHtml + secGitHubHtml + secIphoneHtml + secAndroidHtml;
+                // Výchozí čistý pohled ZÁLOHA: pouze Tachometr zálohování + Karta Zálohování a obnova databáze
+                grid._add = inlineTachoHtml + secZalohaHtml;
             }
         };
 
@@ -24042,7 +23870,7 @@ function buildShareTextSummary(type, id) {
     </script>
 
     <!-- ============================================================================ -->
-    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v481)      -->
+    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v482)      -->
     <!-- Zkrácená verze Přepravy: ostatní agendy jsou na iPhonu kompletně skryté.     -->
     <!-- ============================================================================ -->
     <style id="iphoneAppStyles">
@@ -24328,7 +24156,7 @@ function buildShareTextSummary(type, id) {
                     <span class="material-icons text-[#38BDF8] text-xl">speed</span>
                     <div>
                         <div class="font-black text-sm leading-tight text-white">Aktualizace</div>
-                        <div id="iosModalVersionBadge" class="text-[11px] text-[#94A3B8] font-bold">Přeprava • v 481</div>
+                        <div id="iosModalVersionBadge" class="text-[11px] text-[#94A3B8] font-bold">Přeprava • v 482</div>
                     </div>
                 </div>
                 <button type="button" onclick="closeIphoneInstallModal()" class="px-3 py-1.5 rounded-lg bg-[#334155] hover:bg-[#475569] text-white text-xs font-extrabold transition" title="Zavřít">
@@ -24370,7 +24198,7 @@ function buildShareTextSummary(type, id) {
 
                 <!-- Skrytý progress bar element pro zpětnou kompatibilitu -->
                 <div id="iosGhUpdateProgressBar" class="hidden"></div>
-                <div id="iosGhRemoteVerBadge" class="hidden">v 481</div>
+                <div id="iosGhRemoteVerBadge" class="hidden">v 482</div>
 
                 <!-- Stavový text pod tachometrem -->
                 <p id="iosGhUpdateStatusText" class="text-xs font-bold text-[#CBD5E1] min-h-[32px] flex items-center justify-center px-2">
@@ -24757,7 +24585,7 @@ function buildShareTextSummary(type, id) {
         };
 
         window.shareAndroidInstallWhatsApp = function() {
-            const ver = window.CURRENT_SW_VERSION_NAME || '481';
+            const ver = window.CURRENT_SW_VERSION_NAME || '482';
             const url = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?android=1&install=1';
             const txt = `Kontejnery Ostrava — Rychlá instalace mobilní aplikace pro Android přes prohlížeč Chrome bez APK (v ${ver}): ${url}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');
