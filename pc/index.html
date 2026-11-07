@@ -543,7 +543,7 @@ try {
             <!-- Verze aplikace a datum -->
             <div class="inline-flex items-center gap-1.5 bg-sky-950/80 border border-sky-400/40 text-sky-200 px-3 py-1 rounded-full text-xs font-black shadow-inner mb-4">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="loginVersionDisplay">v 484 • 7.11.2026</span>
+                <span id="loginVersionDisplay">v 485 • 7.11.2026</span>
             </div>
 
             <!-- Přepínač PC vs Řidič -->
@@ -931,7 +931,7 @@ try {
                 <span>KONTEJNERY OSTRAVA - POHODA</span>
                 <span class="hidden" id="pohodaWindowTitleAgenda"></span>
                 <button type="button" onclick="window.handleHeaderUpdateClick()" class="cursor-pointer bg-[#0A2E6E] hover:bg-blue-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm border border-sky-300/50 flex items-center gap-1" title="Verze aplikace • Kliknutím zkontrolujete nebo ručně potvrdíte novou aktualizaci">
-                    <span id="headerVersionBadge">v 484 • 7.11.2026</span>
+                    <span id="headerVersionBadge">v 485 • 7.11.2026</span>
                     <span id="ghUpdateBadge" class="hidden bg-[#CC0000] text-yellow-200 text-[10px] px-1.5 py-0.5 rounded font-black animate-pulse flex items-center gap-0.5"><span class="material-icons text-[11px]">system_update_alt</span><span>NOVÁ</span></span>
                 </button>
             </h1>
@@ -3438,7 +3438,7 @@ try {
 
     <script>
     (function() {
-        const CURRENT_SW_VERSION = 484;
+        const CURRENT_SW_VERSION = 485;
         const CURRENT_SW_VERSION_NAME = CURRENT_SW_VERSION;
         const CURRENT_SW_RELEASE_DATE = "7.11.2026";
         const CURRENT_SW_RELEASE_DATE_SPACED = "7. 11. 2026";
@@ -23620,6 +23620,9 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
                 const o = getMergedOrders().find(x => x.id === id) || allCustomers.find(x => x.id === id) || {};
                 return {
                     docTitle: 'PŘEDÁVACÍ PROTOKOL / OBJEDNÁVKA KONTEJNERU',
+                    hdrTitleLine1: 'PŘEDÁVACÍ  PROTOKOL',
+                    hdrTitleLine2: 'PŘEDÁNÍ KONTEJNERU',
+                    isProtocolLayout: true,
                     docSub: 'Potvrzení objednávky a specifikace kontejneru',
                     cislo: o.cisloZakaznika || o.id || '-',
                     depo: o.depo || 'Depo 1',
@@ -23644,6 +23647,9 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
                 const n = allNabidky.find(x => x.id === id) || {};
                 return {
                     docTitle: `CENOVÁ NABÍDKA KONTEJNERU č. ${n.cislo || ''}`,
+                    hdrTitleLine1: 'CENOVÁ NABÍDKA',
+                    hdrTitleLine2: `KONTEJNERU č. ${n.cislo || '-'}`,
+                    isProtocolLayout: false,
                     docSub: 'Nabídka prodeje / pronájmu kontejnerů a vybavení',
                     cislo: n.cislo || '-',
                     depo: n.depo || 'Depo 1',
@@ -23668,6 +23674,9 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
                 const z = allZakazky.find(x => x.id === id) || {};
                 return {
                     docTitle: `PŘEDÁVACÍ PROTOKOL / ZAKÁZKA č. ${z.cisloZakazky || ''}`,
+                    hdrTitleLine1: 'PŘEDÁVACÍ  PROTOKOL',
+                    hdrTitleLine2: 'PŘEDÁNÍ KONTEJNERU',
+                    isProtocolLayout: true,
                     docSub: 'Předávací protokol kontejnerového modulu a příslušenství',
                     cislo: z.cisloZakazky || '-',
                     depo: z.depo || 'Depo 1',
@@ -23696,6 +23705,9 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
                 const typTxt = f.typPlneni === 'PRONAJEM' ? 'ZA PRONÁJEM KONTEJNERU' : 'ZA PRODEJ KONTEJNERU';
                 return {
                     docTitle: `${isZal ? 'ZÁLOHOVÁ FAKTURA' : 'FAKTURA – DAŇOVÝ DOKLAD'} č. ${f.cislo || ''}`,
+                    hdrTitleLine1: isZal ? 'ZÁLOHOVÁ FAKTURA' : 'FAKTURA – DAŇOVÝ DOKLAD',
+                    hdrTitleLine2: `č. ${f.cislo || '-'}`,
+                    isProtocolLayout: false,
                     docSub: `Fakturace ${typTxt} • Variabilní symbol: ${f.varSymbol || f.cislo || ''}`,
                     cislo: f.cislo || '-',
                     depo: f.depo || 'Depo 1',
@@ -23725,6 +23737,9 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
                 const evs = getCustomerFullEngagementEvents(c);
                 return {
                     docTitle: `KARTA ZÁKAZNÍKA • ${c.company || c.name || ''}`,
+                    hdrTitleLine1: 'KARTA ZÁKAZNÍKA',
+                    hdrTitleLine2: c.company || c.name || '-',
+                    isProtocolLayout: false,
                     docSub: `Evidence odběratele, bonita ARES/ISIR (${c.bonita || 'AAA'}) a historie dokladů`,
                     cislo: c.cisloZakaznika || '-',
                     depo: c.depo || 'Depo 1',
@@ -23754,10 +23769,13 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
                 return {
                     docTitle: isVrac
                         ? `PŘEDÁVACÍ PROTOKOL VRÁCENÍ • ${t.designation || t.spz || ''}`
-                        : `PŘEDÁVACÍ PROTOKOL PŘEPRAVY • ${t.designation || t.spz || ''}`,
+                        : `PŘEDÁVACÍ PROTOKOL PŘEDÁNÍ • ${t.designation || t.spz || ''}`,
+                    hdrTitleLine1: 'PŘEDÁVACÍ  PROTOKOL',
+                    hdrTitleLine2: isVrac ? 'VRÁCENÍ KONTEJNERU' : 'PŘEDÁNÍ KONTEJNERU',
+                    isProtocolLayout: true,
                     docSub: isVrac
                         ? 'Záznam o vrácení, kontrole kontejneru a převzetí zpět do depa'
-                        : 'Záznam o přepravě, složení kontejneru a převzetí zákazníkem',
+                        : 'Záznam o předání, složení kontejneru a převzetí zákazníkem',
                     cislo: t.designation || t.cisloDokladuZdroj || '-',
                     depo: t.depo || 'Depo 1',
                     datum: t.dateText || t.date || new Date().toLocaleDateString('cs-CZ'),
@@ -23772,7 +23790,7 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
                     email: t.customerEmail || '-',
                     photoUri: isPortablePhotoUri(tPhoto) ? tPhoto : '',
                     techSpecs: [
-                        ['Druh záznamu', isVrac ? 'VRÁCENÍ KONTEJNERU' : 'EXPEDICE / PŘEPRAVA'],
+                        ['Druh záznamu', isVrac ? 'VRÁCENÍ KONTEJNERU' : 'PŘEDÁNÍ KONTEJNERU'],
                         ['Označení přepravy / Kontejneru', `${t.designation || '-'} ${t.containerType ? '(' + t.containerType + ')' : ''}`],
                         ['Zákazník / Firma', custComp],
                         ['IČO / DIČ zákazníka', [t.customerIc ? 'IČ: ' + t.customerIc : '', t.customerDic ? 'DIČ: ' + t.customerDic : ''].filter(Boolean).join(' • ') || '-'],
@@ -23788,8 +23806,12 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
             }
             const k = allContainers.find(x => x.id === id) || {};
             const bez = Number(k.price || 0), dph = Math.round(bez * 0.21);
+            const isVracK = Boolean(k.isVraceni || (k.status && String(k.status).toUpperCase().includes('VRÁCEN')));
             return {
                 docTitle: `PŘEDÁVACÍ PROTOKOL KONTEJNERU • ${k.designation || ''}`,
+                hdrTitleLine1: 'PŘEDÁVACÍ  PROTOKOL',
+                hdrTitleLine2: isVracK ? 'VRÁCENÍ KONTEJNERU' : 'PŘEDÁNÍ KONTEJNERU',
+                isProtocolLayout: true,
                 docSub: 'Technický a předávací protokol kontejnerové jednotky',
                 cislo: k.designation || '-',
                 depo: k.depo || 'Depo 1',
@@ -23803,6 +23825,7 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
                 email: '-',
                 photoUri: resolveContainerMainPhoto(k),
                 techSpecs: [
+                    ['Druh záznamu', isVracK ? 'VRÁCENÍ KONTEJNERU' : 'PŘEDÁNÍ KONTEJNERU'],
                     ['Výrobní / Evidenční číslo kontejneru', k.designation || '-'],
                     ['Typ a rozměr kontejneru', k.type || 'Obytný / Skladový kontejner'],
                     ['Stav a umístění', `${k.status || 'SKLADEM'} (${k.depo || 'Depo 1'})`],
@@ -23917,7 +23940,7 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
                 .hdr {
                     display: flex;
                     justify-content: space-between;
-                    align-items: flex-start;
+                    align-items: center;
                     border-bottom: 2.5px solid #001B44;
                     padding-bottom: 8px;
                     margin-bottom: 8px;
@@ -24001,12 +24024,19 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
                         <div style="font-size:10px;font-weight:bold;color:#001B44;margin-top:2px;white-space:nowrap;">Tel.: +420 733 609 813 • Mobil: +420 608 813 484</div>
                     </div>
                 </div>
+                ${d.isProtocolLayout ? `
+                <div style="text-align:right;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;padding-right:6px;">
+                    <div style="font-size:31px;font-weight:900;color:#000000;letter-spacing:1.2px;line-height:1.1;font-family:'Arial Black','Segoe UI Black',Impact,Arial,sans-serif;white-space:nowrap;">PŘEDÁVACÍ &nbsp;PROTOKOL</div>
+                    <div style="font-size:21px;font-weight:900;color:#000000;letter-spacing:0.6px;line-height:1.2;margin-top:6px;padding-right:8px;font-family:'Arial Black','Segoe UI Black',Impact,Arial,sans-serif;white-space:nowrap;">${escapePrintHtml(d.hdrTitleLine2 || 'PŘEDÁNÍ KONTEJNERU')}</div>
+                </div>
+                ` : `
                 <div style="text-align:right;">
-                    <div style="font-size:16px;font-weight:900;color:#001B44;letter-spacing:0.5px;line-height:1.15;">CENOVÁ NABÍDKA</div>
-                    <div style="font-size:14px;font-weight:900;color:#001B44;margin-top:2px;">KONTEJNERU č. ${escapePrintHtml(d.cislo)}</div>
+                    <div style="font-size:16px;font-weight:900;color:#001B44;letter-spacing:0.5px;line-height:1.15;">${escapePrintHtml(d.hdrTitleLine1 || 'CENOVÁ NABÍDKA')}</div>
+                    <div style="font-size:14px;font-weight:900;color:#001B44;margin-top:2px;">${escapePrintHtml(d.hdrTitleLine2 || `KONTEJNERU č. ${d.cislo}`)}</div>
                     <div style="font-size:10.5px;font-weight:bold;color:#334155;margin-top:2px;">${escapePrintHtml(d.docSub)}</div>
                     <div style="margin-top:4px;font-size:10.5px;white-space:nowrap;"><b>Číslo dokladu:</b> ${escapePrintHtml(d.cislo)} &nbsp;|&nbsp; <b>Datum:</b> ${escapePrintHtml(d.datum)}</div>
                 </div>
+                `}
             </div>
             <div class="box-grid">
                 <div class="box">
@@ -24172,7 +24202,7 @@ function buildShareTextSummary(type, id) {
     </script>
 
     <!-- ============================================================================ -->
-    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v484)      -->
+    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v485)      -->
     <!-- Zkrácená verze Přepravy: ostatní agendy jsou na iPhonu kompletně skryté.     -->
     <!-- ============================================================================ -->
     <style id="iphoneAppStyles">
@@ -24458,7 +24488,7 @@ function buildShareTextSummary(type, id) {
                     <span class="material-icons text-[#38BDF8] text-xl">speed</span>
                     <div>
                         <div class="font-black text-sm leading-tight text-white">Aktualizace</div>
-                        <div id="iosModalVersionBadge" class="text-[11px] text-[#94A3B8] font-bold">Přeprava • v 484</div>
+                        <div id="iosModalVersionBadge" class="text-[11px] text-[#94A3B8] font-bold">Přeprava • v 485</div>
                     </div>
                 </div>
                 <button type="button" onclick="closeIphoneInstallModal()" class="px-3 py-1.5 rounded-lg bg-[#334155] hover:bg-[#475569] text-white text-xs font-extrabold transition" title="Zavřít">
@@ -24500,7 +24530,7 @@ function buildShareTextSummary(type, id) {
 
                 <!-- Skrytý progress bar element pro zpětnou kompatibilitu -->
                 <div id="iosGhUpdateProgressBar" class="hidden"></div>
-                <div id="iosGhRemoteVerBadge" class="hidden">v 484</div>
+                <div id="iosGhRemoteVerBadge" class="hidden">v 485</div>
 
                 <!-- Stavový text pod tachometrem -->
                 <p id="iosGhUpdateStatusText" class="text-xs font-bold text-[#CBD5E1] min-h-[32px] flex items-center justify-center px-2">
@@ -24876,7 +24906,7 @@ function buildShareTextSummary(type, id) {
         };
 
         window.shareAndroidInstallWhatsApp = function() {
-            const ver = window.CURRENT_SW_VERSION_NAME || '484';
+            const ver = window.CURRENT_SW_VERSION_NAME || '485';
             const url = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?android=1&install=1';
             const txt = `Kontejnery Ostrava — Rychlá instalace mobilní aplikace pro Android přes prohlížeč Chrome bez APK (v ${ver}): ${url}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');
