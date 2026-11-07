@@ -543,7 +543,7 @@ try {
             <!-- Verze aplikace a datum -->
             <div class="inline-flex items-center gap-1.5 bg-sky-950/80 border border-sky-400/40 text-sky-200 px-3 py-1 rounded-full text-xs font-black shadow-inner mb-4">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="loginVersionDisplay">v 486 • 7.11.2026</span>
+                <span id="loginVersionDisplay">v 487 • 7.11.2026</span>
             </div>
 
             <!-- Přepínač PC vs Řidič -->
@@ -931,7 +931,7 @@ try {
                 <span>KONTEJNERY OSTRAVA - POHODA</span>
                 <span class="hidden" id="pohodaWindowTitleAgenda"></span>
                 <button type="button" onclick="window.handleHeaderUpdateClick()" class="cursor-pointer bg-[#0A2E6E] hover:bg-blue-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm border border-sky-300/50 flex items-center gap-1" title="Verze aplikace • Kliknutím zkontrolujete nebo ručně potvrdíte novou aktualizaci">
-                    <span id="headerVersionBadge">v 486 • 7.11.2026</span>
+                    <span id="headerVersionBadge">v 487 • 7.11.2026</span>
                     <span id="ghUpdateBadge" class="hidden bg-[#CC0000] text-yellow-200 text-[10px] px-1.5 py-0.5 rounded font-black animate-pulse flex items-center gap-0.5"><span class="material-icons text-[11px]">system_update_alt</span><span>NOVÁ</span></span>
                 </button>
             </h1>
@@ -3438,7 +3438,7 @@ try {
 
     <script>
     (function() {
-        const CURRENT_SW_VERSION = 486;
+        const CURRENT_SW_VERSION = 487;
         const CURRENT_SW_VERSION_NAME = CURRENT_SW_VERSION;
         const CURRENT_SW_RELEASE_DATE = "7.11.2026";
         const CURRENT_SW_RELEASE_DATE_SPACED = "7. 11. 2026";
@@ -3957,6 +3957,23 @@ try {
             pushSplit(prevVault.deliveryPhotos);
             pushSplit(rec.extraImages);
             pushSplit(prevVault.extraImages);
+            const extractFromContainersJson = (cj) => {
+                if (!cj) return;
+                try {
+                    const parsed = typeof cj === 'string' ? JSON.parse(cj) : cj;
+                    if (Array.isArray(parsed)) {
+                        parsed.forEach(item => {
+                            if (item && Array.isArray(item.photos)) {
+                                item.photos.forEach(p => { if (p) candidates.push(p); });
+                            }
+                            if (item && item.imageUri) candidates.push(item.imageUri);
+                            if (item && item.photo) candidates.push(item.photo);
+                        });
+                    }
+                } catch (_) {}
+            };
+            extractFromContainersJson(rec.containersJson);
+            extractFromContainersJson(prevVault.containersJson);
             if (Array.isArray(rec.photos)) rec.photos.forEach(p => { if (p) candidates.push(p); });
             if (rec.photo) candidates.push(rec.photo);
             if (Array.isArray(prevVault.photos)) prevVault.photos.forEach(p => { if (p) candidates.push(p); });
@@ -12396,6 +12413,52 @@ ${itemsXml}
             exportAllDepoFakturyToPohoda(false);
         };
 
+        window.normalizeSearchTextJs = function(str) {
+            return String(str || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase();
+        };
+
+        window.recordMatchesUniversalSearch = function(rec, rawQuery) {
+            const qRaw = String(rawQuery || '').trim();
+            if (!qRaw) return true;
+            if (!rec || typeof rec !== 'object') return false;
+            const ver = (rec.lastModified || rec.timestamp || 0);
+            if (rec._univSearchVer !== ver || typeof rec._univSearchHay !== 'string') {
+                const parts = [];
+                const visit = (val, key) => {
+                    if (val === null || val === undefined) return;
+                    if (key && (key.startsWith('_') || key.toLowerCase().includes('image') || key.toLowerCase().includes('photo') || key.toLowerCase().includes('thumb') || key === 'signatureDataUri')) return;
+                    if (typeof val === 'string') {
+                        if (val.startsWith('data:image') || val.length > 4000) return;
+                        parts.push(val);
+                    } else if (typeof val === 'number' || typeof val === 'boolean') {
+                        parts.push(String(val));
+                    } else if (Array.isArray(val)) {
+                        val.forEach(v => visit(v, key));
+                    } else if (typeof val === 'object') {
+                        Object.keys(val).forEach(k => visit(val[k], k));
+                    }
+                };
+                Object.keys(rec).forEach(k => visit(rec[k], k));
+                if (rec.systemNumber) parts.push('#' + rec.systemNumber);
+                const joined = parts.join(' ');
+                const norm = window.normalizeSearchTextJs(joined);
+                const compact = norm.replace(/[\s\-_./]/g, '');
+                rec._univSearchVer = ver;
+                rec._univSearchHay = joined.toLowerCase() + ' ' + norm + ' ' + compact;
+            }
+            const hay = rec._univSearchHay;
+            const tokens = qRaw.split(/\s+/).filter(Boolean);
+            return tokens.every(tok => {
+                const tLower = tok.toLowerCase();
+                const tNorm = window.normalizeSearchTextJs(tok);
+                const tCompact = tNorm.replace(/[\s\-_./]/g, '');
+                return hay.includes(tLower) || hay.includes(tNorm) || (tCompact.length >= 2 && hay.includes(tCompact));
+            });
+        };
+
         // --- HLAVNÍ RENDERER STORMWARE POHODA KOMPLET PRO ZÁLOŽKU ÚČETNICTVÍ ---
         window.renderUcetnictviPohodaView = (grid, list, head, body, bar, q, isGrid) => {
             const subKey = window.agendaSubTabByTab['ucetnictvi'] || 'FAKTURY'; // FAKTURY | ZALOHOVE | POKLADNA
@@ -12413,8 +12476,8 @@ ${itemsXml}
                     if (!p || delPK.has(p.id)) return false;
                     const matchDepo = currentDepo === 'VŠE' || (!p.depo ? currentDepo === 'Depo 1' : p.depo === currentDepo);
                     const matchTyp = window.currentPokladnaTypFilter === 'VŠE' || (p.typ || 'PRIJEM') === window.currentPokladnaTypFilter;
-                    const matchQ = !q || [p.cislo, p.parSymbol, p.firma, p.jmeno, p.ic, p.text, p.poznamka].join(' ').toLowerCase().includes(q);
-                    return matchDepo && matchTyp && matchQ;
+                    const matchQ = !q || window.recordMatchesUniversalSearch(p, q);
+                    return matchDepo && (q ? true : matchTyp) && matchQ;
                 }).sort((a, b) => String(b.cislo || '').localeCompare(String(a.cislo || ''), 'cs', { numeric: true }));
 
                 let sel = allFiltered.find(x => x.id === window.selectedPohodaRecordId['POKLADNA']) || allFiltered[0] || null;
@@ -12686,8 +12749,8 @@ ${itemsXml}
                 if (!f || delSet.has(f.id)) return false;
                 const matchDepo = currentDepo === 'VŠE' || (!f.depo ? currentDepo === 'Depo 1' : f.depo === currentDepo);
                 const matchTyp = currentFakturaTypFilter === 'VŠE' || (f.typPlneni || 'PRODEJ') === currentFakturaTypFilter;
-                const matchQ = !q || [f.cislo, f.varSymbol, f.firma, f.jmeno, f.ic, f.text, f.poznamka, f.zdrojDoklad].join(' ').toLowerCase().includes(q);
-                return matchDepo && matchTyp && matchQ;
+                const matchQ = !q || window.recordMatchesUniversalSearch(f, q);
+                return matchDepo && (q ? true : matchTyp) && matchQ;
             }).sort((a, b) => String(a.cislo || '').localeCompare(String(b.cislo || ''), 'cs', { numeric: true }));
 
             let sel = filtered.find(x => x.id === window.selectedPohodaRecordId[subKey]) || filtered[Math.min(3, Math.max(0, filtered.length - 1))] || filtered[0] || null;
@@ -13261,7 +13324,7 @@ ${itemsXml}
                     const isVyb = cat === 'Vybavení';
                     const isPrep = cat === 'Přeprava';
                     const items = allCatalogItems
-                        .filter(i => i.kategorie === cat && (!q || [i.oznaceni, i.nazev, i.kategorie].join(' ').toLowerCase().includes(q)))
+                        .filter(i => i.kategorie === cat && (!q || window.recordMatchesUniversalSearch(i, q)))
                         .sort((a, b) => {
                             if (polSort.col === 'oznaceni') return (a.oznaceni || '').localeCompare(b.oznaceni || '', 'cs', { numeric: true }) * polDirMul;
                             if (polSort.col === 'nazev') return (a.nazev || '').localeCompare(b.nazev || '', 'cs', { sensitivity: 'base' }) * polDirMul;
@@ -13348,11 +13411,11 @@ ${itemsXml}
             if (currentTab === 'objednavky') {
                 const depoMatchedOrders = getMergedOrders().filter(o => {
                     const matchDepo = currentDepo === 'VŠE' || !o.depo || o.depo === currentDepo;
-                    return matchDepo && (!q || [o.name, o.company, o.phone, o.email, o.message, o.ic].join(' ').toLowerCase().includes(q));
+                    return matchDepo && (!q || window.recordMatchesUniversalSearch(o, q));
                 });
                 renderAgendaStatusSubMenuBar('objednavky', depoMatchedOrders);
                 const activeSubTab = window.agendaSubTabByTab['objednavky'] || 'NOVÉ';
-                const arr = depoMatchedOrders.filter(o => matchesAgendaStatusTabJs(o.status, activeSubTab));
+                const arr = depoMatchedOrders.filter(o => q ? true : matchesAgendaStatusTabJs(o.status, activeSubTab));
                 const sObj = window.getAgendaSort('objednavky');
                 const sDirObj = sObj.dir === 'asc' ? 1 : -1;
                 arr.sort((a, b) => {
@@ -13441,7 +13504,7 @@ ${itemsXml}
                     </div>
                 </div>`;
                 const calcNabSum = (n) => { let s = 0; (n.items || []).forEach(i => s += Number(i.castkaBez || 0) + Number(i.dphVal || 0)); return s; };
-                const arr = allNabidky.filter(n => (currentDepo === 'VŠE' || (n.depo || 'Depo 1') === currentDepo) && (!q || [n.cislo, n.firma, n.jmeno, n.ic].join(' ').toLowerCase().includes(q)));
+                const arr = allNabidky.filter(n => (currentDepo === 'VŠE' || (n.depo || 'Depo 1') === currentDepo) && (!q || window.recordMatchesUniversalSearch(n, q)));
                 const sNab = window.getAgendaSort('nabidky');
                 const sDirNab = sNab.dir === 'asc' ? 1 : -1;
                 arr.sort((a, b) => {
@@ -13533,12 +13596,12 @@ ${itemsXml}
                 const depoMatchedZakazky = allZakazky.filter(z => {
                     const matchDepo = currentDepo === 'VŠE' || (!z.depo ? currentDepo === 'Depo 1' : z.depo === currentDepo);
                     const zSt = z.stredisko || 'Pronájem';
-                    const matchSt = currentZakazkaStrediskoFilter === 'VŠE' || zSt.toLowerCase() === currentZakazkaStrediskoFilter.toLowerCase();
-                    return matchDepo && matchSt && (!q || [z.cisloZakazky, z.cisloNabidky, z.firma, z.vyrizuje, z.ic, z.lokalita, zSt, z.prepravaInfo].join(' ').toLowerCase().includes(q));
+                    const matchSt = q ? true : (currentZakazkaStrediskoFilter === 'VŠE' || zSt.toLowerCase() === currentZakazkaStrediskoFilter.toLowerCase());
+                    return matchDepo && matchSt && (!q || window.recordMatchesUniversalSearch(z, q));
                 });
                 renderAgendaStatusSubMenuBar('zakazky', depoMatchedZakazky);
                 const activeZakSub = window.agendaSubTabByTab['zakazky'] || 'NOVÉ';
-                const arr = depoMatchedZakazky.filter(z => matchesAgendaStatusTabJs(z.status, activeZakSub));
+                const arr = depoMatchedZakazky.filter(z => q ? true : matchesAgendaStatusTabJs(z.status, activeZakSub));
                 const sZak = window.getAgendaSort('zakazky');
                 const sDirZak = sZak.dir === 'asc' ? 1 : -1;
                 arr.sort((a, b) => {
@@ -13647,7 +13710,7 @@ ${itemsXml}
                         <button type="button" onclick="checkAllCustomersBonitaOnline()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded-lg text-xs font-extrabold flex items-center gap-1 shadow"><span class="material-icons text-xs">fact_check</span> Zkontrolovat bonitu firem</button>
                     </div>
                 </div>`;
-                const arr = allAdresar.filter(c => (currentDepo === 'VŠE' || !c.depo || c.depo === currentDepo) && (!q || [c.company, c.name, c.phone, c.email, c.ic, c.dic, c.ulice, c.cisloZakaznika, c.bonita].join(' ').toLowerCase().includes(q)));
+                const arr = allAdresar.filter(c => (currentDepo === 'VŠE' || !c.depo || c.depo === currentDepo) && (!q || window.recordMatchesUniversalSearch(c, q)));
                 if (!arr.length) return document.getElementById('noData').classList.remove('hidden');
 
                 const evCountMap = new Map();
@@ -13761,8 +13824,13 @@ ${itemsXml}
                     <button onclick="openKontejnerModal(null)" class="bg-[#1B5E8B] hover:bg-[#0F3D5E] text-white px-3 py-1 rounded text-xs font-extrabold flex items-center gap-1"><span class="material-icons text-xs">add</span> + NOVÁ KARTA KONTEJNERU</button>
                 </div>`;
                 const arr = (allContainers || []).filter(k => {
+                    if (q) {
+                        const kd = k.depo || ((k.status || '').includes('02') ? 'Depo 2' : 'Depo 1');
+                        const matchDepo = currentDepo === 'VŠE' || kd === currentDepo;
+                        return matchDepo && window.recordMatchesUniversalSearch(k, q);
+                    }
                     return matchesContainerStatusTabJs(k.status, activeSubTab, currentDepo, k);
-                }).filter(k => !q || [k.designation, k.type, k.description, k.customerCompany, k.transporter, k.vlastnik, k.spz, k.systemNumber ? '#' + k.systemNumber : '', k.systemNumber ? String(k.systemNumber) : ''].join(' ').toLowerCase().includes(q));
+                });
                 const sKont = window.getAgendaSort('kontejnery');
                 const sDirKont = sKont.dir === 'asc' ? 1 : -1;
                 arr.sort((a, b) => {
@@ -13907,11 +13975,11 @@ ${itemsXml}
                     (t.note && String(t.note).toUpperCase().includes('VRÁCEN'))
                 );
                 const depoMatchedTransports = allTransports
-                    .filter(t => (currentDepo === 'VŠE' || (t.depo || 'Depo 1') === currentDepo) && (!q || getTrSearchHaystack(t).includes(q)))
+                    .filter(t => (currentDepo === 'VŠE' || (t.depo || 'Depo 1') === currentDepo) && (!q || window.recordMatchesUniversalSearch(t, q) || getTrSearchHaystack(t).includes(q)))
                     .sort((a, b) => (parseTrDateEpoch(a) - parseTrDateEpoch(b)) || (Number(a.timestamp || 0) - Number(b.timestamp || 0)));
                 renderAgendaStatusSubMenuBar('preprava', depoMatchedTransports);
                 const activePrepSub = window.agendaSubTabByTab['preprava'] || 'NOVÉ';
-                const arr = depoMatchedTransports.filter(t => matchesAgendaStatusTabJs(t.status, activePrepSub));
+                const arr = depoMatchedTransports.filter(t => q ? true : matchesAgendaStatusTabJs(t.status, activePrepSub));
 
                 const isIosDriverMode = document.body.classList.contains('ios-app-mode') || window.FORCE_IPHONE_APP_MODE === true;
 
@@ -14221,7 +14289,7 @@ ${itemsXml}
                 const depoMatchedZajemci = (allZajemci || []).filter(z => {
                     if (!z || z.isDeleted || delSetZ.has(z.id)) return false;
                     const zd = z.depo || 'Depo 1';
-                    return (currentDepo === 'VŠE' || zd === currentDepo) && (!q || [z.jmeno, z.firma, z.telefon, z.email, z.typKontejneru, z.poznamka, z.zamer, z.cisloZajemce].join(' ').toLowerCase().includes(q));
+                    return (currentDepo === 'VŠE' || zd === currentDepo) && (!q || window.recordMatchesUniversalSearch(z, q));
                 }).sort((a, b) => Number(b.timestamp || 0) - Number(a.timestamp || 0));
 
                 renderAgendaStatusSubMenuBar('adresar', depoMatchedZajemci);
@@ -14246,6 +14314,7 @@ ${itemsXml}
                     </div>
                 </div>`;
                 const arr = depoMatchedZajemci.filter(z => {
+                    if (q) return true;
                     const st = String(z.status || 'AKTIVNÍ').toUpperCase();
                     if (activeZajSub === 'VYŘÍZENO') return st === 'VYŘÍZENO' || st === 'VYŘÍZENO / ZAKÁZKA';
                     if (activeZajSub === 'ZRUŠENÉ') return st === 'ZRUŠENO';
@@ -16100,15 +16169,9 @@ ${itemsXml}
                 const matchDepo = currentDepo === 'VŠE' || !inv.depo || inv.depo === currentDepo;
                 if (!matchDepo) return false;
                 if (!q) return true;
+                if (window.recordMatchesUniversalSearch(inv, q)) return true;
                 const parsed = parseWebInventorySession(inv);
-                const hay = [
-                    parsed.dateText,
-                    inv.author,
-                    inv.containerDesignations,
-                    parsed.summaryNote,
-                    ...(parsed.items || []).map(it => `${it.designation} ${it.type} ${it.color} ${it.description}`)
-                ].join(' ').toLowerCase();
-                return hay.includes(q);
+                return window.recordMatchesUniversalSearch(parsed, q);
             }).sort((a, b) => Number(b.timestamp || 0) - Number(a.timestamp || 0));
 
             const nowStr = new Date().toLocaleDateString('cs-CZ') + ' ' + new Date().toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' });
@@ -22891,15 +22954,14 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
             if (cat === 'all' || cat === 'order') {
                 const ords = typeof getMergedOrders === 'function' ? getMergedOrders() : (allExternalOrders || []);
                 ords.forEach(o => {
-                    const text = [o.company, o.name, o.customerCompany, o.customerName, o.phone, o.email, o.address, o.location, o.containerType, o.id].join(' ').toLowerCase();
-                    if (!q || text.includes(q)) {
+                    if (!q || window.recordMatchesUniversalSearch(o, q)) {
                         items.push({
                             type: 'order',
                             badge: 'OBJEDNÁVKA',
                             badgeCls: 'bg-[#0D47A1] text-white',
                             title: o.company || o.name || o.customerCompany || 'Objednávka bez názvu',
                             subtitle: `${o.location || o.address || 'Bez adresy'} • ${o.phone || o.email || '-'}`,
-                            container: o.containerType || '',
+                            container: o.containerType || o.message || '',
                             raw: o
                         });
                     }
@@ -22909,15 +22971,14 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
             // 2. Zakázky
             if (cat === 'all' || cat === 'zakazka') {
                 (allZakazky || []).forEach(z => {
-                    const text = [z.company, z.name, z.cisloZakazky, z.lokalita, z.phone, z.containerType, z.id].join(' ').toLowerCase();
-                    if (!q || text.includes(q)) {
+                    if (!q || window.recordMatchesUniversalSearch(z, q)) {
                         items.push({
                             type: 'zakazka',
                             badge: 'ZAKÁZKA',
                             badgeCls: 'bg-[#047857] text-white',
-                            title: `${z.cisloZakazky ? z.cisloZakazky + ' • ' : ''}${z.company || z.name || 'Zakázka'}`,
-                            subtitle: `${z.lokalita || 'Bez lokality'} • ${z.phone || '-'}`,
-                            container: z.containerType || '',
+                            title: `${z.cisloZakazky ? z.cisloZakazky + ' • ' : ''}${z.firma || z.company || z.vyrizuje || z.name || 'Zakázka'}`,
+                            subtitle: `${z.lokalita || z.ulice || 'Bez lokality'} • ${z.telefon || z.phone || '-'}`,
+                            container: z.containerType || (z.items || []).map(it => it.nazev || it.oznaceni).filter(Boolean).join(', ') || '',
                             raw: z
                         });
                     }
@@ -22926,16 +22987,16 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
 
             // 3. Adresář
             if (cat === 'all' || cat === 'adresar') {
-                (allCustomers || []).forEach(c => {
-                    const text = [c.company, c.name, c.ic, c.dic, c.address, c.city, c.phone, c.email, c.id].join(' ').toLowerCase();
-                    if (!q || text.includes(q)) {
+                const adrList = typeof getMergedAdresar === 'function' ? getMergedAdresar() : (allCustomers || []);
+                adrList.forEach(c => {
+                    if (!q || window.recordMatchesUniversalSearch(c, q)) {
                         items.push({
                             type: 'adresar',
                             badge: 'ADRESÁŘ',
                             badgeCls: 'bg-[#6D28D9] text-white',
                             title: c.company || c.name || 'Zákazník bez názvu',
-                            subtitle: `${c.address ? c.address + ', ' : ''}${c.city || ''} • ${c.phone || c.email || '-'}`,
-                            container: '',
+                            subtitle: `${c.ulice || c.address || ''}${c.city ? ', ' + c.city : ''} • ${c.phone || c.email || '-'}`,
+                            container: c.ic ? `IČ: ${c.ic}` : '',
                             raw: c
                         });
                     }
@@ -22945,15 +23006,14 @@ Vrať striktně JSON s klíči: 'designation', 'type', 'color', 'description', '
             // 4. Kontejnery
             if (cat === 'all' || cat === 'kontejner') {
                 (allContainers || []).forEach(k => {
-                    const text = [k.designation, k.id, k.type, k.depo, k.status, k.customerCompany].join(' ').toLowerCase();
-                    if (!q || text.includes(q)) {
+                    if (!q || window.recordMatchesUniversalSearch(k, q)) {
                         items.push({
                             type: 'kontejner',
                             badge: 'KONTEJNER',
                             badgeCls: 'bg-[#B45309] text-white',
                             title: `${k.designation || k.id} (${k.type || 'Kontejner'})`,
                             subtitle: `${k.depo || 'Depo 1'} • Stav: ${k.status || 'SKLADEM'}${k.customerCompany ? ' • ' + k.customerCompany : ''}`,
-                            container: k.designation || k.id,
+                            container: k.description || k.designation || k.id,
                             raw: k
                         });
                     }
@@ -24202,7 +24262,7 @@ function buildShareTextSummary(type, id) {
     </script>
 
     <!-- ============================================================================ -->
-    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v486)      -->
+    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v487)      -->
     <!-- Zkrácená verze Přepravy: ostatní agendy jsou na iPhonu kompletně skryté.     -->
     <!-- ============================================================================ -->
     <style id="iphoneAppStyles">
@@ -24488,7 +24548,7 @@ function buildShareTextSummary(type, id) {
                     <span class="material-icons text-[#38BDF8] text-xl">speed</span>
                     <div>
                         <div class="font-black text-sm leading-tight text-white">Aktualizace</div>
-                        <div id="iosModalVersionBadge" class="text-[11px] text-[#94A3B8] font-bold">Přeprava • v 486</div>
+                        <div id="iosModalVersionBadge" class="text-[11px] text-[#94A3B8] font-bold">Přeprava • v 487</div>
                     </div>
                 </div>
                 <button type="button" onclick="closeIphoneInstallModal()" class="px-3 py-1.5 rounded-lg bg-[#334155] hover:bg-[#475569] text-white text-xs font-extrabold transition" title="Zavřít">
@@ -24530,7 +24590,7 @@ function buildShareTextSummary(type, id) {
 
                 <!-- Skrytý progress bar element pro zpětnou kompatibilitu -->
                 <div id="iosGhUpdateProgressBar" class="hidden"></div>
-                <div id="iosGhRemoteVerBadge" class="hidden">v 486</div>
+                <div id="iosGhRemoteVerBadge" class="hidden">v 487</div>
 
                 <!-- Stavový text pod tachometrem -->
                 <p id="iosGhUpdateStatusText" class="text-xs font-bold text-[#CBD5E1] min-h-[32px] flex items-center justify-center px-2">
@@ -24619,14 +24679,8 @@ function buildShareTextSummary(type, id) {
 
             const searchRow = document.getElementById('iosQuickSearchRow');
             if (searchRow) {
-                if (isNov) {
-                    searchRow.classList.add('hidden');
-                    searchRow.style.display = 'none';
-                    if (typeof window.clearIosQuickSearch === 'function') window.clearIosQuickSearch();
-                } else {
-                    searchRow.classList.remove('hidden');
-                    searchRow.style.display = '';
-                }
+                searchRow.classList.remove('hidden');
+                searchRow.style.display = '';
             }
             if (bNove) {
                 bNove.className = isNov
@@ -24906,7 +24960,7 @@ function buildShareTextSummary(type, id) {
         };
 
         window.shareAndroidInstallWhatsApp = function() {
-            const ver = window.CURRENT_SW_VERSION_NAME || '486';
+            const ver = window.CURRENT_SW_VERSION_NAME || '487';
             const url = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?android=1&install=1';
             const txt = `Kontejnery Ostrava — Rychlá instalace mobilní aplikace pro Android přes prohlížeč Chrome bez APK (v ${ver}): ${url}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');
