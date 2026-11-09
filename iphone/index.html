@@ -541,7 +541,7 @@ try {
             <!-- Verze aplikace a datum -->
             <div class="inline-flex items-center gap-1.5 bg-sky-950/80 border border-sky-400/40 text-sky-200 px-3 py-1 rounded-full text-xs font-black shadow-inner mb-4">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="loginVersionDisplay">v 488 • 7.11.2026</span>
+                <span id="loginVersionDisplay">v 489 • 9.11.2026</span>
             </div>
 
             <!-- Přepínač PC vs Řidič -->
@@ -929,7 +929,7 @@ try {
                 <span>KONTEJNERY OSTRAVA - POHODA</span>
                 <span class="hidden" id="pohodaWindowTitleAgenda"></span>
                 <button type="button" onclick="window.handleHeaderUpdateClick()" class="cursor-pointer bg-[#0A2E6E] hover:bg-blue-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm border border-sky-300/50 flex items-center gap-1" title="Verze aplikace • Kliknutím zkontrolujete nebo ručně potvrdíte novou aktualizaci">
-                    <span id="headerVersionBadge">v 488 • 7.11.2026</span>
+                    <span id="headerVersionBadge">v 489 • 9.11.2026</span>
                     <span id="ghUpdateBadge" class="hidden bg-[#CC0000] text-yellow-200 text-[10px] px-1.5 py-0.5 rounded font-black animate-pulse flex items-center gap-0.5"><span class="material-icons text-[11px]">system_update_alt</span><span>NOVÁ</span></span>
                 </button>
             </h1>
@@ -3436,10 +3436,10 @@ try {
 
     <script>
     (function() {
-        const CURRENT_SW_VERSION = 488;
+        const CURRENT_SW_VERSION = 489;
         const CURRENT_SW_VERSION_NAME = CURRENT_SW_VERSION;
-        const CURRENT_SW_RELEASE_DATE = "7.11.2026";
-        const CURRENT_SW_RELEASE_DATE_SPACED = "7. 11. 2026";
+        const CURRENT_SW_RELEASE_DATE = "9.11.2026";
+        const CURRENT_SW_RELEASE_DATE_SPACED = "9. 11. 2026";
         window.CURRENT_SW_VERSION = CURRENT_SW_VERSION;
         window.CURRENT_SW_VERSION_NAME = CURRENT_SW_VERSION_NAME;
         window.CURRENT_SW_RELEASE_DATE = CURRENT_SW_RELEASE_DATE;
@@ -24260,7 +24260,7 @@ function buildShareTextSummary(type, id) {
     </script>
 
     <!-- ============================================================================ -->
-    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v488)      -->
+    <!-- MOBILNÍ APLIKACE PRO iPHONE — VÝHRADNĚ PRO ŘIDIČE (SEKCE PŘEPRAVA v489)      -->
     <!-- Zkrácená verze Přepravy: ostatní agendy jsou na iPhonu kompletně skryté.     -->
     <!-- ============================================================================ -->
     <style id="iphoneAppStyles">
@@ -24546,7 +24546,7 @@ function buildShareTextSummary(type, id) {
                     <span class="material-icons text-[#38BDF8] text-xl">speed</span>
                     <div>
                         <div class="font-black text-sm leading-tight text-white">Aktualizace</div>
-                        <div id="iosModalVersionBadge" class="text-[11px] text-[#94A3B8] font-bold">Přeprava • v 488</div>
+                        <div id="iosModalVersionBadge" class="text-[11px] text-[#94A3B8] font-bold">Přeprava • v 489</div>
                     </div>
                 </div>
                 <button type="button" onclick="closeIphoneInstallModal()" class="px-3 py-1.5 rounded-lg bg-[#334155] hover:bg-[#475569] text-white text-xs font-extrabold transition" title="Zavřít">
@@ -24588,7 +24588,7 @@ function buildShareTextSummary(type, id) {
 
                 <!-- Skrytý progress bar element pro zpětnou kompatibilitu -->
                 <div id="iosGhUpdateProgressBar" class="hidden"></div>
-                <div id="iosGhRemoteVerBadge" class="hidden">v 488</div>
+                <div id="iosGhRemoteVerBadge" class="hidden">v 489</div>
 
                 <!-- Stavový text pod tachometrem -->
                 <p id="iosGhUpdateStatusText" class="text-xs font-bold text-[#CBD5E1] min-h-[32px] flex items-center justify-center px-2">
@@ -24958,7 +24958,7 @@ function buildShareTextSummary(type, id) {
         };
 
         window.shareAndroidInstallWhatsApp = function() {
-            const ver = window.CURRENT_SW_VERSION_NAME || '488';
+            const ver = window.CURRENT_SW_VERSION_NAME || '489';
             const url = 'https://kont-premysl-sliva.github.io/Home_1/iphone/iphone.html?android=1&install=1';
             const txt = `Kontejnery Ostrava — Rychlá instalace mobilní aplikace pro Android přes prohlížeč Chrome bez APK (v ${ver}): ${url}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');
